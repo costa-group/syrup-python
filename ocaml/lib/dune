@@ -1,0 +1,5 @@
+(library (name syrup_backend)
+ (libraries core z3 ppx_deriving.std yojson sedlex)
+ (preprocess (pps ppx_deriving.std ppx_deriving_yojson sedlex.ppx))
+ (public_name syrup_backend)
+)

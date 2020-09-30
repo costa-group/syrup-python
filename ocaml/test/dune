@@ -1,0 +1,36 @@
+(executables
+ (names test_sk_util test_instr test_params test_enc test_outpt)
+ (libraries syrup_backend oUnit)
+ (preprocess (pps ppx_deriving.std))
+ (link_flags -cc g++)
+)
+
+(alias
+ (name runtest)
+ (deps (:x test_sk_util.exe))
+ (action (run %{x}))
+)
+
+(alias
+ (name runtest)
+ (deps (:x test_instr.exe))
+ (action (run %{x}))
+)
+
+(alias
+ (name runtest)
+ (deps (:x test_params.exe))
+ (action (run %{x}))
+)
+
+(alias
+ (name runtest)
+ (deps (:x test_enc.exe))
+ (action (run %{x}))
+)
+
+(alias
+ (name runtest)
+ (deps (:x test_outpt.exe))
+ (action (run %{x}))
+)
