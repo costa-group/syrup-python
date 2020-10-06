@@ -1,0 +1,1 @@
+{"max_progr_len": 4, "src_ws": ["s(0)"], "vars": ["s(0)", "s(2)"], "init_progr_len": 4, "max_sk_sz": 3, "current_cost": 14, "user_instrs": [{"outpt_sk": ["s(2)"], "commutative": false, "inpt_sk": ["s(0)", 340282366920938463463374607431768211456], "gas": 5, "disasm": "DIV", "opcode": "04", "id": "DIV_0"}], "tgt_ws": [22506, "s(2)"]}

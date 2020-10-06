@@ -1,0 +1,14 @@
+#$ -S /bin/bash
+#$ -cwd           # Set the working directory for the job to the current directory
+#$ -l h_rt=2:00:00 # Request runtime
+#$ -l h_vmem=2G   # Request 1GB RAM
+#$ -l tmem=2G     # Request 1GB RAM
+#$ -j y           # Join stdout and stderr
+#$ -o /dev/null   # Do not create files for stdout
+#$ -t 1-72247:4
+BATCH_MAX="$((${SGE_TASK_ID}+3))"
+for i in `seq ${SGE_TASK_ID} $((BATCH_MAX <= 72247 ? BATCH_MAX : 72247))`
+do
+  PATH_TO_INPUT=$(sed "${i}q;d" input-list.txt)
+  /home/mschett/opti/run_BCLT.sh -timeout 900 -omit-csv-header $PATH_TO_INPUT > /home/mschett/opti-eval/ebso-comparison-new/results/result_BCLT_${i}.json 2>&1
+done

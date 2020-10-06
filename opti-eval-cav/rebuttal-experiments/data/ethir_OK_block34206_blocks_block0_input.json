@@ -1,0 +1,1 @@
+{"max_progr_len": 13, "src_ws": ["s(0)"], "vars": ["s(0)", "s(11)"], "init_progr_len": 12, "max_sk_sz": 11, "current_cost": 37, "user_instrs": [{"outpt_sk": ["s(11)"], "commutative": false, "inpt_sk": [], "gas": 2, "disasm": "TIMESTAMP", "opcode": "42", "id": "TIMESTAMP_0"}], "tgt_ws": [12936, "s(0)", 7809, "s(11)", 0, 0, 0, 0, 1, 0, "s(0)"]}
