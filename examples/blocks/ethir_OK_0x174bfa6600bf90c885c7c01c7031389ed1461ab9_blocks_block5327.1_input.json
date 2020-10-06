@@ -1,0 +1,1 @@
+{"max_progr_len": 2, "src_ws": [], "vars": ["s(7)"], "init_progr_len": 2, "max_sk_sz": 2, "current_cost": 5, "user_instrs": [{"outpt_sk": ["s(7)"], "commutative": false, "inpt_sk": [], "gas": 2, "disasm": "RETURNDATASIZE", "opcode": "3d", "id": "RETURNDATASIZE_0"}], "tgt_ws": [0, "s(7)"]}
