@@ -1,0 +1,1 @@
+{"max_progr_len": 10, "src_ws": ["s(0)", "s(1)"], "vars": ["s(0)", "s(1)", "s(10)"], "init_progr_len": 10, "max_sk_sz": 10, "current_cost": 30, "user_instrs": [{"outpt_sk": ["s(10)"], "commutative": false, "inpt_sk": ["s(1)", 31], "gas": 3, "disasm": "LT", "opcode": "10", "id": "LT_0"}], "tgt_ws": [23048, "s(10)", 0, 0, 0, 0, 0, 0, "s(0)", "s(1)"]}

@@ -1,0 +1,1 @@
+{"max_progr_len": 7, "src_ws": ["s(0)"], "vars": ["s(0)", "s(6)"], "init_progr_len": 7, "max_sk_sz": 6, "current_cost": 21, "user_instrs": [{"outpt_sk": ["s(6)"], "commutative": true, "inpt_sk": ["s(0)", 4], "gas": 3, "disasm": "EQ", "opcode": "14", "id": "EQ_0"}], "tgt_ws": [7094, "s(6)", 0, "s(0)", 0, "s(0)"]}

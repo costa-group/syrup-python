@@ -1,0 +1,1 @@
+{"max_progr_len": 13, "src_ws": [], "vars": ["s(12)"], "init_progr_len": 11, "max_sk_sz": 12, "current_cost": 38, "user_instrs": [{"outpt_sk": ["s(12)"], "commutative": false, "inpt_sk": [], "gas": 2, "disasm": "CALLVALUE", "opcode": "34", "id": "CALLVALUE_0"}], "tgt_ws": [1056, 5, "s(12)", 169, 100, 181, 0, 0, 0, 0, 0]}

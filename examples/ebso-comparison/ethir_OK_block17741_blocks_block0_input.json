@@ -1,0 +1,1 @@
+{"max_progr_len": 6, "src_ws": ["s(0)"], "vars": ["s(0)", "s(5)"], "init_progr_len": 6, "max_sk_sz": 5, "current_cost": 75, "user_instrs": [{"outpt_sk": ["s(5)"], "commutative": false, "inpt_sk": ["s(0)", 2], "gas": 60, "disasm": "EXP", "opcode": "0a", "id": "EXP_0"}], "tgt_ws": [10827, "s(5)", 8291, 0, "s(0)"]}

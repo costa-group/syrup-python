@@ -1,0 +1,1 @@
+{"max_progr_len": 9, "src_ws": ["s(0)"], "vars": ["s(0)", "s(7)"], "init_progr_len": 7, "max_sk_sz": 7, "current_cost": 28, "user_instrs": [{"outpt_sk": ["s(7)"], "commutative": false, "inpt_sk": [], "gas": 2, "disasm": "CODESIZE", "opcode": "38", "id": "CODESIZE_0"}], "tgt_ws": ["s(0)", "s(7)", 416, 416, "s(0)", 13, "s(0)"]}

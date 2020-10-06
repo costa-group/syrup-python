@@ -1,0 +1,1 @@
+{"max_progr_len": 7, "src_ws": ["s(0)"], "vars": ["s(0)", "s(6)"], "init_progr_len": 7, "max_sk_sz": 6, "current_cost": 19, "user_instrs": [{"outpt_sk": ["s(6)"], "commutative": false, "inpt_sk": [], "gas": 2, "disasm": "ADDRESS", "opcode": "30", "id": "ADDRESS_0"}], "tgt_ws": [2769, 0, 18183919967615000, 1146086134561870360280155729967018496565116718991, "s(6)", 4553]}

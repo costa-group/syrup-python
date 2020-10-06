@@ -1,0 +1,1 @@
+{"max_progr_len": 7, "src_ws": [], "vars": ["s(7)"], "init_progr_len": 7, "max_sk_sz": 7, "current_cost": 20, "user_instrs": [{"outpt_sk": ["s(7)"], "commutative": false, "inpt_sk": [], "gas": 2, "disasm": "GAS", "opcode": "5a", "id": "GAS_0"}], "tgt_ws": ["s(7)", 805383188830244934838275473784301907651370706969, 0, 284, 68, 0, 32]}
