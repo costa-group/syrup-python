@@ -1,0 +1,99 @@
+# Module containing all necessary functions to generate
+# a SMT-Lib script. All methods return a string with
+# the corresponding statement.
+
+# Methods to generate logical connective asserts.
+
+# Given a logical connective symbol and its operands,
+# returns the corresponding statement
+def _add_connective(connective_name, formulas):
+    string = "(" + connective_name
+    for formula in formulas:
+        string += " " + str(formula)
+    string += ")"
+    return string
+
+
+def add_implies(formulas):
+    return _add_connective("=>", formulas)
+
+
+def add_and(formulas):
+    return _add_connective("and", formulas)
+
+
+def add_or(formulas):
+    return _add_connective("or", formulas)
+
+
+def add_not(formula):
+    return "(not "+ formula +")"
+
+
+def add_eq(formulas):
+    return _add_connective("=", formulas)
+
+
+def add_leq(formulas):
+    return _add_connective("<=", formulas)
+
+
+def add_lt(formulas):
+    return _add_connective("<", formulas)
+
+# Methods to declare variables
+
+# Given a variable prefix and the indexes,
+# returns the corresponding string
+def var2str(var_name, indexes):
+    string = str(var_name)
+    for index in indexes:
+        string += "_" + str(index)
+    return string
+
+def _declare_variable(var_name, var_type):
+    return "(declare-fun " + str(var_name) + "() " + str(var_type) + ")"
+
+
+def declare_boolvar(var_name):
+    return _declare_variable(var_name, "Bool")
+
+
+def declare_intvar(var_name):
+    return _declare_variable(var_name, "Int")
+
+
+# Methods to add asserts
+
+def add_assert(statement):
+    return "(assert "+ statement +")"
+
+
+def add_assert_soft(statement, weight):
+    return "(assert-soft " + statement + " :weight " + str(weight) + ")"
+
+
+# Methods to generate auxiliary statements for
+# SMT-Lib
+
+def set_logic(mode):
+    return "(set-logic " + mode + ")"
+
+
+def check_sat():
+    return "(check-sat)"
+
+
+def get_objectives():
+    return "(get-objectives)"
+
+
+def get_model():
+    return "(get-model)"
+
+
+def get_value(variable):
+    return "(get-value " + str(variable) + ")"
+
+
+
