@@ -37,18 +37,20 @@ def a(i):
 
 def _initialize_s_vars(variables):
     for var in variables:
+        # We add a | |, as variables are of the form s(i) and
+        # SMT-Lib cannot accept those names.
         print(declare_intvar(var))
 
 
 def _initialize_u_vars(bs, b0):
-    for i in range(bs-1):
-        for j in range(b0):
-            print(declare_intvar(u(i,j)))
+    for i in range(bs):
+        for j in range(b0+1):
+            print(declare_boolvar(u(i,j)))
 
 
 def _initialize_x_vars(bs, b0):
-    for i in range(bs-1):
-        for j in range(b0):
+    for i in range(bs):
+        for j in range(b0+1):
             print(declare_intvar(x(i,j)))
 
 
@@ -73,27 +75,32 @@ def initialize_variables(variables, bs, b0):
 
 # Auxiliary methods for defining the constraints
 
-def _move(j, alpha, beta, sigma):
+def _move(j, alpha, beta, delta):
     and_variables = []
+
+    # Move can be empty
+    if alpha > beta:
+        return "true"
     for i in range(alpha, beta+1):
-        first_and = add_eq([u(i+sigma, j+1), u(i,j)])
-        second_and = add_eq([x(i+sigma, j+1), x(i,j)])
+        first_and = add_eq([u(i+delta, j+1), u(i,j)])
+        second_and = add_eq([x(i+delta, j+1), x(i,j)])
         and_variables.append(add_and([first_and, second_and]))
     return add_and(and_variables)
 
-def _generate_stack_theta(b0):
-    tetha = {}
-    tetha["PUSH"] = 0
-    tetha["POP"] = 1
-    tetha["NOP"] = 2
+
+def _generate_stack_theta(bs):
+    theta = {}
+    theta["PUSH"] = 0
+    theta["POP"] = 1
+    theta["NOP"] = 2
     initial_index = 3
-    for i in range(1, min(b0, max_k_dup+1)):
-        tetha["DUP" + str(i)] = initial_index
+    for i in range(1, min(bs, max_k_dup+1)):
+        theta["DUP" + str(i)] = initial_index
         initial_index += 1
-    for i in range(1, min(b0, max_k_swap+1)):
-        tetha["SWAP" + str(i)] = initial_index
+    for i in range(1, min(bs, max_k_swap+1)):
+        theta["SWAP" + str(i)] = initial_index
         initial_index += 1
-    return tetha
+    return theta
 
 
 # Returns two different dictionaries: the first one, for
@@ -112,7 +119,7 @@ def _generate_uninterpreted_theta(user_instr, initial_index):
 
 # Method for generating variable assignment (SV)
 
-def _variables_assignment_constraint(variables):
+def variables_assignment_constraint(variables):
     print("; Variables assignment")
     for i,var in enumerate(variables):
         statement = add_eq([var, int_limit + i])
@@ -169,13 +176,69 @@ def _stack_constraints(b0, bs, theta):
         _pop_encoding(j, bs, theta["POP"])
         _nop_encoding(j, bs, theta["NOP"])
 
-        for k in range(1, min(b0, max_k_dup + 1)):
-            _dupk_encoding(k, j, bs, theta["DUP"])
+        for k in range(1, min(bs, max_k_dup + 1)):
+            _dupk_encoding(k, j, bs, theta["DUP" + str(k)])
 
-        for k in range(1, min(b0, max_k_dup + 1)):
-            _dupk_encoding(k, j, bs, theta["DUP"])
+        for k in range(1, min(bs, max_k_swap + 1)):
+            _swapk_encoding(k, j, bs, theta["SWAP" + str(k)])
+
+# Methods for generating constraints for commutative uninterpreted functions (Cc)
 
 
 
-def generate_smtlib_encoding(b0, bs, usr_instr, variables):
-    pass
+# Methods for generating constraints for non-commutative uninterpreted functions (Cu)
+
+
+# Methods for generating constraints for finding the target program
+
+def instructions_constraints(b0, bs, theta_stack, theta_comm, theta_non_comm):
+    mi = len(theta_stack) + len(theta_comm) + len(theta_non_comm)
+    print("; Instructions constraints")
+
+    for j in range(b0):
+        print(add_assert(add_and([add_leq([0, t(j)]), add_lt([t(j), mi])])))
+
+    _stack_constraints(b0, bs, theta_stack)
+
+
+# Methods for defining how the stack at the beginning is (B)
+
+def initial_stack_encoding(initial_stack, bs):
+    print("; Initial stack constraints")
+
+    for alpha, variable in enumerate(initial_stack):
+        print(add_assert(add_and([u(alpha, 0), add_eq([x(alpha, 0), variable])])))
+
+    for beta in range(len(initial_stack), bs):
+        print(add_assert(add_not(u(beta, 0))))
+
+
+# Methods for defining how the stack at the end is (E)
+
+
+def final_stack_encoding(final_stack, bs, b0):
+    print("; Final stack constraints")
+
+    for alpha, variable in enumerate(final_stack):
+        print(add_assert(add_and([u(alpha, b0), add_eq([x(alpha, b0), variable])])))
+
+    for beta in range(len(final_stack), bs):
+        print(add_assert(add_not(u(beta, b0))))
+
+
+# Method to generate complete representation
+
+def generate_smtlib_encoding(b0, bs, usr_instr, variables, initial_stack, final_stack):
+    set_logic('QF_LIA')
+    initialize_variables(variables, bs, b0)
+    variables_assignment_constraint(variables)
+    theta_instr = _generate_stack_theta(bs)
+    theta_comm, theta_non_comm = _generate_uninterpreted_theta(usr_instr, len(theta_instr))
+    instructions_constraints(b0, bs, theta_instr, theta_comm, theta_non_comm)
+    initial_stack_encoding(initial_stack, bs)
+    final_stack_encoding(final_stack, bs, b0)
+    check_sat()
+    # get_objectives()
+    # get_model()
+    for j in range(b0):
+        get_value(t(j))

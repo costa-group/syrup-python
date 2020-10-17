@@ -52,7 +52,7 @@ def var2str(var_name, indexes):
     return string
 
 def _declare_variable(var_name, var_type):
-    return "(declare-fun " + str(var_name) + "() " + str(var_type) + ")"
+    return "(declare-fun " + str(var_name) + " () " + str(var_type) + ")"
 
 
 def declare_boolvar(var_name):
@@ -77,23 +77,23 @@ def add_assert_soft(statement, weight):
 # SMT-Lib
 
 def set_logic(mode):
-    return "(set-logic " + mode + ")"
+    print("(set-logic " + mode + ")")
 
 
 def check_sat():
-    return "(check-sat)"
+    print("(check-sat)")
 
 
 def get_objectives():
-    return "(get-objectives)"
+    print("(get-objectives)")
 
 
 def get_model():
-    return "(get-model)"
+    print("(get-model)")
 
 
 def get_value(variable):
-    return "(get-value " + str(variable) + ")"
+    print("(get-value (" + str(variable) + "))")
 
 
 
