@@ -19,6 +19,11 @@ if __name__ == "__main__":
 
     bs = data['max_sk_sz']
     user_instr = data['user_instrs']
+
+    for instr in user_instr:
+        instr['outpt_sk'] = list(map(add_bars_to_string, instr['outpt_sk']))
+        instr['inpt_sk'] = list(map(add_bars_to_string, instr['inpt_sk']))
+
     initial_stack = list(map(add_bars_to_string, data['src_ws']))
     final_stack = list(map(add_bars_to_string, data['tgt_ws']))
     variables = list(map(add_bars_to_string, data['vars']))

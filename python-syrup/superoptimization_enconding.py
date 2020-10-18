@@ -37,8 +37,6 @@ def a(i):
 
 def _initialize_s_vars(variables):
     for var in variables:
-        # We add a | |, as variables are of the form s(i) and
-        # SMT-Lib cannot accept those names.
         print(declare_intvar(var))
 
 
@@ -117,6 +115,19 @@ def _generate_uninterpreted_theta(user_instr, initial_index):
         initial_index += 1
     return theta_comm, theta_non_comm
 
+# Separes user instructions in two groups, according to whether they
+# are commutative or not.
+def _separe_usr_instr(user_instr):
+    comm_functions = []
+    non_comm_functions = []
+    for instr in user_instr:
+        if instr['commutative']:
+            comm_functions.append(instr)
+        else:
+            non_comm_functions.append(instr)
+    return comm_functions, non_comm_functions
+
+
 # Method for generating variable assignment (SV)
 
 def variables_assignment_constraint(variables):
@@ -182,16 +193,62 @@ def _stack_constraints(b0, bs, theta):
         for k in range(1, min(bs, max_k_swap + 1)):
             _swapk_encoding(k, j, bs, theta["SWAP" + str(k)])
 
-# Methods for generating constraints for commutative uninterpreted functions (Cc)
-
-
-
 # Methods for generating constraints for non-commutative uninterpreted functions (Cu)
 
 
+def _non_comm_function_encoding(j, bs, o, r, theta_f):
+    n = len(o)
+    left_term = add_eq([t(j), theta_f])
+    right_term_first_and = []
+    # Second and can be empty, so we initialize terms to true value
+    right_term_second_and = ["true"]
+    for i in range(0, n):
+        right_term_first_and.append(add_and([u(i,j), add_eq([x(i,j), o[i]])]))
+    for i in range(bs-n+1, bs):
+        right_term_second_and.append(add_not(u(i, j+1)))
+    right_term = add_and([add_and(right_term_first_and), u(0, j+1) , add_eq([x(0,j+1), r]),
+                          _move(j, n, min(bs-2+n, bs-1), 1-n) , add_and(right_term_second_and)])
+    print(add_assert(add_implies([left_term, right_term])))
+
+
+def non_comm_function_constraints(b0, bs, non_comm_user_instr, theta_non_comm):
+    print("; Non-commutative constraints")
+    for instr in non_comm_user_instr:
+        o = instr['inpt_sk']
+        theta_f = theta_non_comm[instr['id']]
+
+        # We assume every function has only one output
+        r = instr['outpt_sk'][0]
+
+        for j in range(b0):
+            _non_comm_function_encoding(j, bs, o, r, theta_f)
+
+# Methods for generating constraints for commutative uninterpreted functions (Cc)
+
+def _comm_function_encoding(j, bs, o0, o1, r, theta_f):
+    left_term = add_eq([t(j), theta_f])
+    right_term = add_and([u(0,j), u(1,j), add_or([add_and([add_eq([x(0,j), o0]), add_eq([x(1,j), o1])]),
+                                                  add_and([add_eq([x(0,j), o1]), add_eq([x(1,j), o0])])]),
+                          u(0,j+1), add_eq([x(0,j+1), r]), _move(j, 2, bs-1, -1), add_not(u(bs-1, j))])
+    print(add_assert(add_implies([left_term, right_term])))
+
+
+def comm_function_constraints(b0, bs, comm_user_instr, theta_comm):
+    print("; Commutative constraints")
+    for instr in comm_user_instr:
+        o0 = instr['inpt_sk'][0]
+        o1 = instr['inpt_sk'][1]
+        theta_f = theta_comm[instr['id']]
+
+        # We assume every function has only one output
+        r = instr['outpt_sk'][0]
+
+        for j in range(b0):
+            _comm_function_encoding(j, bs, o0, o1, r, theta_f)
+
 # Methods for generating constraints for finding the target program
 
-def instructions_constraints(b0, bs, theta_stack, theta_comm, theta_non_comm):
+def instructions_constraints(b0, bs, comm_instr, non_comm_instr, theta_stack, theta_comm, theta_non_comm):
     mi = len(theta_stack) + len(theta_comm) + len(theta_non_comm)
     print("; Instructions constraints")
 
@@ -199,6 +256,8 @@ def instructions_constraints(b0, bs, theta_stack, theta_comm, theta_non_comm):
         print(add_assert(add_and([add_leq([0, t(j)]), add_lt([t(j), mi])])))
 
     _stack_constraints(b0, bs, theta_stack)
+    comm_function_constraints(b0, bs, comm_instr, theta_comm)
+    non_comm_function_constraints(b0, bs, non_comm_instr, theta_non_comm)
 
 
 # Methods for defining how the stack at the beginning is (B)
@@ -226,19 +285,36 @@ def final_stack_encoding(final_stack, bs, b0):
         print(add_assert(add_not(u(beta, b0))))
 
 
+# Aditional contraints
+
+def _each_function_is_used(b0, initial_idx, end_idx):
+    print("; All uninterpreted functions are eventually used")
+    for i in range(initial_idx, end_idx):
+        or_variables = []
+        for j in range(b0):
+            or_variables.append(add_eq([t(j), i]))
+        print(add_assert(add_or(or_variables)))
+
+
 # Method to generate complete representation
 
 def generate_smtlib_encoding(b0, bs, usr_instr, variables, initial_stack, final_stack):
     set_logic('QF_LIA')
     initialize_variables(variables, bs, b0)
     variables_assignment_constraint(variables)
-    theta_instr = _generate_stack_theta(bs)
-    theta_comm, theta_non_comm = _generate_uninterpreted_theta(usr_instr, len(theta_instr))
-    instructions_constraints(b0, bs, theta_instr, theta_comm, theta_non_comm)
+    theta_stack = _generate_stack_theta(bs)
+    theta_comm, theta_non_comm = _generate_uninterpreted_theta(usr_instr, len(theta_stack))
+    comm_instr, non_comm_instr = _separe_usr_instr(usr_instr)
+    instructions_constraints(b0, bs, comm_instr, non_comm_instr, theta_stack, theta_comm, theta_non_comm)
     initial_stack_encoding(initial_stack, bs)
     final_stack_encoding(final_stack, bs, b0)
+    _each_function_is_used(b0, len(theta_stack), len(theta_stack) + len(theta_comm) + len(theta_non_comm))
     check_sat()
     # get_objectives()
     # get_model()
     for j in range(b0):
         get_value(t(j))
+        get_value(a(j))
+    print("; Stack: " + str(theta_stack))
+    print("; Comm: " + str(theta_comm))
+    print("; Non-Comm: " + str(theta_non_comm))
