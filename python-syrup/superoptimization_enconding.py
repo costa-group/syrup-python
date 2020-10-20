@@ -80,10 +80,10 @@ def _move(j, alpha, beta, delta):
     if alpha > beta:
         return "true"
     for i in range(alpha, beta+1):
-        first_and = add_eq([u(i+delta, j+1), u(i,j)])
-        second_and = add_eq([x(i+delta, j+1), x(i,j)])
-        and_variables.append(add_and([first_and, second_and]))
-    return add_and(and_variables)
+        first_and = add_eq(u(i+delta, j+1), u(i,j))
+        second_and = add_eq(x(i+delta, j+1), x(i,j))
+        and_variables.append(add_and(first_and, second_and))
+    return add_and(*and_variables)
 
 
 def _generate_stack_theta(bs):
@@ -132,51 +132,51 @@ def _separe_usr_instr(user_instr):
 
 def variables_assignment_constraint(variables):
     print("; Variables assignment")
-    for i,var in enumerate(variables):
-        statement = add_eq([var, int_limit + i])
+    for i, var in enumerate(variables):
+        statement = add_eq(var, int_limit + i)
         print(add_assert(statement))
 
 # Methods for generating the constraints for stack (Cs)
 
 def _push_encoding(j, bs, theta_push):
-    left_term = add_eq([t(j), theta_push])
-    right_term = add_and([add_leq([0, a(j)]), add_lt([a(j), int_limit]), add_not(u(bs-1,j)), u(0, j+1),
-                          add_eq([x(0, j+1), a(j)]), _move(j, 0, bs-2, 1)])
-    print(add_assert(add_implies([left_term, right_term])))
+    left_term = add_eq(t(j), theta_push)
+    right_term = add_and(add_leq(0, a(j)), add_lt(a(j), int_limit), add_not(u(bs-1,j)), u(0, j+1),
+                          add_eq(x(0, j+1), a(j)), _move(j, 0, bs-2, 1))
+    print(add_assert(add_implies(left_term, right_term)))
 
 
 def _dupk_encoding(k, j, bs, theta_dupk):
-    left_term = add_eq([t(j), theta_dupk])
-    right_term = add_and([add_not(u(bs-1, j)), u(k-1, j), u(0, j+1),
-                          add_eq([x(0, j+1), x(k-1, j)]), _move(j, 0, bs-2, 1)])
-    print(add_assert(add_implies([left_term, right_term])))
+    left_term = add_eq(t(j), theta_dupk)
+    right_term = add_and(add_not(u(bs-1, j)), u(k-1, j), u(0, j+1),
+                          add_eq(x(0, j+1), x(k-1, j)), _move(j, 0, bs-2, 1))
+    print(add_assert(add_implies(left_term, right_term)))
 
 
 def _swapk_encoding(k,j, bs, theta_swapk):
-    left_term = add_eq([t(j), theta_swapk])
-    right_term = add_and([u(k,j), u(0, j+1), add_eq([x(0, j+1), x(k,j)]) ,
-                          u(k, j+1), add_eq([x(k, j+1), x(0,j)]),
-                          _move(j, 1, k-1, 0), _move(j, k+1, bs-1, 0)])
-    print(add_assert(add_implies([left_term, right_term])))
+    left_term = add_eq(t(j), theta_swapk)
+    right_term = add_and(u(k,j), u(0, j+1), add_eq(x(0, j+1), x(k,j)) ,
+                          u(k, j+1), add_eq(x(k, j+1), x(0,j)),
+                          _move(j, 1, k-1, 0), _move(j, k+1, bs-1, 0))
+    print(add_assert(add_implies(left_term, right_term)))
 
 
 def _pop_encoding(j, bs, theta_pop):
-    left_term = add_eq([t(j), theta_pop])
-    right_term = add_and([u(0,j), add_not(u(bs-1, j+1)), _move(j,1,bs-1,-1)])
-    print(add_assert(add_implies([left_term, right_term])))
+    left_term = add_eq(t(j), theta_pop)
+    right_term = add_and(u(0,j), add_not(u(bs-1, j+1)), _move(j,1,bs-1,-1))
+    print(add_assert(add_implies(left_term, right_term)))
 
 
 def _nop_encoding(j, bs, theta_nop):
-    left_term = add_eq([t(j), theta_nop])
+    left_term = add_eq(t(j), theta_nop)
     right_term = _move(j,0,bs-1,0)
-    print(add_assert(add_implies([left_term, right_term])))
+    print(add_assert(add_implies(left_term, right_term)))
 
 
 def _fromnop_encoding(b0, theta_nop):
     for j in range(b0-1):
-        left_term = add_eq([t(j), theta_nop])
-        right_term = add_eq([t(j+1), theta_nop])
-        print(add_assert(add_implies([left_term, right_term])))
+        left_term = add_eq(t(j), theta_nop)
+        right_term = add_eq(t(j+1), theta_nop)
+        print(add_assert(add_implies(left_term, right_term)))
 
 
 def _stack_constraints(b0, bs, theta):
@@ -198,17 +198,17 @@ def _stack_constraints(b0, bs, theta):
 
 def _non_comm_function_encoding(j, bs, o, r, theta_f):
     n = len(o)
-    left_term = add_eq([t(j), theta_f])
-    right_term_first_and = []
+    left_term = add_eq(t(j), theta_f)
+    right_term_first_and = ["true"]
     # Second and can be empty, so we initialize terms to true value
     right_term_second_and = ["true"]
     for i in range(0, n):
-        right_term_first_and.append(add_and([u(i,j), add_eq([x(i,j), o[i]])]))
+        right_term_first_and.append(add_and(u(i,j), add_eq(x(i,j), o[i])))
     for i in range(bs-n+1, bs):
         right_term_second_and.append(add_not(u(i, j+1)))
-    right_term = add_and([add_and(right_term_first_and), u(0, j+1) , add_eq([x(0,j+1), r]),
-                          _move(j, n, min(bs-2+n, bs-1), 1-n) , add_and(right_term_second_and)])
-    print(add_assert(add_implies([left_term, right_term])))
+    right_term = add_and(add_and(*right_term_first_and), u(0, j+1) , add_eq(x(0,j+1), r),
+                          _move(j, n, min(bs-2+n, bs-1), 1-n) , add_and(*right_term_second_and))
+    print(add_assert(add_implies(left_term, right_term)))
 
 
 def non_comm_function_constraints(b0, bs, non_comm_user_instr, theta_non_comm):
@@ -226,11 +226,11 @@ def non_comm_function_constraints(b0, bs, non_comm_user_instr, theta_non_comm):
 # Methods for generating constraints for commutative uninterpreted functions (Cc)
 
 def _comm_function_encoding(j, bs, o0, o1, r, theta_f):
-    left_term = add_eq([t(j), theta_f])
-    right_term = add_and([u(0,j), u(1,j), add_or([add_and([add_eq([x(0,j), o0]), add_eq([x(1,j), o1])]),
-                                                  add_and([add_eq([x(0,j), o1]), add_eq([x(1,j), o0])])]),
-                          u(0,j+1), add_eq([x(0,j+1), r]), _move(j, 2, bs-1, -1), add_not(u(bs-1, j))])
-    print(add_assert(add_implies([left_term, right_term])))
+    left_term = add_eq(t(j), theta_f)
+    right_term = add_and(u(0,j), u(1,j), add_or(add_and(add_eq(x(0,j), o0), add_eq(x(1,j), o1)),
+                                                  add_and(add_eq(x(0,j), o1), add_eq(x(1,j), o0))),
+                          u(0,j+1), add_eq(x(0,j+1), r), _move(j, 2, bs-1, -1), add_not(u(bs-1, j)))
+    print(add_assert(add_implies(left_term, right_term)))
 
 
 def comm_function_constraints(b0, bs, comm_user_instr, theta_comm):
@@ -253,7 +253,7 @@ def instructions_constraints(b0, bs, comm_instr, non_comm_instr, theta_stack, th
     print("; Instructions constraints")
 
     for j in range(b0):
-        print(add_assert(add_and([add_leq([0, t(j)]), add_lt([t(j), mi])])))
+        print(add_assert(add_and(add_leq(0, t(j)), add_lt(t(j), mi))))
 
     _stack_constraints(b0, bs, theta_stack)
     comm_function_constraints(b0, bs, comm_instr, theta_comm)
@@ -266,7 +266,7 @@ def initial_stack_encoding(initial_stack, bs):
     print("; Initial stack constraints")
 
     for alpha, variable in enumerate(initial_stack):
-        print(add_assert(add_and([u(alpha, 0), add_eq([x(alpha, 0), variable])])))
+        print(add_assert(add_and(u(alpha, 0), add_eq(x(alpha, 0), variable))))
 
     for beta in range(len(initial_stack), bs):
         print(add_assert(add_not(u(beta, 0))))
@@ -279,7 +279,7 @@ def final_stack_encoding(final_stack, bs, b0):
     print("; Final stack constraints")
 
     for alpha, variable in enumerate(final_stack):
-        print(add_assert(add_and([u(alpha, b0), add_eq([x(alpha, b0), variable])])))
+        print(add_assert(add_and(u(alpha, b0), add_eq(x(alpha, b0), variable))))
 
     for beta in range(len(final_stack), bs):
         print(add_assert(add_not(u(beta, b0))))
@@ -292,8 +292,8 @@ def _each_function_is_used(b0, initial_idx, end_idx):
     for i in range(initial_idx, end_idx):
         or_variables = []
         for j in range(b0):
-            or_variables.append(add_eq([t(j), i]))
-        print(add_assert(add_or(or_variables)))
+            or_variables.append(add_eq(t(j), i))
+        print(add_assert(add_or(*or_variables)))
 
 
 # Method to generate complete representation

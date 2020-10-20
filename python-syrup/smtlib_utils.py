@@ -6,7 +6,7 @@
 
 # Given a logical connective symbol and its operands,
 # returns the corresponding statement
-def _add_connective(connective_name, formulas):
+def _add_connective(connective_name, *formulas):
     string = "(" + connective_name
     for formula in formulas:
         string += " " + str(formula)
@@ -14,32 +14,32 @@ def _add_connective(connective_name, formulas):
     return string
 
 
-def add_implies(formulas):
-    return _add_connective("=>", formulas)
+def add_implies(form1, form2):
+    return _add_connective("=>", form1, form2)
 
 
-def add_and(formulas):
-    return _add_connective("and", formulas)
+def add_and(*formulas):
+    return _add_connective("and", *formulas)
 
 
-def add_or(formulas):
-    return _add_connective("or", formulas)
+def add_or(*formulas):
+    return _add_connective("or", *formulas)
 
 
 def add_not(formula):
-    return "(not "+ formula +")"
+    return _add_connective("not", formula)
 
 
-def add_eq(formulas):
-    return _add_connective("=", formulas)
+def add_eq(form1, form2):
+    return _add_connective("=", form1, form2)
 
 
-def add_leq(formulas):
-    return _add_connective("<=", formulas)
+def add_leq(form1, form2):
+    return _add_connective("<=", form1, form2)
 
 
-def add_lt(formulas):
-    return _add_connective("<", formulas)
+def add_lt(form1, form2):
+    return _add_connective("<", form1, form2)
 
 # Methods to declare variables
 
