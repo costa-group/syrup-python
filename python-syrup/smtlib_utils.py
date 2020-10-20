@@ -45,7 +45,7 @@ def add_lt(form1, form2):
 
 # Given a variable prefix and the indexes,
 # returns the corresponding string
-def var2str(var_name, indexes):
+def var2str(var_name, *indexes):
     string = str(var_name)
     for index in indexes:
         string += "_" + str(index)
@@ -69,8 +69,11 @@ def add_assert(statement):
     return "(assert "+ statement +")"
 
 
-def add_assert_soft(statement, weight):
-    return "(assert-soft " + statement + " :weight " + str(weight) + ")"
+def add_assert_soft(statement, weight, id=None):
+    if id is None:
+        return "(assert-soft " + statement + " :weight " + str(weight) + ")"
+    else:
+        return "(assert-soft " + statement + " :weight " + str(weight) +  " :id "+ str(id) + ")"
 
 
 # Methods to generate auxiliary statements for

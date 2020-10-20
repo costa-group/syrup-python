@@ -3,6 +3,7 @@
 # SFS has already been generated
 
 from smtlib_utils import *
+from collections import OrderedDict
 
 # We set the maximum k dup and swap instructions
 # can have.
@@ -19,19 +20,19 @@ int_limit = 2**256
 
 
 def u(i,j):
-    return var2str("u", [i,j])
+    return var2str("u", i,j)
 
 
 def x(i,j):
-    return var2str("x", [i,j])
+    return var2str("x", i, j)
 
 
 def t(i):
-    return var2str('t', [i])
+    return var2str('t', i)
 
 
 def a(i):
-    return var2str('a', [i])
+    return var2str('a', i)
 
 # Methods for initializing the variables
 
@@ -68,7 +69,6 @@ def initialize_variables(variables, bs, b0):
     _initialize_x_vars(bs, b0)
     _initialize_t_vars(b0)
     _initialize_a_vars(b0)
-
 
 
 # Auxiliary methods for defining the constraints
@@ -296,6 +296,68 @@ def _each_function_is_used(b0, initial_idx, end_idx):
         print(add_assert(add_or(*or_variables)))
 
 
+# Soft constraints
+
+# Generates an ordered dict that contains all instructions associated value of theta
+# as keys, and their gas cost as values. Ordered by increasing costs
+def _generate_costs_ordered_dict(bs, user_instr, theta_stack, theta_comm, theta_non_comm):
+    instr_costs = {}
+    instr_costs[theta_stack["PUSH"]] = 3
+    instr_costs[theta_stack["POP"]] = 2
+    instr_costs[theta_stack["NOP"]] = 0
+    for i in range(1, min(bs, max_k_dup + 1)):
+        instr_costs[theta_stack["DUP" + str(i)]] = 3
+    for i in range(1, min(bs, max_k_swap + 1)):
+        instr_costs[theta_stack["SWAP" + str(i)]] = 3
+    for instr in user_instr:
+        if instr['commutative']:
+            instr_costs[theta_comm[instr['id']]] = instr['gas']
+        else:
+            instr_costs[theta_non_comm[instr['id']]] = instr['gas']
+    return OrderedDict(sorted(instr_costs.items(), key=lambda t: t[1]))
+
+# Generates an ordered dict that has the cost of Wp sets as keys
+# and the theta value of opcodes with that cost as values.
+# Ordered by increasing costs
+def _generate_disjoint_sets_from_cost(ordered_costs):
+    disjoint_set = {}
+    for id in ordered_costs:
+        gas_cost = ordered_costs[id]
+        if gas_cost in disjoint_set:
+            disjoint_set[gas_cost].append(id)
+        else:
+            disjoint_set[gas_cost] = [id]
+    return OrderedDict(sorted(disjoint_set.items(), key=lambda t: t[0]))
+
+
+# Generates the soft constraints contained in the paper.
+def paper_soft_constraints(b0, bs, user_instr, theta_stack, theta_comm, thetha_non_comm):
+    print("; Soft constraints from paper")
+    instr_costs = _generate_costs_ordered_dict(bs, user_instr, theta_stack, theta_comm, thetha_non_comm)
+    disjoin_sets = _generate_disjoint_sets_from_cost(instr_costs)
+    previous_cost = 0
+    or_variables = []
+    for gas_cost in disjoin_sets:
+        # We skip the first set of instructions, as they have
+        # no soft constraint associated. Neverthelss, we add
+        # opcodes with cost 0 to the set of variables till p
+        if gas_cost == 0:
+            for instr in disjoin_sets[gas_cost]:
+                or_variables.append(instr)
+            continue
+
+        wi = gas_cost - previous_cost
+
+        # Before adding current associated opcodes, we generate
+        # the constraints for each tj.
+        for j in range(b0):
+            print(add_assert_soft(add_or(*list(map(lambda var: add_eq(t(j), var), or_variables))), wi, 'gas'))
+        for instr in disjoin_sets[gas_cost]:
+            or_variables.append(instr)
+
+        # We update previous_cost
+        previous_cost = gas_cost
+
 # Method to generate complete representation
 
 def generate_smtlib_encoding(b0, bs, usr_instr, variables, initial_stack, final_stack):
@@ -309,8 +371,9 @@ def generate_smtlib_encoding(b0, bs, usr_instr, variables, initial_stack, final_
     initial_stack_encoding(initial_stack, bs)
     final_stack_encoding(final_stack, bs, b0)
     _each_function_is_used(b0, len(theta_stack), len(theta_stack) + len(theta_comm) + len(theta_non_comm))
+    paper_soft_constraints(b0, bs, usr_instr, theta_stack, theta_comm, theta_non_comm)
     check_sat()
-    # get_objectives()
+    get_objectives()
     # get_model()
     for j in range(b0):
         get_value(t(j))

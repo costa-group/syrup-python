@@ -3,12 +3,9 @@
 from superoptimization_enconding import generate_smtlib_encoding
 from utils import  add_bars_to_string
 import json
+import argparse
 
-
-
-if __name__ == "__main__":
-    json_path = input()
-
+def parse_data(json_path):
     with open(json_path) as path:
         data = json.load(path)
 
@@ -27,5 +24,19 @@ if __name__ == "__main__":
     initial_stack = list(map(add_bars_to_string, data['src_ws']))
     final_stack = list(map(add_bars_to_string, data['tgt_ws']))
     variables = list(map(add_bars_to_string, data['vars']))
+    return b0, bs, user_instr, variables, initial_stack, final_stack
 
+
+
+if __name__ == "__main__":
+    ap = argparse.ArgumentParser(description='Backend of syrup tool')
+    ap.add_argument('json_path', help='Path to json file that contains the SFS')
+    ap.add_argument('-write-only', help='print smt constraint in SMT-LIB format, '
+                                                             'a mapping to instructions, and objectives',
+                    action='store_true')
+
+    args = vars(ap.parse_args())
+    json_path = args['json_path']
+
+    b0, bs, user_instr, variables, initial_stack, final_stack = parse_data(json_path)
     generate_smtlib_encoding(b0, bs, user_instr, variables, initial_stack, final_stack)
