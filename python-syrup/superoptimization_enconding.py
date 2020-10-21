@@ -87,10 +87,7 @@ def _move(j, alpha, beta, delta):
 
 
 def _generate_stack_theta(bs):
-    theta = {}
-    theta["PUSH"] = 0
-    theta["POP"] = 1
-    theta["NOP"] = 2
+    theta = {"PUSH": 0, "POP": 1, "NOP": 2}
     initial_index = 3
     for i in range(1, min(bs, max_k_dup+1)):
         theta["DUP" + str(i)] = initial_index
@@ -301,10 +298,7 @@ def _each_function_is_used(b0, initial_idx, end_idx):
 # Generates an ordered dict that contains all instructions associated value of theta
 # as keys, and their gas cost as values. Ordered by increasing costs
 def _generate_costs_ordered_dict(bs, user_instr, theta_stack, theta_comm, theta_non_comm):
-    instr_costs = {}
-    instr_costs[theta_stack["PUSH"]] = 3
-    instr_costs[theta_stack["POP"]] = 2
-    instr_costs[theta_stack["NOP"]] = 0
+    instr_costs = {theta_stack["PUSH"]: 3, theta_stack["POP"]: 2, theta_stack["NOP"]: 0}
     for i in range(1, min(bs, max_k_dup + 1)):
         instr_costs[theta_stack["DUP" + str(i)]] = 3
     for i in range(1, min(bs, max_k_swap + 1)):
@@ -331,9 +325,9 @@ def _generate_disjoint_sets_from_cost(ordered_costs):
 
 
 # Generates the soft constraints contained in the paper.
-def paper_soft_constraints(b0, bs, user_instr, theta_stack, theta_comm, thetha_non_comm):
+def paper_soft_constraints(b0, bs, user_instr, theta_stack, theta_comm, theta_non_comm):
     print("; Soft constraints from paper")
-    instr_costs = _generate_costs_ordered_dict(bs, user_instr, theta_stack, theta_comm, thetha_non_comm)
+    instr_costs = _generate_costs_ordered_dict(bs, user_instr, theta_stack, theta_comm, theta_non_comm)
     disjoin_sets = _generate_disjoint_sets_from_cost(instr_costs)
     previous_cost = 0
     or_variables = []
