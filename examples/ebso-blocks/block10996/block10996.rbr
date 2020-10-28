@@ -1,0 +1,17 @@
+block0(s(0))=>
+	s(1) = 20
+	nop(PUSH)
+	s(2) = 21
+	nop(PUSH)
+	s(3) = s(0)
+	nop(DUP3)
+	s(2) = s(3)*s(2)
+	nop(MUL)
+	s(1) = s(2)/s(1)
+	nop(DIV)
+	s(2) = s(0)
+	s(0) = s(1)
+	s(1) = s(2)
+	nop(SWAP1)
+	nop(POP)
+

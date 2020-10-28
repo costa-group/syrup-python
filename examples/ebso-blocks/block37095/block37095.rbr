@@ -1,0 +1,26 @@
+block0()=>
+	s(0) = 11193086
+	nop(PUSH)
+	s(1) = 8388608
+	nop(PUSH)
+	s(2) = 1
+	nop(PUSH)
+	s(3) = 24
+	nop(PUSH)
+	s(4) = 2
+	nop(PUSH)
+	s(3) = s(4)^s(3)
+	nop(EXP)
+	s(2) = s(3)-s(2)
+	nop(SUB)
+	s(3) = 29
+	nop(PUSH)
+	s(4) = calldatasize
+	nop(CALLDATASIZE)
+	s(3) = s(4)-s(3)
+	nop(SUB)
+	s(4) = 0
+	nop(PUSH)
+	s(5) = s(4)
+	nop(DUP1)
+

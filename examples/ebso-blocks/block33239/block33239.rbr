@@ -1,0 +1,29 @@
+block0(s(3), s(2), s(1), s(0))=>
+	s(4) = 32
+	nop(PUSH)
+	s(3) = s(4)+s(3)
+	nop(ADD)
+	s(4) = 0
+	nop(PUSH)
+	s(3) = sha3(s(4), s(3))
+	nop(SHA3)
+	s(4) = s(2)
+	nop(DUP2)
+	s(5) = s(3)
+	s(3) = s(4)
+	s(4) = s(5)
+	nop(SWAP1)
+	sstore(s(4),s(3))
+	nop(SSTORE)
+	nop(POP)
+	s(2) = 4882
+	nop(PUSH)
+	s(3) = 7
+	nop(PUSH)
+	s(3) = sload(s(3))
+	nop(SLOAD)
+	s(4) = s(0)
+	nop(DUP4)
+	s(5) = 6630
+	nop(PUSH)
+

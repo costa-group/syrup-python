@@ -1,0 +1,18 @@
+block0()=>
+	s(0) = 100
+	nop(PUSH)
+	s(1) = 32
+	nop(PUSH)
+	s(2) = 100000000000000000000000000
+	nop(PUSH)
+	s(1) = s(2)*s(1)
+	nop(MUL)
+	s(2) = s(0)
+	nop(DUP2)
+	s(2)= eq(s(2), 0)
+	nop(ISZERO)
+	s(2)= eq(s(2), 0)
+	nop(ISZERO)
+	s(3) = 6384
+	nop(PUSH)
+

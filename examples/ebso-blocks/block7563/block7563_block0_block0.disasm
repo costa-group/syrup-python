@@ -1,0 +1,5 @@
+PUSH
+DUP2
+GT
+DUP1
+PUSH

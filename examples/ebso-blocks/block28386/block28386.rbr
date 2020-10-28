@@ -1,0 +1,30 @@
+block0()=>
+	s(0) = 5
+	nop(PUSH)
+	s(0) = sload(s(0))
+	nop(SLOAD)
+	s(1) = 0
+	nop(PUSH)
+	s(2) = s(0)
+	s(0) = s(1)
+	s(1) = s(2)
+	nop(SWAP1)
+	s(2) = 1
+	nop(PUSH)
+	s(3) = 255
+	nop(PUSH)
+	s(4) = s(2)
+	s(2) = s(3)
+	s(3) = s(4)
+	nop(SWAP1)
+	s(4) = s(1)
+	s(1) = s(3)
+	s(3) = s(4)
+	nop(SWAP2)
+	s(2) = and(s(3), s(2))
+	nop(AND)
+	s(1) = gt(s(2), s(1))
+	nop(GT)
+	s(2) = 5513
+	nop(PUSH)
+

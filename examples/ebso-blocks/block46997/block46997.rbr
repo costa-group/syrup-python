@@ -1,0 +1,68 @@
+block0()=>
+	s(0) = 4
+	nop(PUSH)
+	s(0) = calldataload
+	nop(CALLDATALOAD)
+	s(1) = 36
+	nop(PUSH)
+	s(1) = calldataload
+	nop(CALLDATALOAD)
+	s(2) = s(1)
+	nop(DUP1)
+	s(3) = s(0)
+	nop(DUP3)
+	s(4) = caller
+	nop(CALLER)
+	s(5) = 1
+	nop(PUSH)
+	s(6) = 160
+	nop(PUSH)
+	s(7) = 2
+	nop(PUSH)
+	s(6) = s(7)^s(6)
+	nop(EXP)
+	s(5) = s(6)-s(5)
+	nop(SUB)
+	s(4) = and(s(5), s(4))
+	nop(AND)
+	s(5) = 0
+	nop(PUSH)
+	s(6) = s(5)
+	nop(DUP1)
+	s(6) = calldataload
+	nop(CALLDATALOAD)
+	s(7) = 1
+	nop(PUSH)
+	s(8) = 224
+	nop(PUSH)
+	s(9) = 2
+	nop(PUSH)
+	s(8) = s(9)^s(8)
+	nop(EXP)
+	s(7) = s(8)-s(7)
+	nop(SUB)
+	s(7) = not(s(7))
+	nop(NOT)
+	s(6) = and(s(7), s(6))
+	nop(AND)
+	s(7) = s(5)
+	s(5) = s(6)
+	s(6) = s(7)
+	nop(SWAP1)
+	s(7) = callvalue
+	nop(CALLVALUE)
+	s(8) = s(6)
+	s(6) = s(7)
+	s(7) = s(8)
+	nop(SWAP1)
+	s(8) = calldatasize
+	nop(CALLDATASIZE)
+	s(9) = 64
+	nop(PUSH)
+	s(9) = mload(s(9))
+	nop(MLOAD)
+	s(10) = s(6)
+	nop(DUP4)
+	s(11) = s(9)
+	nop(DUP2)
+

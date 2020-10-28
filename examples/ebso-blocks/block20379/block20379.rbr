@@ -1,0 +1,22 @@
+block0(s(7), s(6), s(5), s(4), s(3), s(2), s(1), s(0))=>
+	s(8) = 9
+	nop(PUSH)
+	s(8) = sload(s(8))
+	nop(SLOAD)
+	s(9) = s(0)
+	nop(DUP9)
+	s(10) = s(3)
+	nop(DUP7)
+	s(9) = s(10)+s(9)
+	nop(ADD)
+	s(8) = gt(s(9), s(8))
+	nop(GT)
+	s(8)= eq(s(8), 0)
+	nop(ISZERO)
+	s(8)= eq(s(8), 0)
+	nop(ISZERO)
+	s(8)= eq(s(8), 0)
+	nop(ISZERO)
+	s(9) = 5677
+	nop(PUSH)
+

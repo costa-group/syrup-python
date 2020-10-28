@@ -1,0 +1,20 @@
+block0()=>
+	s(0) = 3922
+	nop(PUSH)
+	s(1) = callvalue
+	nop(CALLVALUE)
+	s(2) = 3917
+	nop(PUSH)
+	s(3) = address
+	nop(ADDRESS)
+	s(4) = 1461501637330902918203684832716283019655932542975
+	nop(PUSH)
+	s(3) = and(s(4), s(3))
+	nop(AND)
+	s(3) = balance
+	nop(BALANCE)
+	s(4) = callvalue
+	nop(CALLVALUE)
+	s(5) = 4755
+	nop(PUSH)
+

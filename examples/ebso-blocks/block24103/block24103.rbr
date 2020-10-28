@@ -1,0 +1,16 @@
+block0()=>
+	s(0) = 0
+	nop(PUSH)
+	s(1) = s(0)
+	nop(DUP1)
+	s(2) = callvalue
+	nop(CALLVALUE)
+	s(3) = 11110000000000
+	nop(PUSH)
+	s(2)= eq(s(3), s(2))
+	nop(EQ)
+	s(3) = s(2)
+	nop(DUP1)
+	s(4) = 179
+	nop(PUSH)
+

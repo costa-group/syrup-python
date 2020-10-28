@@ -1,0 +1,18 @@
+block0(s(6), s(5), s(4), s(3), s(2), s(1), s(0))=>
+	s(7) = 12907
+	nop(PUSH)
+	s(8) = 12901
+	nop(PUSH)
+	s(9) = timestamp
+	nop(TIMESTAMP)
+	s(10) = 12896
+	nop(PUSH)
+	s(11) = 5
+	nop(PUSH)
+	s(11) = sload(s(11))
+	nop(SLOAD)
+	s(12) = s(0)
+	nop(DUP12)
+	s(13) = 12341
+	nop(PUSH)
+

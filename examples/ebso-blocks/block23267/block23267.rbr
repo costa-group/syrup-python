@@ -1,0 +1,18 @@
+block0(s(0))=>
+	s(1) = s(0)
+	nop(DUP1)
+	s(1) = mload(s(1))
+	nop(MLOAD)
+	s(2) = 224
+	nop(PUSH)
+	s(3) = 2
+	nop(PUSH)
+	s(2) = s(3)^s(2)
+	nop(EXP)
+	s(3) = 1711902031
+	nop(PUSH)
+	s(2) = s(3)*s(2)
+	nop(MUL)
+	s(3) = s(1)
+	nop(DUP2)
+

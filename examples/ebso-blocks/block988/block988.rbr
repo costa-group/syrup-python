@@ -1,0 +1,7 @@
+block0(s(0))=>
+	nop(POP)
+	s(0) = 189
+	nop(PUSH)
+	s(0) = not(s(0))
+	nop(NOT)
+

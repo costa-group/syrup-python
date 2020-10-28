@@ -1,0 +1,20 @@
+block0()=>
+	s(0) = 0
+	nop(PUSH)
+	s(1) = 0
+	nop(PUSH)
+	s(2) = 0
+	nop(PUSH)
+	s(3) = 0
+	nop(PUSH)
+	s(4) = 1
+	nop(PUSH)
+	s(4) = calldataload
+	nop(CALLDATALOAD)
+	s(5) = 33
+	nop(PUSH)
+	s(5) = calldataload
+	nop(CALLDATALOAD)
+	s(6) = gas
+	nop(GAS)
+

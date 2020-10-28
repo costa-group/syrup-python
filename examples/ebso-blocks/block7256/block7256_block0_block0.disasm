@@ -1,0 +1,6 @@
+POP
+PUSH
+DUP5
+PUSH
+AND
+EQ

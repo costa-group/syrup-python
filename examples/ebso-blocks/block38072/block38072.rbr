@@ -1,0 +1,16 @@
+block0()=>
+	s(0) = 1000000000000000000
+	nop(PUSH)
+	s(1) = 2500000000000000
+	nop(PUSH)
+	s(2) = callvalue
+	nop(CALLVALUE)
+	s(3) = s(1)
+	nop(DUP2)
+	s(3)= eq(s(3), 0)
+	nop(ISZERO)
+	s(3)= eq(s(3), 0)
+	nop(ISZERO)
+	s(4) = 3205
+	nop(PUSH)
+

@@ -1,0 +1,14 @@
+block0(s(1), s(0))=>
+	s(2) = 0
+	nop(PUSH)
+	s(3) = 3175
+	nop(PUSH)
+	s(4) = s(0)
+	nop(DUP4)
+	s(5) = caller
+	nop(CALLER)
+	s(6) = s(1)
+	nop(DUP5)
+	s(7) = 2282
+	nop(PUSH)
+

@@ -1,0 +1,20 @@
+block0(s(0))=>
+	s(1) = 1766847064778384329583297500742918515827483896875618958121606201292619776
+	nop(PUSH)
+	s(2) = s(0)
+	nop(DUP2)
+	s(2) = calldataload
+	nop(CALLDATALOAD)
+	s(1) = s(2)/s(1)
+	nop(DIV)
+	s(2) = 50000
+	nop(PUSH)
+	s(3) = gas
+	nop(GAS)
+	s(2) = lt(s(3), s(2))
+	nop(LT)
+	s(2)= eq(s(2), 0)
+	nop(ISZERO)
+	s(3) = 1396
+	nop(PUSH)
+

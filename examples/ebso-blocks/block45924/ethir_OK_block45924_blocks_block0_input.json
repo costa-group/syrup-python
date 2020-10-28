@@ -1,0 +1,1 @@
+{"max_progr_len": 5, "src_ws": ["s(0)"], "vars": ["s(0)", "s(3)"], "init_progr_len": 5, "max_sk_sz": 3, "current_cost": 14, "user_instrs": [{"outpt_sk": ["s(3)"], "commutative": false, "inpt_sk": [64], "gas": 3, "disasm": "MLOAD", "opcode": "51", "id": "MLOAD_0"}], "tgt_ws": ["s(3)", 52665151681279212761973266239497017984561471128312838467620438697077274312704, "s(3)"]}

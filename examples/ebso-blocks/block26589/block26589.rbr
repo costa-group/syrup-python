@@ -1,0 +1,28 @@
+block0(s(0))=>
+	s(1) = 4
+	nop(PUSH)
+	s(2) = s(1)
+	nop(DUP1)
+	s(2) = sload(s(2))
+	nop(SLOAD)
+	s(3) = 255
+	nop(PUSH)
+	s(3) = not(s(3))
+	nop(NOT)
+	s(2) = and(s(3), s(2))
+	nop(AND)
+	s(3) = 1
+	nop(PUSH)
+	s(2) = or(s(3), s(2))
+	nop(OR)
+	s(3) = s(1)
+	s(1) = s(2)
+	s(2) = s(3)
+	nop(SWAP1)
+	sstore(s(2),s(1))
+	nop(SSTORE)
+	s(1) = 9
+	nop(PUSH)
+	sstore(s(1),s(0))
+	nop(SSTORE)
+

@@ -1,0 +1,54 @@
+block0(s(3), s(2), s(1), s(0))=>
+	s(4) = 0
+	nop(PUSH)
+	s(5) = 100
+	nop(PUSH)
+	s(6) = 1
+	nop(PUSH)
+	s(7) = s(1)
+	nop(DUP6)
+	s(8) = s(6)
+	s(6) = s(7)
+	s(7) = s(8)
+	nop(SWAP1)
+	s(6) = signextend(s(7),s(6))
+	nop(SIGNEXTEND)
+	s(7) = s(3)
+	nop(DUP4)
+	s(6) = s(7)*s(6)
+	nop(MUL)
+	s(5) = s(6)/s(5)
+	nop(DIV)
+	s(6) = 20
+	nop(PUSH)
+	s(7) = 2
+	nop(PUSH)
+	s(8) = s(6)
+	nop(DUP2)
+	s(7) = s(8)/s(7)
+	nop(DIV)
+	s(8) = 2
+	nop(PUSH)
+	s(9) = s(2)
+	nop(DUP7)
+	s(8) = s(9)/s(8)
+	nop(DIV)
+	s(7) = s(8)+s(7)
+	nop(ADD)
+	s(8) = s(0)
+	nop(DUP8)
+	s(7) = s(8)*s(7)
+	nop(MUL)
+	s(8) = 1
+	nop(PUSH)
+	s(7) = signextend(s(8),s(7))
+	nop(SIGNEXTEND)
+	s(8) = s(6)
+	nop(DUP2)
+	s(8)= eq(s(8), 0)
+	nop(ISZERO)
+	s(8)= eq(s(8), 0)
+	nop(ISZERO)
+	s(9) = 12317
+	nop(PUSH)
+

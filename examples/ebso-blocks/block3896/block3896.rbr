@@ -1,0 +1,10 @@
+block0(s(1), s(0))=>
+	s(2) = s(0)
+	nop(DUP2)
+	s(3) = s(1)
+	nop(DUP2)
+	s(2)= eq(s(3), s(2))
+	nop(EQ)
+	s(3) = 15144
+	nop(PUSH)
+

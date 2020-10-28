@@ -1,0 +1,31 @@
+block0(s(2), s(1), s(0))=>
+	s(3) = 805383188830244934838275473784301907651370706969
+	nop(PUSH)
+	s(4) = s(1)
+	s(1) = s(3)
+	s(3) = s(4)
+	nop(SWAP2)
+	nop(POP)
+	s(3) = 6083
+	nop(PUSH)
+	s(4) = 1000000000000000000
+	nop(PUSH)
+	s(5) = 1003000000000000000
+	nop(PUSH)
+	s(6) = s(0)
+	nop(DUP6)
+	s(7) = 10
+	nop(PUSH)
+	s(8) = 11
+	nop(PUSH)
+	s(9) = s(7)
+	nop(DUP2)
+	s(8) = lt(s(9), s(8))
+	nop(LT)
+	s(8)= eq(s(8), 0)
+	nop(ISZERO)
+	s(8)= eq(s(8), 0)
+	nop(ISZERO)
+	s(9) = 5837
+	nop(PUSH)
+

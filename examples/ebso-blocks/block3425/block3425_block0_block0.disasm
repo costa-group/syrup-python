@@ -1,0 +1,4 @@
+EQ
+DUP1
+ISZERO
+PUSH

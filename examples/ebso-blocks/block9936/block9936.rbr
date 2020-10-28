@@ -1,0 +1,12 @@
+block0(s(1), s(0))=>
+	nop(POP)
+	nop(POP)
+	s(0) = gas
+	nop(GAS)
+	s(1) = 6144
+	nop(PUSH)
+	s(0) = lt(s(1), s(0))
+	nop(LT)
+	s(1) = 67
+	nop(PUSH)
+

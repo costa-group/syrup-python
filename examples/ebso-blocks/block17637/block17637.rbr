@@ -1,0 +1,22 @@
+block0()=>
+	s(0) = 0
+	nop(PUSH)
+	s(1) = calldatasize
+	nop(CALLDATASIZE)
+	s(2) = 64
+	nop(PUSH)
+	s(2) = mload(s(2))
+	nop(MLOAD)
+	s(3) = s(2)
+	nop(DUP1)
+	s(4) = s(0)
+	nop(DUP4)
+	s(5) = s(1)
+	nop(DUP4)
+	s(6) = s(5)
+	nop(DUP1)
+	s(7) = s(4)
+	nop(DUP3)
+	s(8) = s(3)
+	nop(DUP5)
+

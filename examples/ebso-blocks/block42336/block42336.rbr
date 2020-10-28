@@ -1,0 +1,46 @@
+block0(s(1), s(0))=>
+	s(2) = 32
+	nop(PUSH)
+	s(1) = s(2)+s(1)
+	nop(ADD)
+	s(2) = 0
+	nop(PUSH)
+	s(1) = sha3(s(2), s(1))
+	nop(SHA3)
+	s(2) = 0
+	nop(PUSH)
+	s(3) = 256
+	nop(PUSH)
+	s(2) = s(3)^s(2)
+	nop(EXP)
+	s(3) = s(1)
+	nop(DUP2)
+	s(3) = sload(s(3))
+	nop(SLOAD)
+	s(4) = s(2)
+	nop(DUP2)
+	s(5) = 255
+	nop(PUSH)
+	s(4) = s(5)*s(4)
+	nop(MUL)
+	s(4) = not(s(4))
+	nop(NOT)
+	s(3) = and(s(4), s(3))
+	nop(AND)
+	s(4) = s(2)
+	s(2) = s(3)
+	s(3) = s(4)
+	nop(SWAP1)
+	s(4) = s(0)
+	nop(DUP4)
+	s(5) = 2
+	nop(PUSH)
+	s(6) = s(4)
+	nop(DUP2)
+	s(5) = gt(s(6), s(5))
+	nop(GT)
+	s(5)= eq(s(5), 0)
+	nop(ISZERO)
+	s(6) = 3454
+	nop(PUSH)
+

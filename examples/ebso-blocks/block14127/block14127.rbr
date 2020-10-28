@@ -1,0 +1,12 @@
+block0()=>
+	s(0) = 4279
+	nop(PUSH)
+	s(1) = 16
+	nop(PUSH)
+	s(1) = sload(s(1))
+	nop(SLOAD)
+	s(2) = callvalue
+	nop(CALLVALUE)
+	s(3) = 6664
+	nop(PUSH)
+

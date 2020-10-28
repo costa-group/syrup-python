@@ -1,0 +1,1 @@
+{"max_progr_len": 4, "src_ws": ["s(0)"], "vars": ["s(0)", "s(31)"], "init_progr_len": 4, "max_sk_sz": 4, "current_cost": 12, "user_instrs": [{"outpt_sk": ["s(31)"], "commutative": true, "inpt_sk": ["s(0)", 136], "gas": 3, "disasm": "ADD", "opcode": "01", "id": "ADD_0"}], "tgt_ws": ["s(31)", 53106884550678426794899120446736599396697197578004301452373758135668219838464, "s(0)"]}

@@ -1,0 +1,20 @@
+block0()=>
+	s(0) = 10000
+	nop(PUSH)
+	s(1) = 2973
+	nop(PUSH)
+	s(2) = 15
+	nop(PUSH)
+	s(2) = sload(s(2))
+	nop(SLOAD)
+	s(3) = 12
+	nop(PUSH)
+	s(3) = sload(s(3))
+	nop(SLOAD)
+	s(2) = s(3)-s(2)
+	nop(SUB)
+	s(3) = number
+	nop(NUMBER)
+	s(4) = 6518
+	nop(PUSH)
+

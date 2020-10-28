@@ -1,0 +1,12 @@
+block0(s(0))=>
+	s(1) = 2805
+	nop(PUSH)
+	s(2) = 0
+	nop(PUSH)
+	s(2) = sload(s(2))
+	nop(SLOAD)
+	s(3) = s(0)
+	nop(DUP3)
+	s(4) = 5120
+	nop(PUSH)
+

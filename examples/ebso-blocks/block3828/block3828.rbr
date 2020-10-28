@@ -1,0 +1,8 @@
+block0()=>
+	s(0) = 65535
+	nop(PUSH)
+	s(0) = sload(s(0))
+	nop(SLOAD)
+	s(1) = 128
+	nop(PUSH)
+

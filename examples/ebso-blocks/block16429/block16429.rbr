@@ -1,0 +1,12 @@
+block0()=>
+	s(0) = 1889
+	nop(PUSH)
+	s(1) = callvalue
+	nop(CALLVALUE)
+	s(2) = 1884
+	nop(PUSH)
+	s(3) = timestamp
+	nop(TIMESTAMP)
+	s(4) = 2682
+	nop(PUSH)
+

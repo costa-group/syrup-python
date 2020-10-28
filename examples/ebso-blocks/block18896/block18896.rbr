@@ -1,0 +1,18 @@
+block0(s(8), s(7), s(6), s(5), s(4), s(3), s(2), s(1), s(0))=>
+	s(9) = 6652
+	nop(PUSH)
+	s(10) = s(0)
+	nop(DUP10)
+	s(11) = s(1)
+	nop(DUP10)
+	s(12) = s(2)
+	nop(DUP10)
+	s(13) = s(3)
+	nop(DUP10)
+	s(14) = s(4)
+	nop(DUP10)
+	s(15) = s(5)
+	nop(DUP10)
+	s(16) = 10551
+	nop(PUSH)
+

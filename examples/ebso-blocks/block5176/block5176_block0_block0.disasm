@@ -1,0 +1,5 @@
+PUSH
+NOT
+PUSH
+DUP4
+ADD

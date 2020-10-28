@@ -1,0 +1,10 @@
+block0(s(1), s(0))=>
+	s(0) = s(1)/s(0)
+	nop(DIV)
+	s(1) = 100000
+	nop(PUSH)
+	s(0) = s(1)*s(0)
+	nop(MUL)
+	s(1) = 6387
+	nop(PUSH)
+

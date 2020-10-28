@@ -1,0 +1,20 @@
+block0(s(4), s(3), s(2), s(1), s(0))=>
+	s(5) = s(0)
+	nop(DUP5)
+	s(6) = 288
+	nop(PUSH)
+	s(5) = s(6)+s(5)
+	nop(ADD)
+	s(5) = mload(s(5))
+	nop(MLOAD)
+	s(6) = timestamp
+	nop(TIMESTAMP)
+	s(5) = lt(s(6), s(5))
+	nop(LT)
+	s(5)= eq(s(5), 0)
+	nop(ISZERO)
+	s(5)= eq(s(5), 0)
+	nop(ISZERO)
+	s(6) = 7057
+	nop(PUSH)
+

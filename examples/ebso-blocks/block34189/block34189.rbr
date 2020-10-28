@@ -1,0 +1,36 @@
+block0(s(13), s(12), s(11), s(10), s(9), s(8), s(7), s(6), s(5), s(4), s(3), s(2), s(1), s(0))=>
+	s(14) = 0
+	nop(PUSH)
+	s(15) = s(14)
+	nop(DUP1)
+	s(15) = sload(s(15))
+	nop(SLOAD)
+	s(16) = 255
+	nop(PUSH)
+	s(16) = not(s(16))
+	nop(NOT)
+	s(15) = and(s(16), s(15))
+	nop(AND)
+	s(16) = 1
+	nop(PUSH)
+	s(15) = or(s(16), s(15))
+	nop(OR)
+	s(16) = s(14)
+	s(14) = s(15)
+	s(15) = s(16)
+	nop(SWAP1)
+	sstore(s(15),s(14))
+	nop(SSTORE)
+	s(14) = s(2)
+	nop(DUP12)
+	s(15) = s(0)
+	nop(DUP15)
+	s(14)= eq(s(15), s(14))
+	nop(EQ)
+	s(15) = s(14)
+	nop(DUP1)
+	s(15)= eq(s(15), 0)
+	nop(ISZERO)
+	s(16) = 1268
+	nop(PUSH)
+

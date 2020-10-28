@@ -1,0 +1,16 @@
+block0()=>
+	s(0) = 0
+	nop(PUSH)
+	s(1) = s(0)
+	nop(DUP1)
+	s(2) = 210807806372669148184673207099275009025253393647
+	nop(PUSH)
+	s(3) = caller
+	nop(CALLER)
+	s(2)= eq(s(3), s(2))
+	nop(EQ)
+	s(3) = s(2)
+	nop(DUP1)
+	s(4) = 3038
+	nop(PUSH)
+

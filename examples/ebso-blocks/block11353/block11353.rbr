@@ -1,0 +1,10 @@
+block0()=>
+	s(0) = 361
+	nop(PUSH)
+	s(1) = callvalue
+	nop(CALLVALUE)
+	s(2) = 0
+	nop(PUSH)
+	s(3) = 2142
+	nop(PUSH)
+

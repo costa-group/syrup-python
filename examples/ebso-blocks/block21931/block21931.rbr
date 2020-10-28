@@ -1,0 +1,24 @@
+block0(s(1), s(0))=>
+	s(2) = 0
+	nop(PUSH)
+	s(3) = calldatasize
+	nop(CALLDATASIZE)
+	s(4) = 35
+	nop(PUSH)
+	s(5) = s(0)
+	nop(DUP5)
+	s(6) = s(4)
+	s(4) = s(5)
+	s(5) = s(6)
+	nop(SWAP1)
+	s(4) = s(5)-s(4)
+	nop(SUB)
+	s(5) = s(3)
+	nop(DUP2)
+	s(6) = s(4)
+	nop(DUP2)
+	s(5) = lt(s(6), s(5))
+	nop(LT)
+	s(6) = 709
+	nop(PUSH)
+

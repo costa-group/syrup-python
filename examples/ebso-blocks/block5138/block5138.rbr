@@ -1,0 +1,9 @@
+block0(s(1), s(0))=>
+	nop(POP)
+	s(1) = 3
+	nop(PUSH)
+	s(0) = s(1)+s(0)
+	nop(ADD)
+	s(1) = 1365
+	nop(PUSH)
+

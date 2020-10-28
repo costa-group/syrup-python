@@ -1,0 +1,49 @@
+block0()=>
+	s(0) = 0
+	nop(PUSH)
+	s(1) = s(0)
+	nop(DUP1)
+	s(2) = 0
+	nop(PUSH)
+	s(3) = s(2)
+	nop(DUP1)
+	s(4) = 0
+	nop(PUSH)
+	s(5) = s(4)
+	nop(DUP1)
+	s(6) = 0
+	nop(PUSH)
+	s(7) = s(6)
+	nop(DUP1)
+	s(8) = 0
+	nop(PUSH)
+	s(9) = s(8)
+	nop(DUP1)
+	s(10) = 0
+	nop(PUSH)
+	s(11) = s(10)
+	nop(DUP1)
+	s(12) = 0
+	nop(PUSH)
+	s(13) = s(12)
+	nop(DUP1)
+	s(14) = 0
+	nop(PUSH)
+	s(15) = s(14)
+	nop(DUP1)
+	s(16) = 0
+	nop(PUSH)
+	s(17) = calldatasize
+	nop(CALLDATASIZE)
+	s(18) = s(16)
+	s(16) = s(17)
+	s(17) = s(18)
+	nop(SWAP1)
+	nop(POP)
+	s(15) = gt(s(16), s(15))
+	nop(GT)
+	s(15)= eq(s(15), 0)
+	nop(ISZERO)
+	s(16) = 2012
+	nop(PUSH)
+

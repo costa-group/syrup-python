@@ -1,0 +1,17 @@
+block0(s(0))=>
+	nop(POP)
+	s(0) = 86400
+	nop(PUSH)
+	s(1) = 13
+	nop(PUSH)
+	s(1) = sload(s(1))
+	nop(SLOAD)
+	s(0) = s(1)+s(0)
+	nop(ADD)
+	s(1) = timestamp
+	nop(TIMESTAMP)
+	s(0) = lt(s(1), s(0))
+	nop(LT)
+	s(0)= eq(s(0), 0)
+	nop(ISZERO)
+

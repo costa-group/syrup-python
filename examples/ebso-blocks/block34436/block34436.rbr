@@ -1,0 +1,20 @@
+block0(s(1), s(0))=>
+	s(2) = 16
+	nop(PUSH)
+	sstore(s(2),s(1))
+	nop(SSTORE)
+	s(1) = 14184
+	nop(PUSH)
+	s(2) = 14145
+	nop(PUSH)
+	s(3) = s(0)
+	nop(DUP3)
+	s(4) = 20
+	nop(PUSH)
+	s(5) = 4294967295
+	nop(PUSH)
+	s(6) = 13942
+	nop(PUSH)
+	s(5) = and(s(6), s(5))
+	nop(AND)
+

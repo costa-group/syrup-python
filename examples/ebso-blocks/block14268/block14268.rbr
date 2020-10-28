@@ -1,0 +1,10 @@
+block0()=>
+	s(0) = 47088000
+	nop(PUSH)
+	s(1) = timestamp
+	nop(TIMESTAMP)
+	s(0) = s(1)+s(0)
+	nop(ADD)
+	s(1) = 17774
+	nop(PUSH)
+

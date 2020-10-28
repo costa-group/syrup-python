@@ -1,0 +1,54 @@
+jump0(s(0), calldatasize, gas)=>
+	neq(s(0), 0)
+	call(block45())
+
+jump0(s(0), calldatasize, gas)=>
+	eq(s(0), 0)
+	call(block44())
+
+block0(calldatasize, gas)=>
+	s(0) = calldatasize
+	nop(CALLDATASIZE)
+	s(1) = 0
+	nop(PUSH1)
+	s(2) = s(1)
+	nop(DUP1)
+	calldatacopy(s(2),s(1),s(0))
+	nop(CALLDATACOPY)
+	s(0) = 32
+	nop(PUSH1)
+	s(1) = 0
+	nop(PUSH1)
+	s(2) = calldatasize
+	nop(CALLDATASIZE)
+	s(3) = 0
+	nop(PUSH1)
+	s(4) = 523053451958085496668242804486868200564332447377
+	nop(PUSH20)
+	s(5) = 710
+	nop(PUSH2)
+	s(6) = gas
+	nop(GAS)
+	s(5) = s(6)-s(5)
+	nop(SUB)
+	s(0) = delegatecall
+	nop(DELEGATECALL)
+	call(jump0(s(0), calldatasize, gas))
+	nop(ISZERO)
+	nop(ISZERO)
+	nop(PUSH1)
+	nop(JUMPI)
+
+block44()=>
+	assertfail(s(-1))
+	nop(ASSERTFAIL)
+
+block45()=>
+	nop(JUMPDEST)
+	s(0) = 32
+	nop(PUSH1)
+	s(1) = 0
+	nop(PUSH1)
+	return(s(1),s(0))
+	nop(RETURN)
+

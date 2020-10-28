@@ -1,0 +1,9 @@
+block0(s(1), s(0))=>
+	nop(POP)
+	s(1) = 7500000000000
+	nop(PUSH)
+	s(2) = s(0)
+	s(0) = s(1)
+	s(1) = s(2)
+	nop(SWAP1)
+

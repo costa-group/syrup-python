@@ -1,0 +1,18 @@
+block0(s(0))=>
+	s(1) = 192
+	nop(PUSH)
+	s(2) = s(0)
+	nop(DUP2)
+	s(1) = s(2)+s(1)
+	nop(ADD)
+	s(1) = mload(s(1))
+	nop(MLOAD)
+	s(1) = mload(s(1))
+	nop(MLOAD)
+	s(2) = 1
+	nop(PUSH)
+	sstore(s(2),s(1))
+	nop(SSTORE)
+	s(1) = 1186
+	nop(PUSH)
+

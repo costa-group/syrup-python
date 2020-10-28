@@ -1,0 +1,7 @@
+block0(s(1), s(0))=>
+	nop(POP)
+	s(1) = s(0)
+	nop(DUP1)
+	s(2) = 11472
+	nop(PUSH)
+

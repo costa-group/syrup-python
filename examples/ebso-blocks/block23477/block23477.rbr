@@ -1,0 +1,25 @@
+block0(s(2), s(1), s(0))=>
+	s(3) = s(1)
+	s(1) = s(2)
+	s(2) = s(3)
+	nop(SWAP1)
+	nop(POP)
+	s(2) = 32
+	nop(PUSH)
+	s(1) = s(2)*s(1)
+	nop(MUL)
+	s(0) = s(1)+s(0)
+	nop(ADD)
+	s(0) = calldataload
+	nop(CALLDATALOAD)
+	s(1) = number
+	nop(NUMBER)
+	s(0) = lt(s(1), s(0))
+	nop(LT)
+	s(0)= eq(s(0), 0)
+	nop(ISZERO)
+	s(0)= eq(s(0), 0)
+	nop(ISZERO)
+	s(1) = 1114
+	nop(PUSH)
+

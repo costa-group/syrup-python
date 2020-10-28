@@ -1,0 +1,1 @@
+{"max_progr_len": 6, "src_ws": [], "vars": ["s(6)"], "init_progr_len": 6, "max_sk_sz": 6, "current_cost": 17, "user_instrs": [{"outpt_sk": ["s(6)"], "commutative": false, "inpt_sk": [], "gas": 2, "disasm": "GAS", "opcode": "5a", "id": "GAS_0"}], "tgt_ws": ["s(6)", 805383188830244934838275473784301907651370706969, 252, 68, 320, 32]}

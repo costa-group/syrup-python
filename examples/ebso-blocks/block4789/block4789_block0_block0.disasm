@@ -1,0 +1,5 @@
+PUSH
+DUP3
+MUL
+DUP2
+ADD

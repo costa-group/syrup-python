@@ -1,0 +1,14 @@
+block0()=>
+	s(0) = 76293945312500000000000000000
+	nop(PUSH)
+	s(1) = callvalue
+	nop(CALLVALUE)
+	s(0) = lt(s(1), s(0))
+	nop(LT)
+	s(0)= eq(s(0), 0)
+	nop(ISZERO)
+	s(0)= eq(s(0), 0)
+	nop(ISZERO)
+	s(1) = 317
+	nop(PUSH)
+

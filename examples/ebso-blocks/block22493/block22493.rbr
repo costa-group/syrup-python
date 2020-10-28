@@ -1,0 +1,26 @@
+block0(s(0))=>
+	s(1) = 31
+	nop(PUSH)
+	s(2) = returndatasize
+	nop(RETURNDATASIZE)
+	s(3) = s(1)
+	s(1) = s(2)
+	s(2) = s(3)
+	nop(SWAP1)
+	s(3) = s(1)
+	nop(DUP2)
+	s(2) = s(3)+s(2)
+	nop(ADD)
+	s(3) = 31
+	nop(PUSH)
+	s(3) = not(s(3))
+	nop(NOT)
+	s(2) = and(s(3), s(2))
+	nop(AND)
+	s(3) = s(0)
+	nop(DUP3)
+	s(2) = s(3)+s(2)
+	nop(ADD)
+	s(3) = 64
+	nop(PUSH)
+

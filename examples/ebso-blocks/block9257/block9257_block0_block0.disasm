@@ -1,0 +1,4 @@
+PUSH
+AND
+EQ
+ISZERO

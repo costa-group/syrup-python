@@ -1,0 +1,18 @@
+block0(s(5), s(4), s(3), s(2), s(1), s(0))=>
+	s(6) = 3350
+	nop(PUSH)
+	s(7) = s(4)
+	nop(DUP3)
+	s(8) = s(0)
+	nop(DUP8)
+	s(9) = callvalue
+	nop(CALLVALUE)
+	s(10) = s(1)
+	nop(DUP9)
+	s(11) = s(2)
+	nop(DUP9)
+	s(12) = s(3)
+	nop(DUP9)
+	s(13) = 10168
+	nop(PUSH)
+

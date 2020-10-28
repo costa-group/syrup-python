@@ -1,0 +1,20 @@
+block0()=>
+	s(0) = 0
+	nop(PUSH)
+	s(1) = s(0)
+	nop(DUP1)
+	s(2) = s(1)
+	nop(DUP1)
+	s(3) = s(2)
+	nop(DUP1)
+	s(4) = 1518552000
+	nop(PUSH)
+	s(5) = timestamp
+	nop(TIMESTAMP)
+	s(4) = lt(s(5), s(4))
+	nop(LT)
+	s(4)= eq(s(4), 0)
+	nop(ISZERO)
+	s(5) = 1573
+	nop(PUSH)
+

@@ -1,0 +1,53 @@
+block0(s(0))=>
+	s(1) = 2
+	nop(PUSH)
+	s(1) = sload(s(1))
+	nop(SLOAD)
+	s(2) = 11
+	nop(PUSH)
+	s(2) = sload(s(2))
+	nop(SLOAD)
+	s(3) = 1000000000000000000
+	nop(PUSH)
+	s(4) = s(1)
+	s(1) = s(3)
+	s(3) = s(4)
+	nop(SWAP2)
+	s(4) = 255
+	nop(PUSH)
+	s(3) = and(s(4), s(3))
+	nop(AND)
+	s(4) = 10
+	nop(PUSH)
+	s(3) = s(4)^s(3)
+	nop(EXP)
+	s(4) = callvalue
+	nop(CALLVALUE)
+	s(5) = s(3)
+	s(3) = s(4)
+	s(4) = s(5)
+	nop(SWAP1)
+	s(5) = s(2)
+	s(2) = s(4)
+	s(4) = s(5)
+	nop(SWAP2)
+	s(3) = s(4)*s(3)
+	nop(MUL)
+	s(2) = s(3)*s(2)
+	nop(MUL)
+	s(1) = s(2)/s(1)
+	nop(DIV)
+	s(2) = s(0)
+	s(0) = s(1)
+	s(1) = s(2)
+	nop(SWAP1)
+	nop(POP)
+	s(1) = s(0)
+	nop(DUP1)
+	s(1)= eq(s(1), 0)
+	nop(ISZERO)
+	s(2) = s(1)
+	nop(DUP1)
+	s(3) = 1471
+	nop(PUSH)
+

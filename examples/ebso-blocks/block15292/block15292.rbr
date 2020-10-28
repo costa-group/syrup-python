@@ -1,0 +1,10 @@
+block0()=>
+	s(0) = 0
+	nop(PUSH)
+	s(1) = 11069
+	nop(PUSH)
+	s(2) = 11052
+	nop(PUSH)
+	s(3) = 15352
+	nop(PUSH)
+

@@ -1,0 +1,22 @@
+block0(s(0))=>
+	s(1) = 0
+	nop(PUSH)
+	s(2) = 4
+	nop(PUSH)
+	s(3) = 65535
+	nop(PUSH)
+	s(4) = s(0)
+	nop(DUP4)
+	s(3) = and(s(4), s(3))
+	nop(AND)
+	s(2) = s(3)%s(2)
+	nop(MOD)
+	s(3) = 65535
+	nop(PUSH)
+	s(2) = and(s(3), s(2))
+	nop(AND)
+	s(2)= eq(s(2), 0)
+	nop(ISZERO)
+	s(3) = 6458
+	nop(PUSH)
+

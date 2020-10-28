@@ -1,0 +1,55 @@
+block0(s(0))=>
+	nop(POP)
+	s(0) = 3392
+	nop(PUSH)
+	s(0) = mload(s(0))
+	nop(MLOAD)
+	s(1) = 8
+	nop(PUSH)
+	s(0) = byte(s(0) , s(1))
+	nop(BYTE)
+	s(1) = 3392
+	nop(PUSH)
+	s(1) = mload(s(1))
+	nop(MLOAD)
+	s(2) = 9
+	nop(PUSH)
+	s(1) = byte(s(1) , s(2))
+	nop(BYTE)
+	s(2) = 256
+	nop(PUSH)
+	s(1) = s(2)*s(1)
+	nop(MUL)
+	s(2) = 3392
+	nop(PUSH)
+	s(2) = mload(s(2))
+	nop(MLOAD)
+	s(3) = 10
+	nop(PUSH)
+	s(2) = byte(s(2) , s(3))
+	nop(BYTE)
+	s(3) = 65536
+	nop(PUSH)
+	s(2) = s(3)*s(2)
+	nop(MUL)
+	s(3) = 3392
+	nop(PUSH)
+	s(3) = mload(s(3))
+	nop(MLOAD)
+	s(4) = 11
+	nop(PUSH)
+	s(3) = byte(s(3) , s(4))
+	nop(BYTE)
+	s(4) = 16777216
+	nop(PUSH)
+	s(3) = s(4)*s(3)
+	nop(MUL)
+	s(2) = s(3)+s(2)
+	nop(ADD)
+	s(1) = s(2)+s(1)
+	nop(ADD)
+	s(0) = s(1)+s(0)
+	nop(ADD)
+	s(1) = 3328
+	nop(PUSH)
+

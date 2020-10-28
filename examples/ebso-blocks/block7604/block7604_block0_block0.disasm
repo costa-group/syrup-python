@@ -1,0 +1,5 @@
+PUSH
+DUP6
+EQ
+DUP1
+PUSH

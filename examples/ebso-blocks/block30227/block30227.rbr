@@ -1,0 +1,30 @@
+block0(s(1), s(0))=>
+	s(2) = 17
+	nop(PUSH)
+	sstore(s(2),s(1))
+	nop(SSTORE)
+	s(1) = 1
+	nop(PUSH)
+	s(2) = 160
+	nop(PUSH)
+	s(3) = 2
+	nop(PUSH)
+	s(2) = s(3)^s(2)
+	nop(EXP)
+	s(1) = s(2)-s(1)
+	nop(SUB)
+	s(2) = s(1)
+	nop(DUP1)
+	s(3) = s(0)
+	nop(DUP3)
+	s(2) = and(s(3), s(2))
+	nop(AND)
+	s(3) = 0
+	nop(PUSH)
+	s(4) = s(2)
+	s(2) = s(3)
+	s(3) = s(4)
+	nop(SWAP1)
+	s(4) = s(2)
+	nop(DUP2)
+

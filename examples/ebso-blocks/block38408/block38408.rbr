@@ -1,0 +1,40 @@
+block0(s(0))=>
+	s(1) = 0
+	nop(PUSH)
+	s(2) = 8
+	nop(PUSH)
+	s(3) = s(0)
+	nop(DUP3)
+	s(2) = s(3)/s(2)
+	nop(DIV)
+	s(3) = 7
+	nop(PUSH)
+	s(4) = s(0)
+	nop(DUP4)
+	s(3) = and(s(4), s(3))
+	nop(AND)
+	s(4) = 2
+	nop(PUSH)
+	s(5) = s(0)
+	nop(DUP5)
+	s(6) = s(4)
+	s(4) = s(5)
+	s(5) = s(6)
+	nop(SWAP1)
+	s(4) = s(5)^s(4)
+	nop(EXP)
+	s(5) = 0
+	nop(PUSH)
+	s(5) = not(s(5))
+	nop(NOT)
+	s(6) = s(2)
+	nop(DUP4)
+	s(5) = s(6)+s(5)
+	nop(ADD)
+	s(6) = s(1)
+	nop(DUP5)
+	s(5) = gt(s(6), s(5))
+	nop(GT)
+	s(6) = 13064
+	nop(PUSH)
+

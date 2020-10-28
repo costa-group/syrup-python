@@ -1,0 +1,5 @@
+MOD
+PUSH
+DUP2
+LT
+PUSH

@@ -1,0 +1,24 @@
+block0(s(3), s(2), s(1), s(0))=>
+	s(4) = 64
+	nop(PUSH)
+	s(5) = s(4)
+	nop(DUP1)
+	s(6) = s(2)
+	nop(DUP4)
+	s(5) = sha3(s(6), s(5))
+	nop(SHA3)
+	s(6) = caller
+	nop(CALLER)
+	s(7) = s(5)
+	s(5) = s(6)
+	s(6) = s(7)
+	nop(SWAP1)
+	s(7) = s(0)
+	s(0) = s(6)
+	s(6) = s(7)
+	nop(SWAP6)
+	s(5) = and(s(6), s(5))
+	nop(AND)
+	s(6) = s(2)
+	nop(DUP4)
+

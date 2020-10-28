@@ -1,0 +1,26 @@
+block0()=>
+	s(0) = 0
+	nop(PUSH)
+	s(1) = s(0)
+	nop(DUP1)
+	s(2) = 0
+	nop(PUSH)
+	s(3) = s(2)
+	nop(DUP1)
+	s(4) = 0
+	nop(PUSH)
+	s(5) = 1524060000
+	nop(PUSH)
+	s(6) = timestamp
+	nop(TIMESTAMP)
+	s(5) = lt(s(6), s(5))
+	nop(LT)
+	s(5)= eq(s(5), 0)
+	nop(ISZERO)
+	s(6) = s(5)
+	nop(DUP1)
+	s(6)= eq(s(6), 0)
+	nop(ISZERO)
+	s(7) = 2904
+	nop(PUSH)
+

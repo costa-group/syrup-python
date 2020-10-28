@@ -1,0 +1,11 @@
+block0(s(1), s(0))=>
+	nop(POP)
+	s(0) = mload(s(0))
+	nop(MLOAD)
+	s(1) = 65535
+	nop(PUSH)
+	s(0) = and(s(1), s(0))
+	nop(AND)
+	s(1) = 2313
+	nop(PUSH)
+

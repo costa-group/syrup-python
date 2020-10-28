@@ -1,0 +1,56 @@
+block0(s(11), s(10), s(9), s(8), s(7), s(6), s(5), s(4), s(3), s(2), s(1), s(0))=>
+	s(12) = s(0)
+	nop(DUP12)
+	s(13) = 3
+	nop(PUSH)
+	s(12) = s(13)-s(12)
+	nop(SUB)
+	s(13) = s(7)
+	s(7) = s(12)
+	s(12) = s(13)
+	nop(SWAP5)
+	nop(POP)
+	s(12) = callvalue
+	nop(CALLVALUE)
+	s(13) = s(8)
+	s(8) = s(12)
+	s(12) = s(13)
+	nop(SWAP4)
+	nop(POP)
+	s(12) = s(6)
+	nop(DUP6)
+	s(13) = 13
+	nop(PUSH)
+	s(12) = s(13)+s(12)
+	nop(ADD)
+	s(13) = 0
+	nop(PUSH)
+	s(14) = s(3)
+	nop(DUP11)
+	s(15) = 1
+	nop(PUSH)
+	s(16) = 160
+	nop(PUSH)
+	s(17) = 2
+	nop(PUSH)
+	s(16) = s(17)^s(16)
+	nop(EXP)
+	s(15) = s(16)-s(15)
+	nop(SUB)
+	s(14) = and(s(15), s(14))
+	nop(AND)
+	s(15) = 1
+	nop(PUSH)
+	s(16) = 160
+	nop(PUSH)
+	s(17) = 2
+	nop(PUSH)
+	s(16) = s(17)^s(16)
+	nop(EXP)
+	s(15) = s(16)-s(15)
+	nop(SUB)
+	s(14) = and(s(15), s(14))
+	nop(AND)
+	s(15) = s(13)
+	nop(DUP2)
+

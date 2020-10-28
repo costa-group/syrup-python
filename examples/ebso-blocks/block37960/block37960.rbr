@@ -1,0 +1,18 @@
+block0(s(0))=>
+	s(1) = 156
+	nop(PUSH)
+	s(2) = 2
+	nop(PUSH)
+	s(1) = s(2)^s(1)
+	nop(EXP)
+	s(2) = 413015108489952447701474022147
+	nop(PUSH)
+	s(1) = s(2)*s(1)
+	nop(MUL)
+	s(2) = 32
+	nop(PUSH)
+	s(3) = s(0)
+	nop(DUP3)
+	s(2) = s(3)+s(2)
+	nop(ADD)
+

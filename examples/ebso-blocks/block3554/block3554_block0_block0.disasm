@@ -1,0 +1,6 @@
+POP
+DUP3
+DUP7
+SUB
+DUP6
+GT

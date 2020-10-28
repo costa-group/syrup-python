@@ -1,0 +1,17 @@
+block0(s(3), s(2), s(1), s(0))=>
+	nop(POP)
+	s(3) = number
+	nop(NUMBER)
+	s(4) = s(0)
+	nop(DUP4)
+	s(5) = 192
+	nop(PUSH)
+	s(4) = s(5)+s(4)
+	nop(ADD)
+	s(4) = mload(s(4))
+	nop(MLOAD)
+	s(3) = lt(s(4), s(3))
+	nop(LT)
+	s(3)= eq(s(3), 0)
+	nop(ISZERO)
+

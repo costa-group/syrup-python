@@ -1,0 +1,42 @@
+block0()=>
+	s(0) = 1154878042131485870732230163401469562687781140915
+	nop(PUSH)
+	s(1) = caller
+	nop(CALLER)
+	s(0)= eq(s(1), s(0))
+	nop(EQ)
+	s(1) = 1388848314107566238225689927058584877670162583942
+	nop(PUSH)
+	s(2) = caller
+	nop(CALLER)
+	s(1)= eq(s(2), s(1))
+	nop(EQ)
+	s(0) = s(1)+s(0)
+	nop(ADD)
+	s(1) = 1202191412926250936280572397287185037202264952500
+	nop(PUSH)
+	s(2) = caller
+	nop(CALLER)
+	s(1)= eq(s(2), s(1))
+	nop(EQ)
+	s(0) = s(1)+s(0)
+	nop(ADD)
+	s(1) = 735199234870469811633169170370410941144828197386
+	nop(PUSH)
+	s(2) = caller
+	nop(CALLER)
+	s(1)= eq(s(2), s(1))
+	nop(EQ)
+	s(0) = s(1)+s(0)
+	nop(ADD)
+	s(1) = 935459878688727625110891514497455470713592431917
+	nop(PUSH)
+	s(2) = caller
+	nop(CALLER)
+	s(1)= eq(s(2), s(1))
+	nop(EQ)
+	s(0) = s(1)+s(0)
+	nop(ADD)
+	s(1) = 129
+	nop(PUSH)
+

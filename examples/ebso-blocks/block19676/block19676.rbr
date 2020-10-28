@@ -1,0 +1,24 @@
+block0(s(4), s(3), s(2), s(1), s(0))=>
+	s(5) = timestamp
+	nop(TIMESTAMP)
+	s(6) = coinbase
+	nop(COINBASE)
+	s(5) = xor(s(6), s(5))
+	nop(XOR)
+	s(6) = 1
+	nop(PUSH)
+	s(7) = number
+	nop(NUMBER)
+	s(6) = s(7)-s(6)
+	nop(SUB)
+	s(6) = blockhash_0
+	nop(BLOCKHASH)
+	s(5) = xor(s(6), s(5))
+	nop(XOR)
+	s(6) = 32
+	nop(PUSH)
+	s(7) = s(0)
+	nop(DUP7)
+	s(6) = s(7)+s(6)
+	nop(ADD)
+

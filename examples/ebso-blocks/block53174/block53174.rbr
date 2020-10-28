@@ -1,0 +1,80 @@
+block0(s(9), s(8), s(7), s(6), s(5), s(4), s(3), s(2), s(1), s(0))=>
+	nop(POP)
+	s(9) = s(6)
+	s(6) = s(8)
+	s(8) = s(9)
+	nop(SWAP2)
+	nop(POP)
+	s(8) = 14
+	nop(PUSH)
+	s(9) = 0
+	nop(PUSH)
+	s(10) = s(8)
+	s(8) = s(9)
+	s(9) = s(10)
+	nop(SWAP1)
+	s(9) = sload(s(9))
+	nop(SLOAD)
+	s(10) = s(8)
+	s(8) = s(9)
+	s(9) = s(10)
+	nop(SWAP1)
+	s(10) = 256
+	nop(PUSH)
+	s(9) = s(10)^s(9)
+	nop(EXP)
+	s(10) = s(8)
+	s(8) = s(9)
+	s(9) = s(10)
+	nop(SWAP1)
+	s(8) = s(9)/s(8)
+	nop(DIV)
+	s(9) = 1
+	nop(PUSH)
+	s(10) = 160
+	nop(PUSH)
+	s(11) = 2
+	nop(PUSH)
+	s(10) = s(11)^s(10)
+	nop(EXP)
+	s(9) = s(10)-s(9)
+	nop(SUB)
+	s(8) = and(s(9), s(8))
+	nop(AND)
+	s(9) = 1
+	nop(PUSH)
+	s(10) = 160
+	nop(PUSH)
+	s(11) = 2
+	nop(PUSH)
+	s(10) = s(11)^s(10)
+	nop(EXP)
+	s(9) = s(10)-s(9)
+	nop(SUB)
+	s(8) = and(s(9), s(8))
+	nop(AND)
+	s(9) = 1689927711
+	nop(PUSH)
+	s(10) = s(0)
+	nop(DUP10)
+	s(11) = 64
+	nop(PUSH)
+	s(11) = mload(s(11))
+	nop(MLOAD)
+	s(12) = s(9)
+	nop(DUP3)
+	s(13) = 4294967295
+	nop(PUSH)
+	s(12) = and(s(13), s(12))
+	nop(AND)
+	s(13) = 224
+	nop(PUSH)
+	s(14) = 2
+	nop(PUSH)
+	s(13) = s(14)^s(13)
+	nop(EXP)
+	s(12) = s(13)*s(12)
+	nop(MUL)
+	s(13) = s(11)
+	nop(DUP2)
+

@@ -1,0 +1,12 @@
+block0(s(0))=>
+	s(1) = address
+	nop(ADDRESS)
+	s(1) = balance
+	nop(BALANCE)
+	s(2) = s(0)
+	nop(DUP2)
+	s(1) = lt(s(2), s(1))
+	nop(LT)
+	s(2) = 1568
+	nop(PUSH)
+

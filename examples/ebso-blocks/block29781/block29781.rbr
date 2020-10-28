@@ -1,0 +1,31 @@
+block0(s(2), s(1), s(0))=>
+	nop(POP)
+	s(2) = 2
+	nop(PUSH)
+	s(2) = sload(s(2))
+	nop(SLOAD)
+	s(3) = 1
+	nop(PUSH)
+	s(4) = 160
+	nop(PUSH)
+	s(5) = 2
+	nop(PUSH)
+	s(4) = s(5)^s(4)
+	nop(EXP)
+	s(3) = s(4)-s(3)
+	nop(SUB)
+	s(4) = s(0)
+	nop(DUP4)
+	s(5) = s(3)
+	nop(DUP2)
+	s(4) = and(s(5), s(4))
+	nop(AND)
+	s(5) = s(2)
+	s(2) = s(4)
+	s(4) = s(5)
+	nop(SWAP2)
+	s(3) = and(s(4), s(3))
+	nop(AND)
+	s(2)= eq(s(3), s(2))
+	nop(EQ)
+

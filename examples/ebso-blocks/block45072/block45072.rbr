@@ -1,0 +1,16 @@
+block0()=>
+	s(0) = 0
+	nop(PUSH)
+	s(1) = s(0)
+	nop(DUP1)
+	s(1) = calldataload
+	nop(CALLDATALOAD)
+	s(2) = 26959946667150639794667015087019630673637144422540572481103610249215
+	nop(PUSH)
+	s(2) = not(s(2))
+	nop(NOT)
+	s(1) = and(s(2), s(1))
+	nop(AND)
+	s(2) = s(0)
+	nop(DUP2)
+

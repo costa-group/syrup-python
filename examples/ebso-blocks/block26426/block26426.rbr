@@ -1,0 +1,22 @@
+block0(s(3), s(2), s(1), s(0))=>
+	s(4) = 0
+	nop(PUSH)
+	s(5) = s(4)
+	nop(DUP1)
+	s(6) = 0
+	nop(PUSH)
+	s(7) = 1
+	nop(PUSH)
+	s(8) = s(0)
+	nop(DUP8)
+	s(8) = sload(s(8))
+	nop(SLOAD)
+	s(9) = 0
+	nop(PUSH)
+	s(10) = s(8)
+	nop(DUP2)
+	s(9)= eq(s(10), s(9))
+	nop(EQ)
+	s(10) = 1203
+	nop(PUSH)
+

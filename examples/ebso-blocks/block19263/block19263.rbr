@@ -1,0 +1,21 @@
+block0(s(5), s(4), s(3), s(2), s(1), s(0))=>
+	s(6) = s(0)
+	nop(DUP6)
+	s(6) = extcodesize
+	nop(EXTCODESIZE)
+	s(7) = s(4)
+	s(4) = s(6)
+	s(6) = s(7)
+	nop(SWAP2)
+	nop(POP)
+	s(6) = 0
+	nop(PUSH)
+	s(7) = s(4)
+	nop(DUP3)
+	s(6) = gt(s(7), s(6))
+	nop(GT)
+	s(6)= eq(s(6), 0)
+	nop(ISZERO)
+	s(7) = 4173
+	nop(PUSH)
+

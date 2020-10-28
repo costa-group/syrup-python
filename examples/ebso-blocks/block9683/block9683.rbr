@@ -1,0 +1,17 @@
+block0(s(3), s(2), s(1), s(0))=>
+	s(4) = s(2)
+	s(2) = s(3)
+	s(3) = s(4)
+	nop(SWAP1)
+	nop(POP)
+	s(3) = 32
+	nop(PUSH)
+	s(2) = s(3)*s(2)
+	nop(MUL)
+	s(1) = s(2)+s(1)
+	nop(ADD)
+	s(1) = calldataload
+	nop(CALLDATALOAD)
+	s(0) = gt(s(1), s(0))
+	nop(GT)
+

@@ -1,0 +1,7 @@
+block0(s(0))=>
+	nop(POP)
+	s(0) = callvalue
+	nop(CALLVALUE)
+	s(1) = 1395
+	nop(PUSH)
+

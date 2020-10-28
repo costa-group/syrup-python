@@ -1,0 +1,12 @@
+block0(s(10), s(9), s(8), s(7), s(6), s(5), s(4), s(3), s(2), s(1), s(0))=>
+	s(11) = s(0)
+	nop(DUP11)
+	s(12) = s(10)
+	nop(DUP2)
+	s(13) = s(11)
+	nop(DUP2)
+	s(13) = mload(s(13))
+	nop(MLOAD)
+	s(14) = s(12)
+	nop(DUP2)
+

@@ -1,0 +1,16 @@
+block0(s(1), s(0))=>
+	s(2) = callvalue
+	nop(CALLVALUE)
+	s(3) = callvalue
+	nop(CALLVALUE)
+	s(4) = 36
+	nop(PUSH)
+	s(5) = s(0)
+	nop(DUP5)
+	s(6) = callvalue
+	nop(CALLVALUE)
+	s(7) = 34280126281875120643183634119578426192013436525
+	nop(PUSH)
+	s(8) = gas
+	nop(GAS)
+

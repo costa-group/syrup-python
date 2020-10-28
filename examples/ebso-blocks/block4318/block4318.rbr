@@ -1,0 +1,16 @@
+block0(s(0))=>
+	s(1) = callvalue
+	nop(CALLVALUE)
+	s(2) = callvalue
+	nop(CALLVALUE)
+	s(3) = callvalue
+	nop(CALLVALUE)
+	s(4) = callvalue
+	nop(CALLVALUE)
+	s(5) = s(0)
+	nop(DUP5)
+	s(6) = caller
+	nop(CALLER)
+	s(7) = gas
+	nop(GAS)
+

@@ -1,0 +1,16 @@
+block0(s(0))=>
+	s(1) = 0
+	nop(PUSH)
+	s(2) = 1291
+	nop(PUSH)
+	s(3) = s(0)
+	nop(DUP3)
+	s(4) = timestamp
+	nop(TIMESTAMP)
+	s(5) = 18446744073709551615
+	nop(PUSH)
+	s(4) = and(s(5), s(4))
+	nop(AND)
+	s(5) = 2050
+	nop(PUSH)
+

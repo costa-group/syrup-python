@@ -1,0 +1,11 @@
+block0(s(2), s(1), s(0))=>
+	nop(POP)
+	s(0) = s(1)+s(0)
+	nop(ADD)
+	s(1) = 1048576
+	nop(PUSH)
+	sstore(s(1),s(0))
+	nop(SSTORE)
+	s(0) = 12549
+	nop(PUSH)
+

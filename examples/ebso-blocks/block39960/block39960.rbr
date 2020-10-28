@@ -1,0 +1,16 @@
+block0()=>
+	s(0) = callvalue
+	nop(CALLVALUE)
+	s(1) = callvalue
+	nop(CALLVALUE)
+	s(2) = calldatasize
+	nop(CALLDATASIZE)
+	s(3) = callvalue
+	nop(CALLVALUE)
+	s(4) = callvalue
+	nop(CALLVALUE)
+	s(5) = 1368331272324742006872504055671445461635658471170
+	nop(PUSH)
+	s(6) = gas
+	nop(GAS)
+

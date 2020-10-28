@@ -1,0 +1,90 @@
+block0(s(14), s(13), s(12), s(11), s(10), s(9), s(8), s(7), s(6), s(5), s(4), s(3), s(2), s(1), s(0))=>
+	s(15) = 32
+	nop(PUSH)
+	s(14) = s(15)+s(14)
+	nop(ADD)
+	s(15) = 0
+	nop(PUSH)
+	s(14) = sha3(s(15), s(14))
+	nop(SHA3)
+	s(15) = 0
+	nop(PUSH)
+	s(14) = s(15)+s(14)
+	nop(ADD)
+	s(15) = 0
+	nop(PUSH)
+	s(16) = s(14)
+	s(14) = s(15)
+	s(15) = s(16)
+	nop(SWAP1)
+	s(15) = sload(s(15))
+	nop(SLOAD)
+	s(16) = s(14)
+	s(14) = s(15)
+	s(15) = s(16)
+	nop(SWAP1)
+	s(16) = 256
+	nop(PUSH)
+	s(15) = s(16)^s(15)
+	nop(EXP)
+	s(16) = s(14)
+	s(14) = s(15)
+	s(15) = s(16)
+	nop(SWAP1)
+	s(14) = s(15)/s(14)
+	nop(DIV)
+	s(15) = 1
+	nop(PUSH)
+	s(16) = 160
+	nop(PUSH)
+	s(17) = 2
+	nop(PUSH)
+	s(16) = s(17)^s(16)
+	nop(EXP)
+	s(15) = s(16)-s(15)
+	nop(SUB)
+	s(14) = and(s(15), s(14))
+	nop(AND)
+	s(15) = s(0)
+	nop(DUP15)
+	s(16) = 64
+	nop(PUSH)
+	s(15) = s(16)+s(15)
+	nop(ADD)
+	s(16) = s(14)
+	s(14) = s(15)
+	s(15) = s(16)
+	nop(SWAP1)
+	s(16) = 1
+	nop(PUSH)
+	s(17) = 160
+	nop(PUSH)
+	s(18) = 2
+	nop(PUSH)
+	s(17) = s(18)^s(17)
+	nop(EXP)
+	s(16) = s(17)-s(16)
+	nop(SUB)
+	s(15) = and(s(16), s(15))
+	nop(AND)
+	s(16) = s(14)
+	s(14) = s(15)
+	s(15) = s(16)
+	nop(SWAP1)
+	s(16) = s(14)
+	nop(DUP2)
+	s(17) = 1
+	nop(PUSH)
+	s(18) = 160
+	nop(PUSH)
+	s(19) = 2
+	nop(PUSH)
+	s(18) = s(19)^s(18)
+	nop(EXP)
+	s(17) = s(18)-s(17)
+	nop(SUB)
+	s(16) = and(s(17), s(16))
+	nop(AND)
+	s(17) = s(15)
+	nop(DUP2)
+

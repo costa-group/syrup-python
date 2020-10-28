@@ -1,0 +1,14 @@
+block0()=>
+	s(0) = 0
+	nop(PUSH)
+	s(1) = 7
+	nop(PUSH)
+	s(1) = sload(s(1))
+	nop(SLOAD)
+	s(0)= eq(s(1), s(0))
+	nop(EQ)
+	s(1) = s(0)
+	nop(DUP1)
+	s(2) = 804
+	nop(PUSH)
+

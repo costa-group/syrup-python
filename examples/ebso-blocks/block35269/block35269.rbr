@@ -1,0 +1,21 @@
+block0(s(4), s(3), s(2), s(1), s(0))=>
+	nop(POP)
+	s(4) = 8
+	nop(PUSH)
+	s(5) = 10
+	nop(PUSH)
+	s(4) = s(5)^s(4)
+	nop(EXP)
+	s(5) = 700000000
+	nop(PUSH)
+	s(4) = s(5)*s(4)
+	nop(MUL)
+	s(5) = 2867
+	nop(PUSH)
+	s(6) = 2861
+	nop(PUSH)
+	s(7) = s(0)
+	nop(DUP7)
+	s(8) = 4376
+	nop(PUSH)
+

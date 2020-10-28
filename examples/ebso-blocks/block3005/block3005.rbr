@@ -1,0 +1,7 @@
+block0(s(1), s(0))=>
+	nop(POP)
+	s(0) = calldataload
+	nop(CALLDATALOAD)
+	s(1) = 1564
+	nop(PUSH)
+

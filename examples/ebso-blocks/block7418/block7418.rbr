@@ -1,0 +1,13 @@
+block0(s(8), s(7), s(6), s(5), s(4), s(3), s(2), s(1), s(0))=>
+	nop(POP)
+	s(8) = s(0)
+	nop(DUP8)
+	s(9) = 255
+	nop(PUSH)
+	s(8) = and(s(9), s(8))
+	nop(AND)
+	s(9) = 2
+	nop(PUSH)
+	s(8)= eq(s(9), s(8))
+	nop(EQ)
+

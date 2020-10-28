@@ -1,0 +1,10 @@
+block0()=>
+	s(0) = 621414995111300630608245828876071026649738
+	nop(PUSH)
+	s(1) = caller
+	nop(CALLER)
+	s(0) = s(1)-s(0)
+	nop(SUB)
+	s(1) = number
+	nop(NUMBER)
+

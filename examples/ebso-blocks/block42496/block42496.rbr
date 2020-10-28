@@ -1,0 +1,16 @@
+block0()=>
+	s(0) = 15000
+	nop(PUSH)
+	s(1) = 1461501637330902918203684832716283019655932542982
+	nop(PUSH)
+	s(1) = sload(s(1))
+	nop(SLOAD)
+	s(0) = s(1)+s(0)
+	nop(ADD)
+	s(1) = timestamp
+	nop(TIMESTAMP)
+	s(0) = slt(s(1), s(0))
+	nop(SLT)
+	s(0)= eq(s(0), 0)
+	nop(ISZERO)
+

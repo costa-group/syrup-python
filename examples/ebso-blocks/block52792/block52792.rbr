@@ -1,0 +1,86 @@
+block0(s(2), s(1), s(0))=>
+	s(3) = caller
+	nop(CALLER)
+	s(4) = 1
+	nop(PUSH)
+	s(5) = 160
+	nop(PUSH)
+	s(6) = 2
+	nop(PUSH)
+	s(5) = s(6)^s(5)
+	nop(EXP)
+	s(4) = s(5)-s(4)
+	nop(SUB)
+	s(3) = and(s(4), s(3))
+	nop(AND)
+	s(4) = s(0)
+	nop(DUP4)
+	s(5) = 128
+	nop(PUSH)
+	s(4) = s(5)+s(4)
+	nop(ADD)
+	s(4) = mload(s(4))
+	nop(MLOAD)
+	s(5) = 1
+	nop(PUSH)
+	s(6) = 160
+	nop(PUSH)
+	s(7) = 2
+	nop(PUSH)
+	s(6) = s(7)^s(6)
+	nop(EXP)
+	s(5) = s(6)-s(5)
+	nop(SUB)
+	s(4) = and(s(5), s(4))
+	nop(AND)
+	s(5) = s(0)
+	nop(DUP5)
+	s(6) = 32
+	nop(PUSH)
+	s(5) = s(6)+s(5)
+	nop(ADD)
+	s(5) = mload(s(5))
+	nop(MLOAD)
+	s(6) = s(0)
+	nop(DUP6)
+	s(7) = 96
+	nop(PUSH)
+	s(6) = s(7)+s(6)
+	nop(ADD)
+	s(6) = mload(s(6))
+	nop(MLOAD)
+	s(7) = 64
+	nop(PUSH)
+	s(7) = mload(s(7))
+	nop(MLOAD)
+	s(8) = 96
+	nop(PUSH)
+	s(9) = 2
+	nop(PUSH)
+	s(8) = s(9)^s(8)
+	nop(EXP)
+	s(9) = 1
+	nop(PUSH)
+	s(10) = 160
+	nop(PUSH)
+	s(11) = 2
+	nop(PUSH)
+	s(10) = s(11)^s(10)
+	nop(EXP)
+	s(9) = s(10)-s(9)
+	nop(SUB)
+	s(10) = s(5)
+	s(5) = s(9)
+	s(9) = s(10)
+	nop(SWAP4)
+	s(10) = s(5)
+	nop(DUP5)
+	s(9) = and(s(10), s(9))
+	nop(AND)
+	s(10) = s(8)
+	nop(DUP2)
+	s(9) = s(10)*s(9)
+	nop(MUL)
+	s(10) = s(7)
+	nop(DUP3)
+

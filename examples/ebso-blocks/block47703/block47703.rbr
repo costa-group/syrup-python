@@ -1,0 +1,69 @@
+block0()=>
+	s(0) = 0
+	nop(PUSH)
+	s(1) = 0
+	nop(PUSH)
+	s(2) = 0
+	nop(PUSH)
+	s(3) = 0
+	nop(PUSH)
+	s(4) = 0
+	nop(PUSH)
+	s(5) = 0
+	nop(PUSH)
+	s(6) = 0
+	nop(PUSH)
+	s(7) = 0
+	nop(PUSH)
+	s(8) = 4
+	nop(PUSH)
+	s(9) = 0
+	nop(PUSH)
+	nop(POP)
+	s(9) = s(8)
+	nop(DUP1)
+	s(9) = sload(s(9))
+	nop(SLOAD)
+	s(10) = s(9)
+	nop(DUP1)
+	s(11) = s(8)
+	s(8) = s(10)
+	s(10) = s(11)
+	nop(SWAP2)
+	s(11) = s(9)
+	s(9) = s(10)
+	s(10) = s(11)
+	nop(SWAP1)
+	s(11) = 1
+	nop(PUSH)
+	s(10) = s(11)+s(10)
+	nop(ADD)
+	s(11) = s(9)
+	s(9) = s(10)
+	s(10) = s(11)
+	nop(SWAP1)
+	s(11) = s(9)
+	s(9) = s(10)
+	s(10) = s(11)
+	nop(SWAP1)
+	s(11) = s(9)
+	nop(DUP2)
+	s(11) = sload(s(11))
+	nop(SLOAD)
+	s(12) = s(10)
+	nop(DUP2)
+	s(13) = s(9)
+	nop(DUP4)
+	sstore(s(13),s(12))
+	nop(SSTORE)
+	s(12) = s(10)
+	nop(DUP2)
+	s(13) = s(11)
+	nop(DUP2)
+	s(13)= eq(s(13), 0)
+	nop(ISZERO)
+	s(12) = gt(s(13), s(12))
+	nop(GT)
+	s(13) = 10923
+	nop(PUSH)
+

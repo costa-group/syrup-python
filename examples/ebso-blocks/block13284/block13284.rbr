@@ -1,0 +1,14 @@
+block0()=>
+	s(0) = 4
+	nop(PUSH)
+	s(0) = sload(s(0))
+	nop(SLOAD)
+	s(1) = 255
+	nop(PUSH)
+	s(0) = and(s(1), s(0))
+	nop(AND)
+	s(1) = s(0)
+	nop(DUP1)
+	s(2) = 2624
+	nop(PUSH)
+

@@ -1,0 +1,11 @@
+block0(s(0))=>
+	nop(POP)
+	s(0) = 88
+	nop(PUSH)
+	s(1) = 4
+	nop(PUSH)
+	s(1) = calldataload
+	nop(CALLDATALOAD)
+	s(2) = 90
+	nop(PUSH)
+

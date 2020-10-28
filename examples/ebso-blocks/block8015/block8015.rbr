@@ -1,0 +1,16 @@
+block0(s(0))=>
+	s(1) = 24
+	nop(PUSH)
+	s(2) = 1
+	nop(PUSH)
+	s(3) = s(0)
+	nop(DUP3)
+	s(4) = s(2)
+	s(2) = s(3)
+	s(3) = s(4)
+	nop(SWAP1)
+	s(2) = signextend(s(3),s(2))
+	nop(SIGNEXTEND)
+	s(1) = s(2)/s(1)
+	nop(SDIV)
+

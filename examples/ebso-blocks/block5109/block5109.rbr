@@ -1,0 +1,14 @@
+block0(s(0))=>
+	s(1) = number
+	nop(NUMBER)
+	s(2) = s(0)
+	nop(DUP2)
+	s(3) = s(1)
+	s(1) = s(2)
+	s(2) = s(3)
+	nop(SWAP1)
+	s(1) = lt(s(2), s(1))
+	nop(LT)
+	s(2) = 4922
+	nop(PUSH)
+

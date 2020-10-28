@@ -1,0 +1,12 @@
+block0(s(2), s(1), s(0))=>
+	s(3) = 0
+	nop(PUSH)
+	s(4) = 5359
+	nop(PUSH)
+	s(5) = 7897
+	nop(PUSH)
+	s(6) = s(0)
+	nop(DUP6)
+	s(7) = 10274
+	nop(PUSH)
+

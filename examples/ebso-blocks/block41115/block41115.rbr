@@ -1,0 +1,32 @@
+block0(s(1), s(0))=>
+	s(2) = 32
+	nop(PUSH)
+	s(1) = s(2)*s(1)
+	nop(MUL)
+	s(0) = s(1)+s(0)
+	nop(ADD)
+	s(0) = mload(s(0))
+	nop(MLOAD)
+	s(1) = 4294967295
+	nop(PUSH)
+	s(0) = and(s(1), s(0))
+	nop(AND)
+	s(1) = 0
+	nop(PUSH)
+	s(2) = s(1)
+	nop(DUP1)
+	s(3) = 0
+	nop(PUSH)
+	s(4) = s(3)
+	nop(DUP1)
+	s(5) = 0
+	nop(PUSH)
+	s(6) = 72000
+	nop(PUSH)
+	s(7) = timestamp
+	nop(TIMESTAMP)
+	s(6) = s(7)+s(6)
+	nop(ADD)
+	s(7) = 16346
+	nop(PUSH)
+

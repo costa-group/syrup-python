@@ -1,0 +1,6 @@
+block0()=>
+	s(0) = calldatasize
+	nop(CALLDATASIZE)
+	s(1) = 6
+	nop(PUSH)
+

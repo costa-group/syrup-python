@@ -1,0 +1,30 @@
+block0(s(10), s(9), s(8), s(7), s(6), s(5), s(4), s(3), s(2), s(1), s(0))=>
+	nop(POP)
+	s(10) = 64
+	nop(PUSH)
+	s(10) = mload(s(10))
+	nop(MLOAD)
+	s(11) = s(9)
+	s(9) = s(10)
+	s(10) = s(11)
+	nop(SWAP1)
+	nop(POP)
+	s(10) = 7543
+	nop(PUSH)
+	s(11) = s(4)
+	nop(DUP7)
+	s(12) = 206
+	nop(PUSH)
+	s(13) = s(0)
+	nop(DUP13)
+	s(14) = 4
+	nop(PUSH)
+	s(13) = byte(s(13) , s(14))
+	nop(BYTE)
+	s(12) = s(13)-s(12)
+	nop(SUB)
+	s(13) = s(3)
+	nop(DUP10)
+	s(14) = 14087
+	nop(PUSH)
+

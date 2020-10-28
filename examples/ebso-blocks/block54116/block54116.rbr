@@ -1,0 +1,48 @@
+block0(s(7), s(6), s(5), s(4), s(3), s(2), s(1), s(0))=>
+	s(8) = caller
+	nop(CALLER)
+	s(9) = 1
+	nop(PUSH)
+	s(10) = 160
+	nop(PUSH)
+	s(11) = 2
+	nop(PUSH)
+	s(10) = s(11)^s(10)
+	nop(EXP)
+	s(9) = s(10)-s(9)
+	nop(SUB)
+	s(8) = and(s(9), s(8))
+	nop(AND)
+	s(9) = s(4)
+	nop(DUP5)
+	s(10) = 1
+	nop(PUSH)
+	s(11) = 160
+	nop(PUSH)
+	s(12) = 2
+	nop(PUSH)
+	s(11) = s(12)^s(11)
+	nop(EXP)
+	s(10) = s(11)-s(10)
+	nop(SUB)
+	s(9) = and(s(10), s(9))
+	nop(AND)
+	s(10) = s(1)
+	nop(DUP9)
+	s(11) = 5946482669859827319535919205664302472496018830313771789256497561563225822362
+	nop(PUSH)
+	s(12) = s(0)
+	nop(DUP12)
+	s(13) = s(5)
+	nop(DUP8)
+	s(14) = 64
+	nop(PUSH)
+	s(14) = mload(s(14))
+	nop(MLOAD)
+	s(15) = s(12)
+	s(12) = s(14)
+	s(14) = s(15)
+	nop(SWAP2)
+	s(15) = s(12)
+	nop(DUP3)
+

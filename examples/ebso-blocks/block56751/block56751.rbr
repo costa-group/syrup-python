@@ -1,0 +1,72 @@
+block0(s(1), s(0))=>
+	s(2) = 0
+	nop(PUSH)
+	s(3) = s(1)
+	nop(DUP2)
+	s(4) = 255
+	nop(PUSH)
+	s(3) = and(s(4), s(3))
+	nop(AND)
+	s(4) = 1000000
+	nop(PUSH)
+	s(3) = s(4)^s(3)
+	nop(EXP)
+	s(4) = 18446744073709551615
+	nop(PUSH)
+	s(3) = and(s(4), s(3))
+	nop(AND)
+	s(4) = 5676
+	nop(PUSH)
+	s(5) = s(0)
+	nop(DUP5)
+	s(6) = s(1)
+	nop(DUP5)
+	s(7) = 255
+	nop(PUSH)
+	s(6) = and(s(7), s(6))
+	nop(AND)
+	s(7) = 12
+	nop(PUSH)
+	s(8) = 8
+	nop(PUSH)
+	s(9) = s(7)
+	s(7) = s(8)
+	s(8) = s(9)
+	nop(SWAP1)
+	s(8) = sload(s(8))
+	nop(SLOAD)
+	s(9) = s(7)
+	s(7) = s(8)
+	s(8) = s(9)
+	nop(SWAP1)
+	s(9) = 256
+	nop(PUSH)
+	s(8) = s(9)^s(8)
+	nop(EXP)
+	s(9) = s(7)
+	s(7) = s(8)
+	s(8) = s(9)
+	nop(SWAP1)
+	s(7) = s(8)/s(7)
+	nop(DIV)
+	s(8) = 4294967295
+	nop(PUSH)
+	s(7) = and(s(8), s(7))
+	nop(AND)
+	s(8) = 4294967295
+	nop(PUSH)
+	s(7) = and(s(8), s(7))
+	nop(AND)
+	s(8) = 1000000
+	nop(PUSH)
+	s(7) = s(8)-s(7)
+	nop(SUB)
+	s(6) = s(7)^s(6)
+	nop(EXP)
+	s(7) = 18446744073709551615
+	nop(PUSH)
+	s(6) = and(s(7), s(6))
+	nop(AND)
+	s(7) = 12413
+	nop(PUSH)
+

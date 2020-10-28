@@ -1,0 +1,7 @@
+block0(s(1), s(0))=>
+	nop(POP)
+	s(0) = mload(s(0))
+	nop(MLOAD)
+	s(1) = 14380
+	nop(PUSH)
+

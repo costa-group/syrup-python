@@ -1,0 +1,40 @@
+block0(s(1), s(0))=>
+	s(2) = 0
+	nop(PUSH)
+	s(3) = 96
+	nop(PUSH)
+	s(4) = 0
+	nop(PUSH)
+	s(5) = s(4)
+	nop(DUP1)
+	s(6) = 0
+	nop(PUSH)
+	s(7) = s(0)
+	nop(DUP7)
+	s(8) = s(3)
+	s(3) = s(7)
+	s(7) = s(8)
+	nop(SWAP4)
+	nop(POP)
+	s(7) = 0
+	nop(PUSH)
+	s(8) = s(4)
+	s(4) = s(7)
+	s(7) = s(8)
+	nop(SWAP3)
+	nop(POP)
+	s(7) = 0
+	nop(PUSH)
+	s(8) = s(5)
+	s(5) = s(7)
+	s(7) = s(8)
+	nop(SWAP2)
+	nop(POP)
+	s(7) = 0
+	nop(PUSH)
+	s(8) = s(6)
+	s(6) = s(7)
+	s(7) = s(8)
+	nop(SWAP1)
+	nop(POP)
+

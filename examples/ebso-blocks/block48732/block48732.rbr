@@ -1,0 +1,53 @@
+block0(s(6), s(5), s(4), s(3), s(2), s(1), s(0))=>
+	s(7) = s(5)
+	s(5) = s(6)
+	s(6) = s(7)
+	nop(SWAP1)
+	nop(POP)
+	s(6) = 32
+	nop(PUSH)
+	s(5) = s(6)*s(5)
+	nop(MUL)
+	s(4) = s(5)+s(4)
+	nop(ADD)
+	s(4) = calldataload
+	nop(CALLDATALOAD)
+	s(5) = 1
+	nop(PUSH)
+	s(6) = 160
+	nop(PUSH)
+	s(7) = 2
+	nop(PUSH)
+	s(6) = s(7)^s(6)
+	nop(EXP)
+	s(5) = s(6)-s(5)
+	nop(SUB)
+	s(4) = and(s(5), s(4))
+	nop(AND)
+	s(5) = s(0)
+	nop(DUP5)
+	s(6) = timestamp
+	nop(TIMESTAMP)
+	s(7) = 10368000
+	nop(PUSH)
+	s(6) = s(7)+s(6)
+	nop(ADD)
+	s(7) = 2592000
+	nop(PUSH)
+	s(6) = s(7)+s(6)
+	nop(ADD)
+	s(7) = 2592000
+	nop(PUSH)
+	s(6) = s(7)+s(6)
+	nop(ADD)
+	s(7) = 2592000
+	nop(PUSH)
+	s(6) = s(7)+s(6)
+	nop(ADD)
+	s(7) = 2592000
+	nop(PUSH)
+	s(6) = s(7)+s(6)
+	nop(ADD)
+	s(7) = 3694
+	nop(PUSH)
+

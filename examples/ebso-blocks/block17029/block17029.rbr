@@ -1,0 +1,16 @@
+block0(s(9), s(8), s(7), s(6), s(5), s(4), s(3), s(2), s(1), s(0))=>
+	s(10) = s(0)
+	nop(DUP10)
+	s(11) = 5
+	nop(PUSH)
+	s(10) = byte(s(10) , s(11))
+	nop(BYTE)
+	s(11) = 21
+	nop(PUSH)
+	s(12) = s(10)
+	nop(DUP2)
+	s(11)= eq(s(12), s(11))
+	nop(EQ)
+	s(12) = 4184
+	nop(PUSH)
+

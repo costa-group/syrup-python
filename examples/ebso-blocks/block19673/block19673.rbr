@@ -1,0 +1,17 @@
+block0(s(2), s(1), s(0))=>
+	s(3) = callvalue
+	nop(CALLVALUE)
+	s(4) = s(0)
+	s(0) = s(3)
+	s(3) = s(4)
+	nop(SWAP3)
+	nop(POP)
+	s(3) = 1544
+	nop(PUSH)
+	s(4) = 1512
+	nop(PUSH)
+	s(5) = s(0)
+	nop(DUP5)
+	s(6) = 6707
+	nop(PUSH)
+

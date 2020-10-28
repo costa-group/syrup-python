@@ -1,0 +1,8 @@
+block0()=>
+	s(0) = 3382
+	nop(PUSH)
+	s(1) = address
+	nop(ADDRESS)
+	s(2) = 2912
+	nop(PUSH)
+

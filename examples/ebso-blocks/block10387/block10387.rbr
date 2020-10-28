@@ -1,0 +1,15 @@
+block0(s(3), s(2), s(1), s(0))=>
+	nop(POP)
+	s(3) = 0
+	nop(PUSH)
+	s(4) = s(0)
+	nop(DUP4)
+	s(3) = slt(s(4), s(3))
+	nop(SLT)
+	s(4) = s(3)
+	nop(DUP1)
+	s(4)= eq(s(4), 0)
+	nop(ISZERO)
+	s(5) = 1278
+	nop(PUSH)
+

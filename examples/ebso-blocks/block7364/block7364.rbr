@@ -1,0 +1,9 @@
+block0(s(0))=>
+	nop(POP)
+	s(0) = 3134
+	nop(PUSH)
+	s(1) = caller
+	nop(CALLER)
+	s(2) = 9104
+	nop(PUSH)
+

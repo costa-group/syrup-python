@@ -1,0 +1,14 @@
+block0()=>
+	s(0) = 64
+	nop(PUSH)
+	s(1) = s(0)
+	nop(DUP1)
+	s(1) = mload(s(1))
+	nop(MLOAD)
+	s(2) = 1
+	nop(PUSH)
+	s(3) = s(2)
+	nop(DUP1)
+	s(4) = s(1)
+	nop(DUP3)
+

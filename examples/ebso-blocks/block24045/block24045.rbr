@@ -1,0 +1,18 @@
+block0()=>
+	s(0) = 0
+	nop(PUSH)
+	s(1) = 0
+	nop(PUSH)
+	s(2) = 3597381
+	nop(PUSH)
+	s(3) = number
+	nop(NUMBER)
+	s(2) = gt(s(3), s(2))
+	nop(GT)
+	s(2)= eq(s(2), 0)
+	nop(ISZERO)
+	s(2)= eq(s(2), 0)
+	nop(ISZERO)
+	s(3) = 2628
+	nop(PUSH)
+

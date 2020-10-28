@@ -1,0 +1,22 @@
+block0()=>
+	s(0) = 128
+	nop(PUSH)
+	s(1) = 128
+	nop(PUSH)
+	s(2) = msize
+	nop(MSIZE)
+	s(3) = s(1)
+	s(1) = s(2)
+	s(2) = s(3)
+	nop(SWAP1)
+	s(3) = msize
+	nop(MSIZE)
+	s(2) = s(3)+s(2)
+	nop(ADD)
+	s(3) = 0
+	nop(PUSH)
+	s(4) = s(2)
+	s(2) = s(3)
+	s(3) = s(4)
+	nop(SWAP1)
+

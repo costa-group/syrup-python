@@ -1,0 +1,22 @@
+block0(s(3), s(2), s(1), s(0))=>
+	s(4) = 3973
+	nop(PUSH)
+	s(5) = 1364068194842176056990105843868530818345537040110
+	nop(PUSH)
+	s(6) = callvalue
+	nop(CALLVALUE)
+	s(7) = s(0)
+	nop(DUP7)
+	s(8) = caller
+	nop(CALLER)
+	s(9) = 10000000000000000000000000000
+	nop(PUSH)
+	s(10) = s(1)
+	nop(DUP9)
+	s(11) = 0
+	nop(PUSH)
+	s(12) = s(3)
+	nop(DUP9)
+	s(13) = 1979
+	nop(PUSH)
+

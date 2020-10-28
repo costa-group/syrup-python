@@ -1,0 +1,14 @@
+block0()=>
+	s(0) = 79228162514264337593543950335
+	nop(PUSH)
+	s(1) = 576
+	nop(PUSH)
+	s(1) = mload(s(1))
+	nop(MLOAD)
+	s(0) = sgt(s(1), s(0))
+	nop(SGT)
+	s(0)= eq(s(0), 0)
+	nop(ISZERO)
+	s(1) = 1236
+	nop(PUSH)
+

@@ -1,0 +1,8 @@
+block0(s(3), s(2), s(1), s(0))=>
+	s(4) = s(0)
+	nop(DUP4)
+	s(5) = 65535
+	nop(PUSH)
+	sstore(s(5),s(4))
+	nop(SSTORE)
+

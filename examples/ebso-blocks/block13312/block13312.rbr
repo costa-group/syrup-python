@@ -1,0 +1,17 @@
+block0(s(2), s(1), s(0))=>
+	s(3) = 5
+	nop(PUSH)
+	s(3) = sload(s(3))
+	nop(SLOAD)
+	s(4) = 6
+	nop(PUSH)
+	sstore(s(4),s(3))
+	nop(SSTORE)
+	s(3) = 0
+	nop(PUSH)
+	s(4) = s(0)
+	s(0) = s(3)
+	s(3) = s(4)
+	nop(SWAP3)
+	nop(POP)
+

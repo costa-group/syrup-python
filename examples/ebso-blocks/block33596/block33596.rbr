@@ -1,0 +1,20 @@
+block0()=>
+	s(0) = 7142
+	nop(PUSH)
+	s(1) = caller
+	nop(CALLER)
+	s(2) = 18
+	nop(PUSH)
+	s(3) = 10
+	nop(PUSH)
+	s(2) = s(3)^s(2)
+	nop(EXP)
+	s(3) = 40000000
+	nop(PUSH)
+	s(2) = s(3)*s(2)
+	nop(MUL)
+	s(3) = 1
+	nop(PUSH)
+	s(4) = 7262
+	nop(PUSH)
+

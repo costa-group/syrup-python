@@ -1,0 +1,91 @@
+block0()=>
+	s(0) = 1563
+	nop(PUSH)
+	s(1) = 4
+	nop(PUSH)
+	s(2) = s(1)
+	nop(DUP1)
+	s(2) = calldataload
+	nop(CALLDATALOAD)
+	s(3) = s(1)
+	s(1) = s(2)
+	s(2) = s(3)
+	nop(SWAP1)
+	s(3) = 36
+	nop(PUSH)
+	s(4) = s(3)
+	nop(DUP1)
+	s(4) = calldataload
+	nop(CALLDATALOAD)
+	s(5) = s(2)
+	s(2) = s(4)
+	s(4) = s(5)
+	nop(SWAP2)
+	s(5) = 68
+	nop(PUSH)
+	s(5) = calldataload
+	nop(CALLDATALOAD)
+	s(6) = s(3)
+	s(3) = s(5)
+	s(5) = s(6)
+	nop(SWAP2)
+	s(6) = s(3)
+	nop(DUP3)
+	s(5) = s(6)+s(5)
+	nop(ADD)
+	s(6) = s(3)
+	s(3) = s(5)
+	s(5) = s(6)
+	nop(SWAP2)
+	s(4) = s(5)+s(4)
+	nop(ADD)
+	s(4) = calldataload
+	nop(CALLDATALOAD)
+	s(5) = 0
+	nop(PUSH)
+	s(6) = 2
+	nop(PUSH)
+	s(7) = 0
+	nop(PUSH)
+	nop(POP)
+	s(7) = 0
+	nop(PUSH)
+	s(8) = s(1)
+	nop(DUP7)
+	s(9) = s(2)
+	nop(DUP7)
+	s(10) = s(3)
+	nop(DUP7)
+	s(11) = s(4)
+	nop(DUP7)
+	s(12) = 64
+	nop(PUSH)
+	s(12) = mload(s(12))
+	nop(MLOAD)
+	s(13) = s(12)
+	nop(DUP1)
+	s(14) = s(8)
+	nop(DUP6)
+	s(15) = 1
+	nop(PUSH)
+	s(16) = 160
+	nop(PUSH)
+	s(17) = 2
+	nop(PUSH)
+	s(16) = s(17)^s(16)
+	nop(EXP)
+	s(15) = s(16)-s(15)
+	nop(SUB)
+	s(14) = and(s(15), s(14))
+	nop(AND)
+	s(15) = 96
+	nop(PUSH)
+	s(16) = 2
+	nop(PUSH)
+	s(15) = s(16)^s(15)
+	nop(EXP)
+	s(14) = s(15)*s(14)
+	nop(MUL)
+	s(15) = s(13)
+	nop(DUP2)
+

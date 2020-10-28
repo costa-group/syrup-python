@@ -1,0 +1,11 @@
+block0(s(0))=>
+	nop(POP)
+	s(0) = 10
+	nop(PUSH)
+	s(1) = 4
+	nop(PUSH)
+	s(1) = sload(s(1))
+	nop(SLOAD)
+	s(0)= eq(s(1), s(0))
+	nop(EQ)
+

@@ -1,0 +1,14 @@
+block0(s(11), s(10), s(9), s(8), s(7), s(6), s(5), s(4), s(3), s(2), s(1), s(0))=>
+	s(12) = s(2)
+	nop(DUP10)
+	s(13) = s(0)
+	nop(DUP13)
+	s(12) = sha3(s(13), s(12))
+	nop(SHA3)
+	s(12) = sload(s(12))
+	nop(SLOAD)
+	s(13) = 3
+	nop(PUSH)
+	s(14) = s(0)
+	nop(DUP14)
+

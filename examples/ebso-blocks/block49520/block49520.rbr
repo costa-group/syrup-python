@@ -1,0 +1,60 @@
+block0()=>
+	s(0) = 4689
+	nop(PUSH)
+	s(1) = 4
+	nop(PUSH)
+	s(1) = calldataload
+	nop(CALLDATALOAD)
+	s(2) = 36
+	nop(PUSH)
+	s(2) = calldataload
+	nop(CALLDATALOAD)
+	s(3) = 68
+	nop(PUSH)
+	s(3) = calldataload
+	nop(CALLDATALOAD)
+	s(4) = 100
+	nop(PUSH)
+	s(4) = calldataload
+	nop(CALLDATALOAD)
+	s(5) = 132
+	nop(PUSH)
+	s(5) = calldataload
+	nop(CALLDATALOAD)
+	s(6) = 164
+	nop(PUSH)
+	s(6) = calldataload
+	nop(CALLDATALOAD)
+	s(7) = 196
+	nop(PUSH)
+	s(7) = calldataload
+	nop(CALLDATALOAD)
+	s(8) = 228
+	nop(PUSH)
+	s(8) = calldataload
+	nop(CALLDATALOAD)
+	s(9) = 260
+	nop(PUSH)
+	s(9) = calldataload
+	nop(CALLDATALOAD)
+	s(10) = 292
+	nop(PUSH)
+	s(10) = calldataload
+	nop(CALLDATALOAD)
+	s(11) = 324
+	nop(PUSH)
+	s(11) = calldataload
+	nop(CALLDATALOAD)
+	s(12) = 0
+	nop(PUSH)
+	s(13) = 0
+	nop(PUSH)
+	s(14) = callvalue
+	nop(CALLVALUE)
+	s(13) = gt(s(14), s(13))
+	nop(GT)
+	s(13)= eq(s(13), 0)
+	nop(ISZERO)
+	s(14) = 6573
+	nop(PUSH)
+

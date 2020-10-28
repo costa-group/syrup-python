@@ -1,0 +1,23 @@
+block0(s(2), s(1), s(0))=>
+	s(3) = 100000
+	nop(PUSH)
+	s(4) = s(0)
+	nop(DUP4)
+	s(3) = s(4)/s(3)
+	nop(DIV)
+	s(4) = s(1)
+	s(1) = s(3)
+	s(3) = s(4)
+	nop(SWAP2)
+	nop(POP)
+	s(3) = 255
+	nop(PUSH)
+	s(4) = s(1)
+	nop(DUP3)
+	s(3) = gt(s(4), s(3))
+	nop(GT)
+	s(3)= eq(s(3), 0)
+	nop(ISZERO)
+	s(4) = 392
+	nop(PUSH)
+

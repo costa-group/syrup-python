@@ -1,0 +1,16 @@
+block0(s(5), s(4), s(3), s(2), s(1), s(0))=>
+	s(6) = s(2)
+	s(2) = s(5)
+	s(5) = s(6)
+	nop(SWAP3)
+	s(6) = s(2)
+	nop(DUP4)
+	s(5) = and(s(6), s(5))
+	nop(AND)
+	s(6) = 192
+	nop(PUSH)
+	s(7) = s(0)
+	nop(DUP7)
+	s(6) = s(7)+s(6)
+	nop(ADD)
+

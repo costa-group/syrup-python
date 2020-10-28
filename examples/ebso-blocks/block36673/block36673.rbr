@@ -1,0 +1,26 @@
+block0(s(7), s(6), s(5), s(4), s(3), s(2), s(1), s(0))=>
+	s(8) = 11
+	nop(PUSH)
+	s(9) = s(7)
+	nop(DUP2)
+	s(10) = s(8)
+	s(8) = s(9)
+	s(9) = s(10)
+	nop(SWAP1)
+	sstore(s(9),s(8))
+	nop(SSTORE)
+	s(8) = 18446744073709551616
+	nop(PUSH)
+	s(9) = s(0)
+	nop(DUP9)
+	s(8) = s(9)*s(8)
+	nop(MUL)
+	s(9) = s(7)
+	nop(DUP2)
+	s(9)= eq(s(9), 0)
+	nop(ISZERO)
+	s(9)= eq(s(9), 0)
+	nop(ISZERO)
+	s(10) = 2134
+	nop(PUSH)
+

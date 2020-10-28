@@ -1,0 +1,30 @@
+block0(s(0))=>
+	s(1) = 6329
+	nop(PUSH)
+	s(2) = 5688
+	nop(PUSH)
+	s(3) = gas
+	nop(GAS)
+	s(2) = s(3)-s(2)
+	nop(SUB)
+	s(1) = s(2)/s(1)
+	nop(DIV)
+	s(2) = 0
+	nop(PUSH)
+	s(3) = s(1)
+	nop(DUP2)
+	s(2) = gt(s(3), s(2))
+	nop(GT)
+	s(3) = 0
+	nop(PUSH)
+	s(4) = s(0)
+	nop(DUP4)
+	s(3) = gt(s(4), s(3))
+	nop(GT)
+	s(2) = and(s(3), s(2))
+	nop(AND)
+	s(2)= eq(s(2), 0)
+	nop(ISZERO)
+	s(3) = 2831
+	nop(PUSH)
+

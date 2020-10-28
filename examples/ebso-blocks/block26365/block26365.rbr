@@ -1,0 +1,30 @@
+block0(s(1), s(0))=>
+	s(2) = gas
+	nop(GAS)
+	s(3) = 64
+	nop(PUSH)
+	s(4) = s(3)
+	nop(DUP1)
+	s(4) = mload(s(4))
+	nop(MLOAD)
+	s(5) = s(2)
+	s(2) = s(4)
+	s(4) = s(5)
+	nop(SWAP2)
+	s(5) = s(0)
+	nop(DUP5)
+	s(4) = s(5)-s(4)
+	nop(SUB)
+	s(5) = 29540
+	nop(PUSH)
+	s(4) = s(5)+s(4)
+	nop(ADD)
+	s(5) = gasprice
+	nop(GASPRICE)
+	s(4) = s(5)*s(4)
+	nop(MUL)
+	s(5) = s(4)
+	nop(DUP1)
+	s(6) = s(2)
+	nop(DUP4)
+

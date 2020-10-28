@@ -1,0 +1,16 @@
+block0()=>
+	s(0) = 18
+	nop(PUSH)
+	s(1) = 255
+	nop(PUSH)
+	s(0) = and(s(1), s(0))
+	nop(AND)
+	s(1) = 10
+	nop(PUSH)
+	s(0) = s(1)^s(0)
+	nop(EXP)
+	s(1) = 540000000
+	nop(PUSH)
+	s(0) = s(1)*s(0)
+	nop(MUL)
+

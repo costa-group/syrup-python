@@ -1,0 +1,18 @@
+block0()=>
+	s(0) = 633
+	nop(PUSH)
+	s(1) = 1000000000000000000
+	nop(PUSH)
+	s(2) = 621
+	nop(PUSH)
+	s(3) = callvalue
+	nop(CALLVALUE)
+	s(4) = 92500
+	nop(PUSH)
+	s(5) = 4294967295
+	nop(PUSH)
+	s(6) = 1631
+	nop(PUSH)
+	s(5) = and(s(6), s(5))
+	nop(AND)
+

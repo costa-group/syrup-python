@@ -1,0 +1,16 @@
+block0()=>
+	s(0) = 32
+	nop(PUSH)
+	s(1) = 96
+	nop(PUSH)
+	s(2) = 100
+	nop(PUSH)
+	s(3) = 28
+	nop(PUSH)
+	s(4) = 320980324627778135914095995573976357064368021662
+	nop(PUSH)
+	s(5) = 0
+	nop(PUSH)
+	s(5) = not(s(5))
+	nop(NOT)
+

@@ -1,0 +1,10 @@
+block0(s(0))=>
+	s(0)= eq(s(0), 0)
+	nop(ISZERO)
+	s(0)= eq(s(0), 0)
+	nop(ISZERO)
+	s(0)= eq(s(0), 0)
+	nop(ISZERO)
+	s(1) = 4566
+	nop(PUSH)
+

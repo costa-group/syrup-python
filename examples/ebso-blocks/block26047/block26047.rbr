@@ -1,0 +1,25 @@
+block0(s(12), s(11), s(10), s(9), s(8), s(7), s(6), s(5), s(4), s(3), s(2), s(1), s(0))=>
+	s(13) = s(5)
+	s(5) = s(12)
+	s(12) = s(13)
+	nop(SWAP7)
+	nop(POP)
+	s(12) = 25
+	nop(PUSH)
+	s(13) = s(4)
+	nop(DUP9)
+	s(14) = s(0)
+	nop(DUP14)
+	s(15) = 0
+	nop(PUSH)
+	s(14) = s(15)+s(14)
+	nop(ADD)
+	s(14) = mload(s(14))
+	nop(MLOAD)
+	s(13) = s(14)+s(13)
+	nop(ADD)
+	s(12) = lt(s(13), s(12))
+	nop(LT)
+	s(13) = 16446
+	nop(PUSH)
+

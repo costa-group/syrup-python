@@ -1,0 +1,4 @@
+PUSH
+AND
+DUP2
+GT

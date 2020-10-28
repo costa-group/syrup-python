@@ -1,0 +1,36 @@
+block0()=>
+	s(0) = 0
+	nop(PUSH)
+	s(1) = s(0)
+	nop(DUP1)
+	s(2) = 0
+	nop(PUSH)
+	s(3) = 1
+	nop(PUSH)
+	s(4) = number
+	nop(NUMBER)
+	s(3) = s(4)-s(3)
+	nop(SUB)
+	s(3) = blockhash_0
+	nop(BLOCKHASH)
+	s(4) = 1
+	nop(PUSH)
+	s(5) = s(3)
+	s(3) = s(4)
+	s(4) = s(5)
+	nop(SWAP1)
+	s(3) = s(4)/s(3)
+	nop(DIV)
+	s(4) = s(1)
+	s(1) = s(3)
+	s(3) = s(4)
+	nop(SWAP2)
+	nop(POP)
+	s(3) = 0
+	nop(PUSH)
+	s(4) = s(2)
+	s(2) = s(3)
+	s(3) = s(4)
+	nop(SWAP1)
+	nop(POP)
+

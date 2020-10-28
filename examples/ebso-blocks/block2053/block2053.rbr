@@ -1,0 +1,10 @@
+block0(s(2), s(1), s(0))=>
+	s(1) = s(2)%s(1)
+	nop(MOD)
+	s(2) = 65535
+	nop(PUSH)
+	s(1) = and(s(2), s(1))
+	nop(AND)
+	s(2) = s(0)
+	nop(DUP2)
+

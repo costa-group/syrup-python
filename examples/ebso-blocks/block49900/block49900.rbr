@@ -1,0 +1,62 @@
+block0()=>
+	s(0) = timestamp
+	nop(TIMESTAMP)
+	s(1) = 1
+	nop(PUSH)
+	s(2) = s(0)
+	nop(DUP2)
+	s(3) = s(1)
+	s(1) = s(2)
+	s(2) = s(3)
+	nop(SWAP1)
+	sstore(s(2),s(1))
+	nop(SSTORE)
+	s(1) = 4579200
+	nop(PUSH)
+	s(2) = s(0)
+	nop(DUP2)
+	s(1) = s(2)+s(1)
+	nop(ADD)
+	s(2) = 6
+	nop(PUSH)
+	sstore(s(2),s(1))
+	nop(SSTORE)
+	s(1) = 5184000
+	nop(PUSH)
+	s(2) = s(0)
+	nop(DUP2)
+	s(1) = s(2)+s(1)
+	nop(ADD)
+	s(2) = 7
+	nop(PUSH)
+	sstore(s(2),s(1))
+	nop(SSTORE)
+	s(1) = 5788800
+	nop(PUSH)
+	s(2) = s(0)
+	nop(DUP2)
+	s(1) = s(2)+s(1)
+	nop(ADD)
+	s(2) = 8
+	nop(PUSH)
+	sstore(s(2),s(1))
+	nop(SSTORE)
+	s(1) = 6393600
+	nop(PUSH)
+	s(2) = s(0)
+	nop(DUP2)
+	s(1) = s(2)+s(1)
+	nop(ADD)
+	s(2) = 9
+	nop(PUSH)
+	sstore(s(2),s(1))
+	nop(SSTORE)
+	s(1) = 6998400
+	nop(PUSH)
+	s(0) = s(1)+s(0)
+	nop(ADD)
+	s(1) = 2
+	nop(PUSH)
+	sstore(s(1),s(0))
+	nop(SSTORE)
+

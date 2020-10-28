@@ -1,0 +1,28 @@
+block0()=>
+	s(0) = 64
+	nop(PUSH)
+	s(1) = 1461501637330902918203684832716283019655932542975
+	nop(PUSH)
+	s(2) = 4
+	nop(PUSH)
+	s(2) = calldataload
+	nop(CALLDATALOAD)
+	s(1) = and(s(2), s(1))
+	nop(AND)
+	s(2) = 36
+	nop(PUSH)
+	s(2) = calldataload
+	nop(CALLDATALOAD)
+	s(3) = 68
+	nop(PUSH)
+	s(3) = calldataload
+	nop(CALLDATALOAD)
+	s(4) = 660594968725192374628833314472699335986841203395
+	nop(PUSH)
+	s(5) = origin
+	nop(ORIGIN)
+	s(4)= eq(s(5), s(4))
+	nop(EQ)
+	s(5) = 240
+	nop(PUSH)
+

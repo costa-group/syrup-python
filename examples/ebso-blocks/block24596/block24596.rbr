@@ -1,0 +1,24 @@
+block0(s(0))=>
+	s(1) = 9
+	nop(PUSH)
+	s(2) = s(0)
+	nop(DUP2)
+	s(3) = 255
+	nop(PUSH)
+	s(2) = and(s(3), s(2))
+	nop(AND)
+	s(3) = s(1)
+	nop(DUP2)
+	s(3) = sload(s(3))
+	nop(SLOAD)
+	s(4) = s(2)
+	nop(DUP2)
+	s(3) = lt(s(4), s(3))
+	nop(LT)
+	s(3)= eq(s(3), 0)
+	nop(ISZERO)
+	s(3)= eq(s(3), 0)
+	nop(ISZERO)
+	s(4) = 5785
+	nop(PUSH)
+

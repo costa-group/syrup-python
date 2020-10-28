@@ -1,0 +1,26 @@
+block0(s(3), s(2), s(1), s(0))=>
+	s(4) = 4294967295
+	nop(PUSH)
+	s(5) = 1000
+	nop(PUSH)
+	s(6) = s(0)
+	nop(DUP6)
+	s(5) = s(6)+s(5)
+	nop(ADD)
+	s(6) = s(4)
+	nop(DUP2)
+	s(5) = and(s(6), s(5))
+	nop(AND)
+	s(6) = s(4)
+	s(4) = s(5)
+	s(5) = s(6)
+	nop(SWAP1)
+	s(6) = s(3)
+	nop(DUP3)
+	s(5) = and(s(6), s(5))
+	nop(AND)
+	s(4) = gt(s(5), s(4))
+	nop(GT)
+	s(5) = 8355
+	nop(PUSH)
+

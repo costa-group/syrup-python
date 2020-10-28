@@ -1,0 +1,38 @@
+block0(s(3), s(2), s(1), s(0))=>
+	s(4) = 64
+	nop(PUSH)
+	s(5) = s(3)
+	s(3) = s(4)
+	s(4) = s(5)
+	nop(SWAP1)
+	s(3) = sha3(s(4), s(3))
+	nop(SHA3)
+	s(4) = s(3)
+	nop(DUP1)
+	s(4) = sload(s(4))
+	nop(SLOAD)
+	s(5) = 340282366920938463444927863358058659840
+	nop(PUSH)
+	s(5) = not(s(5))
+	nop(NOT)
+	s(4) = and(s(5), s(4))
+	nop(AND)
+	s(5) = 18446744073709551616
+	nop(PUSH)
+	s(6) = 18446744073709551615
+	nop(PUSH)
+	s(7) = s(0)
+	nop(DUP7)
+	s(6) = and(s(7), s(6))
+	nop(AND)
+	s(5) = s(6)*s(5)
+	nop(MUL)
+	s(4) = or(s(5), s(4))
+	nop(OR)
+	s(5) = s(3)
+	s(3) = s(4)
+	s(4) = s(5)
+	nop(SWAP1)
+	sstore(s(4),s(3))
+	nop(SSTORE)
+

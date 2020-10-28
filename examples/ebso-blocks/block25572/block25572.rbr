@@ -1,0 +1,24 @@
+block0(s(1), s(0))=>
+	s(2) = 64
+	nop(PUSH)
+	s(3) = s(1)
+	s(1) = s(2)
+	s(2) = s(3)
+	nop(SWAP1)
+	s(1) = sha3(s(2), s(1))
+	nop(SHA3)
+	s(2) = 12
+	nop(PUSH)
+	s(1) = s(2)+s(1)
+	nop(ADD)
+	s(2) = s(0)
+	nop(DUP2)
+	s(3) = 10
+	nop(PUSH)
+	s(4) = s(2)
+	nop(DUP2)
+	s(3) = lt(s(4), s(3))
+	nop(LT)
+	s(4) = 6654
+	nop(PUSH)
+

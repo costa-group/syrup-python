@@ -1,0 +1,18 @@
+block0()=>
+	s(0) = 320
+	nop(PUSH)
+	s(0) = mload(s(0))
+	nop(MLOAD)
+	s(1) = 1125899906842626
+	nop(PUSH)
+	sstore(s(1),s(0))
+	nop(SSTORE)
+	s(0) = 3040
+	nop(PUSH)
+	s(0) = mload(s(0))
+	nop(MLOAD)
+	s(1) = 1125899906842627
+	nop(PUSH)
+	sstore(s(1),s(0))
+	nop(SSTORE)
+

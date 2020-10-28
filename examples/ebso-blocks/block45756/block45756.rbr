@@ -1,0 +1,40 @@
+block0()=>
+	s(0) = 1226
+	nop(PUSH)
+	s(1) = 10
+	nop(PUSH)
+	s(1) = sload(s(1))
+	nop(SLOAD)
+	s(2) = 1214
+	nop(PUSH)
+	s(3) = 100000
+	nop(PUSH)
+	s(4) = 1099
+	nop(PUSH)
+	s(5) = 9
+	nop(PUSH)
+	s(5) = sload(s(5))
+	nop(SLOAD)
+	s(6) = 8
+	nop(PUSH)
+	s(6) = sload(s(6))
+	nop(SLOAD)
+	s(7) = 3951
+	nop(PUSH)
+	s(8) = s(6)
+	s(6) = s(7)
+	s(7) = s(8)
+	nop(SWAP1)
+	s(8) = s(5)
+	s(5) = s(7)
+	s(7) = s(8)
+	nop(SWAP2)
+	s(8) = s(6)
+	s(6) = s(7)
+	s(7) = s(8)
+	nop(SWAP1)
+	s(8) = 4294967295
+	nop(PUSH)
+	s(7) = and(s(8), s(7))
+	nop(AND)
+

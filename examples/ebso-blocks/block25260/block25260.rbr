@@ -1,0 +1,18 @@
+block0()=>
+	s(0) = 0
+	nop(PUSH)
+	s(1) = s(0)
+	nop(DUP1)
+	s(2) = s(1)
+	nop(DUP1)
+	s(3) = 50000000000
+	nop(PUSH)
+	s(4) = gasprice
+	nop(GASPRICE)
+	s(3) = gt(s(4), s(3))
+	nop(GT)
+	s(3)= eq(s(3), 0)
+	nop(ISZERO)
+	s(4) = 1123
+	nop(PUSH)
+

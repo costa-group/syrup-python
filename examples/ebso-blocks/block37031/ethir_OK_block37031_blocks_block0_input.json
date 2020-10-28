@@ -1,0 +1,1 @@
+{"max_progr_len": 11, "src_ws": ["s(0)", "s(1)"], "vars": ["s(0)", "s(1)"], "init_progr_len": 9, "max_sk_sz": 9, "current_cost": 33, "user_instrs": [], "tgt_ws": [8116, 1, "s(1)", 2552, 10, 2566, "s(0)", "s(1)"]}

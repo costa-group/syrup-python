@@ -1,0 +1,4 @@
+PUSH
+DUP8
+LT
+PUSH

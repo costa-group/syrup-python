@@ -1,0 +1,4 @@
+MLOAD
+PUSH
+DUP4
+ADD

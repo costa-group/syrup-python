@@ -1,0 +1,12 @@
+block0(s(3), s(2), s(1), s(0))=>
+	s(3)= eq(s(3), 0)
+	nop(ISZERO)
+	s(3)= eq(s(3), 0)
+	nop(ISZERO)
+	s(4) = 320
+	nop(PUSH)
+	s(5) = s(0)
+	nop(DUP5)
+	s(4) = s(5)+s(4)
+	nop(ADD)
+

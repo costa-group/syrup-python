@@ -1,0 +1,12 @@
+block0(s(1), s(0))=>
+	s(2) = 100000000000000000000
+	nop(PUSH)
+	s(3) = s(0)
+	nop(DUP3)
+	s(2) = lt(s(3), s(2))
+	nop(LT)
+	s(2)= eq(s(2), 0)
+	nop(ISZERO)
+	s(3) = 8548
+	nop(PUSH)
+

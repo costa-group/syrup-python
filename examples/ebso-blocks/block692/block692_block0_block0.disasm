@@ -1,0 +1,4 @@
+ADD
+SLOAD
+EQ
+ISZERO

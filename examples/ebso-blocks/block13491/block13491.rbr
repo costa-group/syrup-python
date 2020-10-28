@@ -1,0 +1,16 @@
+block0(s(3), s(2), s(1), s(0))=>
+	s(4) = 18
+	nop(PUSH)
+	s(5) = s(1)
+	nop(DUP4)
+	s(6) = s(0)
+	nop(DUP6)
+	s(5) = s(6)-s(5)
+	nop(SUB)
+	s(4) = gt(s(5), s(4))
+	nop(GT)
+	s(4)= eq(s(4), 0)
+	nop(ISZERO)
+	s(5) = 11652
+	nop(PUSH)
+

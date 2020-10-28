@@ -1,0 +1,20 @@
+block0()=>
+	s(0) = 4
+	nop(PUSH)
+	s(0) = sload(s(0))
+	nop(SLOAD)
+	s(1) = 309485009821345068724781056
+	nop(PUSH)
+	s(2) = s(0)
+	s(0) = s(1)
+	s(1) = s(2)
+	nop(SWAP1)
+	s(0) = s(1)/s(0)
+	nop(DIV)
+	s(1) = 255
+	nop(PUSH)
+	s(0) = and(s(1), s(0))
+	nop(AND)
+	s(1) = 6888
+	nop(PUSH)
+

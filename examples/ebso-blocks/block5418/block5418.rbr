@@ -1,0 +1,18 @@
+block0(s(2), s(1), s(0))=>
+	s(3) = 13
+	nop(PUSH)
+	s(3) = sload(s(3))
+	nop(SLOAD)
+	s(4) = s(2)
+	s(2) = s(3)
+	s(3) = s(4)
+	nop(SWAP1)
+	s(4) = s(0)
+	s(0) = s(3)
+	s(3) = s(4)
+	nop(SWAP3)
+	s(2) = and(s(3), s(2))
+	nop(AND)
+	s(3) = s(0)
+	nop(DUP3)
+

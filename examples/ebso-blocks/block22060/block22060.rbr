@@ -1,0 +1,20 @@
+block0()=>
+	s(0) = 0
+	nop(PUSH)
+	s(1) = s(0)
+	nop(DUP1)
+	s(2) = 0
+	nop(PUSH)
+	s(3) = 9
+	nop(PUSH)
+	s(3) = sload(s(3))
+	nop(SLOAD)
+	s(4) = timestamp
+	nop(TIMESTAMP)
+	s(3) = gt(s(4), s(3))
+	nop(GT)
+	s(4) = s(3)
+	nop(DUP1)
+	s(5) = 2513
+	nop(PUSH)
+

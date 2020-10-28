@@ -1,0 +1,29 @@
+block0(s(8), s(7), s(6), s(5), s(4), s(3), s(2), s(1), s(0))=>
+	nop(POP)
+	s(8) = s(4)
+	s(4) = s(7)
+	s(7) = s(8)
+	nop(SWAP3)
+	nop(POP)
+	s(7) = 0
+	nop(PUSH)
+	s(8) = s(5)
+	s(5) = s(7)
+	s(7) = s(8)
+	nop(SWAP2)
+	nop(POP)
+	s(7) = s(0)
+	nop(DUP7)
+	s(8) = 1461501637330902918203684832716283019655932542975
+	nop(PUSH)
+	s(7) = and(s(8), s(7))
+	nop(AND)
+	s(8) = 0
+	nop(PUSH)
+	s(7)= eq(s(8), s(7))
+	nop(EQ)
+	s(8) = s(7)
+	nop(DUP1)
+	s(9) = 4184
+	nop(PUSH)
+

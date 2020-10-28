@@ -1,0 +1,4 @@
+POP
+SLOAD
+EQ
+ISZERO

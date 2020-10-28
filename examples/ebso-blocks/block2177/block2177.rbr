@@ -1,0 +1,11 @@
+block0(s(1), s(0))=>
+	nop(POP)
+	s(1) = 3
+	nop(PUSH)
+	s(2) = s(0)
+	nop(DUP2)
+	s(1) = lt(s(2), s(1))
+	nop(LT)
+	s(1)= eq(s(1), 0)
+	nop(ISZERO)
+

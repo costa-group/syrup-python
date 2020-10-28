@@ -1,0 +1,13 @@
+block0(s(0))=>
+	nop(POP)
+	s(0) = 250000000000000000000
+	nop(PUSH)
+	s(1) = 15
+	nop(PUSH)
+	s(1) = sload(s(1))
+	nop(SLOAD)
+	s(0) = gt(s(1), s(0))
+	nop(GT)
+	s(0)= eq(s(0), 0)
+	nop(ISZERO)
+

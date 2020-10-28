@@ -1,0 +1,32 @@
+block0()=>
+	s(0) = 0
+	nop(PUSH)
+	s(1) = 0
+	nop(PUSH)
+	s(2) = 0
+	nop(PUSH)
+	s(3) = 0
+	nop(PUSH)
+	s(4) = 17
+	nop(PUSH)
+	s(5) = 0
+	nop(PUSH)
+	nop(POP)
+	s(4) = sload(s(4))
+	nop(SLOAD)
+	s(5) = gas
+	nop(GAS)
+	s(4) = s(5)+s(4)
+	nop(ADD)
+	s(5) = s(2)
+	s(2) = s(4)
+	s(4) = s(5)
+	nop(SWAP2)
+	nop(POP)
+	s(4) = 9291
+	nop(PUSH)
+	s(5) = 0
+	nop(PUSH)
+	s(6) = 3320
+	nop(PUSH)
+

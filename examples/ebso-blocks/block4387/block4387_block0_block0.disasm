@@ -1,0 +1,5 @@
+POP
+MLOAD
+EQ
+DUP1
+PUSH

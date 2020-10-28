@@ -1,0 +1,14 @@
+block0(s(0))=>
+	s(1) = 1802
+	nop(PUSH)
+	s(2) = s(0)
+	nop(DUP2)
+	s(3) = address
+	nop(ADDRESS)
+	s(4) = 0
+	nop(PUSH)
+	s(4) = sload(s(4))
+	nop(SLOAD)
+	s(5) = 4274
+	nop(PUSH)
+

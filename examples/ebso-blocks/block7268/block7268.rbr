@@ -1,0 +1,13 @@
+block0(s(0))=>
+	nop(POP)
+	s(0) = 2
+	nop(PUSH)
+	s(1) = calldatasize
+	nop(CALLDATASIZE)
+	s(0)= eq(s(1), s(0))
+	nop(EQ)
+	s(0)= eq(s(0), 0)
+	nop(ISZERO)
+	s(1) = 214
+	nop(PUSH)
+

@@ -1,0 +1,10 @@
+block0(s(1), s(0))=>
+	s(2) = callvalue
+	nop(CALLVALUE)
+	s(3) = 96
+	nop(PUSH)
+	s(4) = s(0)
+	nop(DUP4)
+	s(3) = s(4)+s(3)
+	nop(ADD)
+

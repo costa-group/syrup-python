@@ -1,0 +1,6 @@
+POP
+DUP8
+PUSH
+AND
+PUSH
+EQ

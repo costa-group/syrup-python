@@ -1,0 +1,14 @@
+block0()=>
+	s(0) = 4432
+	nop(PUSH)
+	s(1) = address
+	nop(ADDRESS)
+	s(2) = 496688220251347682977579053270624358444394543079
+	nop(PUSH)
+	s(3) = 1816080032385000
+	nop(PUSH)
+	s(4) = 0
+	nop(PUSH)
+	s(5) = 2769
+	nop(PUSH)
+

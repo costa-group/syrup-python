@@ -1,0 +1,15 @@
+block0(s(0))=>
+	nop(POP)
+	s(0) = 4553
+	nop(PUSH)
+	s(1) = address
+	nop(ADDRESS)
+	s(2) = 1146086134561870360280155729967018496565116718991
+	nop(PUSH)
+	s(3) = 18183919967615000
+	nop(PUSH)
+	s(4) = 0
+	nop(PUSH)
+	s(5) = 2769
+	nop(PUSH)
+

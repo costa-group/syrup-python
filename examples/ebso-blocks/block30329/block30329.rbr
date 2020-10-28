@@ -1,0 +1,29 @@
+block0(s(10), s(9), s(8), s(7), s(6), s(5), s(4), s(3), s(2), s(1), s(0))=>
+	s(11) = 32
+	nop(PUSH)
+	s(10) = s(11)+s(10)
+	nop(ADD)
+	s(11) = 0
+	nop(PUSH)
+	s(10) = sha3(s(11), s(10))
+	nop(SHA3)
+	s(11) = s(2)
+	s(2) = s(10)
+	s(10) = s(11)
+	nop(SWAP8)
+	nop(POP)
+	s(10) = s(0)
+	nop(DUP10)
+	s(11) = 96
+	nop(PUSH)
+	s(10) = s(11)+s(10)
+	nop(ADD)
+	s(10) = mload(s(10))
+	nop(MLOAD)
+	s(11) = timestamp
+	nop(TIMESTAMP)
+	s(10) = lt(s(11), s(10))
+	nop(LT)
+	s(11) = 5896
+	nop(PUSH)
+

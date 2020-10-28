@@ -1,0 +1,24 @@
+block0(s(1), s(0))=>
+	s(0) = s(1)/s(0)
+	nop(DIV)
+	s(1) = 1
+	nop(PUSH)
+	s(2) = 160
+	nop(PUSH)
+	s(3) = 2
+	nop(PUSH)
+	s(2) = s(3)^s(2)
+	nop(EXP)
+	s(1) = s(2)-s(1)
+	nop(SUB)
+	s(2) = address
+	nop(ADDRESS)
+	s(1) = and(s(2), s(1))
+	nop(AND)
+	s(1) = balance
+	nop(BALANCE)
+	s(0) = gt(s(1), s(0))
+	nop(GT)
+	s(1) = 2232
+	nop(PUSH)
+

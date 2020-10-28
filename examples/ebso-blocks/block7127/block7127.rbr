@@ -1,0 +1,12 @@
+block0(s(0))=>
+	s(0)= eq(s(0), 0)
+	nop(ISZERO)
+	s(0)= eq(s(0), 0)
+	nop(ISZERO)
+	s(1) = 1
+	nop(PUSH)
+	s(0)= eq(s(1), s(0))
+	nop(EQ)
+	s(1) = 1789
+	nop(PUSH)
+

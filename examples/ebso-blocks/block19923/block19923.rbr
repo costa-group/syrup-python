@@ -1,0 +1,22 @@
+block0(s(8), s(7), s(6), s(5), s(4), s(3), s(2), s(1), s(0))=>
+	nop(POP)
+	s(8) = s(0)
+	s(0) = s(7)
+	s(7) = s(8)
+	nop(SWAP7)
+	nop(POP)
+	s(7) = s(4)
+	nop(DUP3)
+	s(8) = 64
+	nop(PUSH)
+	s(8) = mload(s(8))
+	nop(MLOAD)
+	s(9) = s(8)
+	nop(DUP1)
+	s(10) = msize
+	nop(MSIZE)
+	s(9) = lt(s(10), s(9))
+	nop(LT)
+	s(10) = 7782
+	nop(PUSH)
+

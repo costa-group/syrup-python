@@ -1,0 +1,5 @@
+POP
+DUP2
+PUSH
+SLOAD
+GT

@@ -1,0 +1,21 @@
+block0(s(1), s(0))=>
+	s(2) = 2
+	nop(PUSH)
+	s(3) = 65535
+	nop(PUSH)
+	s(4) = 3
+	nop(PUSH)
+	s(5) = s(0)
+	nop(DUP5)
+	s(4) = s(5)*s(4)
+	nop(MUL)
+	s(3) = and(s(4), s(3))
+	nop(AND)
+	s(2) = s(3)/s(2)
+	nop(DIV)
+	s(3) = s(0)
+	s(0) = s(2)
+	s(2) = s(3)
+	nop(SWAP2)
+	nop(POP)
+

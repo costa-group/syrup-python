@@ -1,0 +1,34 @@
+block0(s(1), s(0))=>
+	s(2) = 0
+	nop(PUSH)
+	s(3) = 5
+	nop(PUSH)
+	s(4) = s(0)
+	nop(DUP4)
+	s(5) = coinbase
+	nop(COINBASE)
+	s(6) = timestamp
+	nop(TIMESTAMP)
+	s(7) = 64
+	nop(PUSH)
+	s(7) = mload(s(7))
+	nop(MLOAD)
+	s(8) = s(7)
+	nop(DUP1)
+	s(9) = s(4)
+	nop(DUP5)
+	s(10) = 255
+	nop(PUSH)
+	s(9) = and(s(10), s(9))
+	nop(AND)
+	s(10) = 255
+	nop(PUSH)
+	s(9) = and(s(10), s(9))
+	nop(AND)
+	s(10) = 452312848583266388373324160190187140051835877600158453279131187530910662656
+	nop(PUSH)
+	s(9) = s(10)*s(9)
+	nop(MUL)
+	s(10) = s(8)
+	nop(DUP2)
+

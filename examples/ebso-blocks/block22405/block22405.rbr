@@ -1,0 +1,18 @@
+block0()=>
+	s(0) = 9
+	nop(PUSH)
+	s(0) = sload(s(0))
+	nop(SLOAD)
+	s(1) = 168000
+	nop(PUSH)
+	s(0) = s(1)+s(0)
+	nop(ADD)
+	s(1) = number
+	nop(NUMBER)
+	s(0) = gt(s(1), s(0))
+	nop(GT)
+	s(0)= eq(s(0), 0)
+	nop(ISZERO)
+	s(1) = 5882
+	nop(PUSH)
+

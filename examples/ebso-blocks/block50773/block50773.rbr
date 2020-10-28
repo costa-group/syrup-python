@@ -1,0 +1,46 @@
+block0()=>
+	s(0) = 0
+	nop(PUSH)
+	s(0) = mload(s(0))
+	nop(MLOAD)
+	s(1) = 15
+	nop(PUSH)
+	s(2) = s(0)
+	nop(DUP2)
+	s(1) = and(s(2), s(1))
+	nop(AND)
+	s(2) = 240
+	nop(PUSH)
+	s(3) = s(0)
+	nop(DUP3)
+	s(2) = and(s(3), s(2))
+	nop(AND)
+	s(3) = 1461501637330902918203684832716283019655932542975
+	nop(PUSH)
+	s(4) = 20
+	nop(PUSH)
+	s(4) = mload(s(4))
+	nop(MLOAD)
+	s(3) = and(s(4), s(3))
+	nop(AND)
+	s(4) = 52
+	nop(PUSH)
+	s(5) = 28
+	nop(PUSH)
+	s(6) = calldatasize
+	nop(CALLDATASIZE)
+	s(5) = s(6)-s(5)
+	nop(SUB)
+	s(6) = 0
+	nop(PUSH)
+	s(7) = s(1)
+	nop(DUP6)
+	s(8) = 0
+	nop(PUSH)
+	s(9) = s(7)
+	nop(DUP2)
+	s(8)= eq(s(9), s(8))
+	nop(EQ)
+	s(9) = 294
+	nop(PUSH)
+

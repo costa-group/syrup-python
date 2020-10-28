@@ -1,0 +1,4 @@
+PUSH1
+DUP14
+GT
+DUP1

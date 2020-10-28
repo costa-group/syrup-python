@@ -1,0 +1,21 @@
+block0(s(8), s(7), s(6), s(5), s(4), s(3), s(2), s(1), s(0))=>
+	s(9) = s(6)
+	s(6) = s(8)
+	s(8) = s(9)
+	nop(SWAP2)
+	nop(POP)
+	s(8) = address
+	nop(ADDRESS)
+	s(9) = s(0)
+	nop(DUP9)
+	s(10) = s(1)
+	nop(DUP9)
+	s(11) = s(6)
+	nop(DUP5)
+	s(12) = s(4)
+	nop(DUP8)
+	s(13) = 3266
+	nop(PUSH)
+	s(14) = 7574
+	nop(PUSH)
+

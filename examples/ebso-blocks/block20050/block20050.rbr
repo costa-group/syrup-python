@@ -1,0 +1,17 @@
+block0()=>
+	s(0) = 0
+	nop(PUSH)
+	s(1) = 86400
+	nop(PUSH)
+	s(2) = timestamp
+	nop(TIMESTAMP)
+	s(1) = s(2)/s(1)
+	nop(DIV)
+	s(2) = s(0)
+	s(0) = s(1)
+	s(1) = s(2)
+	nop(SWAP1)
+	nop(POP)
+	s(1) = 6543
+	nop(PUSH)
+

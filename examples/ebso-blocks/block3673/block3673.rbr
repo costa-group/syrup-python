@@ -1,0 +1,8 @@
+block0(s(0))=>
+	s(1) = 10
+	nop(PUSH)
+	sstore(s(1),s(0))
+	nop(SSTORE)
+	s(0) = 3905
+	nop(PUSH)
+

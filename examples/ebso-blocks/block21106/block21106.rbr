@@ -1,0 +1,14 @@
+block0()=>
+	s(0) = 5838
+	nop(PUSH)
+	s(1) = 5828
+	nop(PUSH)
+	s(2) = timestamp
+	nop(TIMESTAMP)
+	s(3) = 4
+	nop(PUSH)
+	s(3) = sload(s(3))
+	nop(SLOAD)
+	s(4) = 13462
+	nop(PUSH)
+

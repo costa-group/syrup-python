@@ -1,0 +1,26 @@
+block0(s(6), s(5), s(4), s(3), s(2), s(1), s(0))=>
+	s(7) = 32
+	nop(PUSH)
+	s(6) = s(7)*s(6)
+	nop(MUL)
+	s(5) = s(6)+s(5)
+	nop(ADD)
+	s(5) = mload(s(5))
+	nop(MLOAD)
+	s(6) = s(0)
+	nop(DUP6)
+	s(7) = 0
+	nop(PUSH)
+	s(8) = 5
+	nop(PUSH)
+	s(9) = s(7)
+	nop(DUP2)
+	s(8) = lt(s(9), s(8))
+	nop(LT)
+	s(8)= eq(s(8), 0)
+	nop(ISZERO)
+	s(8)= eq(s(8), 0)
+	nop(ISZERO)
+	s(9) = 11624
+	nop(PUSH)
+

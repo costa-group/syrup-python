@@ -1,0 +1,38 @@
+block0(s(1), s(0))=>
+	s(2) = 5408
+	nop(PUSH)
+	s(2) = mload(s(2))
+	nop(MLOAD)
+	s(3) = 32
+	nop(PUSH)
+	s(4) = 31
+	nop(PUSH)
+	s(5) = 32
+	nop(PUSH)
+	s(6) = s(2)
+	nop(DUP4)
+	s(5) = s(6)-s(5)
+	nop(SUB)
+	s(5) = mload(s(5))
+	nop(MLOAD)
+	s(4) = s(5)+s(4)
+	nop(ADD)
+	s(3) = s(4)/s(3)
+	nop(DIV)
+	s(4) = 32
+	nop(PUSH)
+	s(3) = s(4)*s(3)
+	nop(MUL)
+	s(4) = 32
+	nop(PUSH)
+	s(3) = s(4)+s(3)
+	nop(ADD)
+	s(4) = s(0)
+	nop(DUP4)
+	s(5) = 4
+	nop(PUSH)
+	s(6) = s(1)
+	nop(DUP5)
+	s(5) = s(6)+s(5)
+	nop(ADD)
+

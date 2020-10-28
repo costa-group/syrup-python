@@ -1,0 +1,10 @@
+block0(s(1), s(0))=>
+	s(2) = 3333
+	nop(PUSH)
+	s(3) = address
+	nop(ADDRESS)
+	s(4) = s(0)
+	nop(DUP4)
+	s(5) = 11994
+	nop(PUSH)
+

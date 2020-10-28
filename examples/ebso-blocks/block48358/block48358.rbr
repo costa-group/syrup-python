@@ -1,0 +1,67 @@
+block0(s(14), s(13), s(12), s(11), s(10), s(9), s(8), s(7), s(6), s(5), s(4), s(3), s(2), s(1), s(0))=>
+	s(15) = 32
+	nop(PUSH)
+	s(14) = s(15)+s(14)
+	nop(ADD)
+	s(15) = 0
+	nop(PUSH)
+	s(14) = sha3(s(15), s(14))
+	nop(SHA3)
+	s(15) = 6
+	nop(PUSH)
+	s(14) = s(15)+s(14)
+	nop(ADD)
+	s(15) = s(13)
+	nop(DUP2)
+	s(16) = s(14)
+	s(14) = s(15)
+	s(15) = s(16)
+	nop(SWAP1)
+	sstore(s(15),s(14))
+	nop(SSTORE)
+	nop(POP)
+	s(13) = 6455
+	nop(PUSH)
+	s(14) = s(0)
+	nop(DUP14)
+	s(15) = s(1)
+	nop(DUP14)
+	s(16) = s(2)
+	nop(DUP14)
+	s(17) = s(5)
+	nop(DUP12)
+	s(18) = s(6)
+	nop(DUP12)
+	s(19) = 4
+	nop(PUSH)
+	s(20) = 0
+	nop(PUSH)
+	s(21) = s(5)
+	nop(DUP16)
+	s(22) = 1
+	nop(PUSH)
+	s(23) = 160
+	nop(PUSH)
+	s(24) = 2
+	nop(PUSH)
+	s(23) = s(24)^s(23)
+	nop(EXP)
+	s(22) = s(23)-s(22)
+	nop(SUB)
+	s(21) = and(s(22), s(21))
+	nop(AND)
+	s(22) = 1
+	nop(PUSH)
+	s(23) = 160
+	nop(PUSH)
+	s(24) = 2
+	nop(PUSH)
+	s(23) = s(24)^s(23)
+	nop(EXP)
+	s(22) = s(23)-s(22)
+	nop(SUB)
+	s(21) = and(s(22), s(21))
+	nop(AND)
+	s(22) = s(20)
+	nop(DUP2)
+

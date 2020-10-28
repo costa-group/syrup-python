@@ -1,0 +1,20 @@
+block0(s(0))=>
+	s(1) = 0
+	nop(PUSH)
+	s(2) = s(1)
+	nop(DUP1)
+	s(3) = 127
+	nop(PUSH)
+	s(4) = s(0)
+	nop(DUP4)
+	s(3) = gt(s(4), s(3))
+	nop(GT)
+	s(4) = 1
+	nop(PUSH)
+	s(5) = s(3)
+	nop(DUP2)
+	s(4)= eq(s(5), s(4))
+	nop(EQ)
+	s(5) = 2483
+	nop(PUSH)
+

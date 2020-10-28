@@ -1,0 +1,44 @@
+block0(s(1), s(0))=>
+	s(2) = gas
+	nop(GAS)
+	s(3) = s(0)
+	nop(DUP3)
+	s(4) = 3
+	nop(PUSH)
+	s(3) = byte(s(3) , s(4))
+	nop(BYTE)
+	s(4) = 1048576
+	nop(PUSH)
+	s(3) = s(4)+s(3)
+	nop(ADD)
+	s(3) = sload(s(3))
+	nop(SLOAD)
+	s(4) = 9998958742994944
+	nop(PUSH)
+	s(5) = 1766847064778384329583297500742918515827483896875618958121606201292619776
+	nop(PUSH)
+	s(6) = 187
+	nop(PUSH)
+	s(6) = calldataload
+	nop(CALLDATALOAD)
+	s(5) = s(6)/s(5)
+	nop(DIV)
+	s(4) = s(5)*s(4)
+	nop(MUL)
+	s(5) = 119794950098349530814564022039136352446178628645
+	nop(PUSH)
+	s(6) = 20
+	nop(PUSH)
+	s(7) = s(0)
+	nop(DUP7)
+	s(8) = 4
+	nop(PUSH)
+	s(7) = byte(s(7) , s(8))
+	nop(BYTE)
+	s(6)= eq(s(7), s(6))
+	nop(EQ)
+	s(6)= eq(s(6), 0)
+	nop(ISZERO)
+	s(7) = 3383
+	nop(PUSH)
+

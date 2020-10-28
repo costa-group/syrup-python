@@ -1,0 +1,4 @@
+PUSH
+PUSH
+SLOAD
+EQ

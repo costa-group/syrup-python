@@ -1,0 +1,20 @@
+block0()=>
+	s(0) = 63072000
+	nop(PUSH)
+	s(1) = 6
+	nop(PUSH)
+	s(1) = sload(s(1))
+	nop(SLOAD)
+	s(2) = timestamp
+	nop(TIMESTAMP)
+	s(1) = s(2)-s(1)
+	nop(SUB)
+	s(0) = gt(s(1), s(0))
+	nop(GT)
+	s(0)= eq(s(0), 0)
+	nop(ISZERO)
+	s(0)= eq(s(0), 0)
+	nop(ISZERO)
+	s(1) = 3217
+	nop(PUSH)
+

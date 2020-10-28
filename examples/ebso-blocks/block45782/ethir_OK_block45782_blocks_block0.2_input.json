@@ -1,0 +1,1 @@
+{"max_progr_len": 8, "src_ws": [], "vars": ["s(3)"], "init_progr_len": 8, "max_sk_sz": 5, "current_cost": 22, "user_instrs": [{"outpt_sk": ["s(3)"], "commutative": false, "inpt_sk": [], "gas": 2, "disasm": "MSIZE", "opcode": "59", "id": "MSIZE_0"}], "tgt_ws": [0, "s(3)", 96]}

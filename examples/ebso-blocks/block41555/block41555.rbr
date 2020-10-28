@@ -1,0 +1,38 @@
+block0(s(4), s(3), s(2), s(1), s(0))=>
+	s(5) = 0
+	nop(PUSH)
+	s(6) = s(0)
+	nop(DUP6)
+	s(7) = s(5)
+	s(5) = s(6)
+	s(6) = s(7)
+	nop(SWAP1)
+	sstore(s(6),s(5))
+	nop(SSTORE)
+	s(5) = 10
+	nop(PUSH)
+	s(6) = s(2)
+	nop(DUP4)
+	s(7) = s(5)
+	s(5) = s(6)
+	s(6) = s(7)
+	nop(SWAP1)
+	sstore(s(6),s(5))
+	nop(SSTORE)
+	s(5) = 4980
+	nop(PUSH)
+	s(6) = 100
+	nop(PUSH)
+	s(7) = 4968
+	nop(PUSH)
+	s(8) = s(0)
+	nop(DUP8)
+	s(9) = s(2)
+	nop(DUP7)
+	s(10) = 4294967295
+	nop(PUSH)
+	s(11) = 6163
+	nop(PUSH)
+	s(10) = and(s(11), s(10))
+	nop(AND)
+

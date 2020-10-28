@@ -1,0 +1,5 @@
+POP
+MLOAD
+SUB
+GT
+PUSH

@@ -1,0 +1,15 @@
+block0(s(0))=>
+	nop(POP)
+	s(0) = 0
+	nop(PUSH)
+	s(1) = 2
+	nop(PUSH)
+	s(2) = s(0)
+	nop(DUP2)
+	s(1) = gt(s(2), s(1))
+	nop(GT)
+	s(1)= eq(s(1), 0)
+	nop(ISZERO)
+	s(2) = 3876
+	nop(PUSH)
+

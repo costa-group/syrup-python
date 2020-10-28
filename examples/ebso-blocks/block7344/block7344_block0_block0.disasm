@@ -1,0 +1,6 @@
+POP
+PUSH
+DUP6
+PUSH
+AND
+LT

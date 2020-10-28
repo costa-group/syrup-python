@@ -1,0 +1,16 @@
+block0()=>
+	s(0) = 186
+	nop(PUSH)
+	s(0) = calldataload
+	nop(CALLDATALOAD)
+	s(1) = 0
+	nop(PUSH)
+	s(0) = byte(s(0) , s(1))
+	nop(BYTE)
+	s(1) = 2
+	nop(PUSH)
+	s(0) = s(1)+s(0)
+	nop(ADD)
+	s(1) = 801
+	nop(PUSH)
+

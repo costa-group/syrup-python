@@ -1,0 +1,8 @@
+block0()=>
+	s(0) = 5706
+	nop(PUSH)
+	s(1) = 75000000
+	nop(PUSH)
+	s(2) = s(0)
+	nop(DUP2)
+

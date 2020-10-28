@@ -1,0 +1,16 @@
+block0(s(1), s(0))=>
+	s(2) = 0
+	nop(PUSH)
+	s(2) = not(s(2))
+	nop(NOT)
+	s(3) = number
+	nop(NUMBER)
+	s(2) = s(3)+s(2)
+	nop(ADD)
+	s(3) = 68
+	nop(PUSH)
+	s(4) = s(0)
+	nop(DUP4)
+	s(3) = s(4)+s(3)
+	nop(ADD)
+

@@ -1,0 +1,14 @@
+block0(s(0))=>
+	s(1) = 3600
+	nop(PUSH)
+	s(2) = 24
+	nop(PUSH)
+	s(1) = s(2)*s(1)
+	nop(MUL)
+	s(2) = 30
+	nop(PUSH)
+	s(1) = s(2)*s(1)
+	nop(MUL)
+	s(2) = s(0)
+	nop(DUP2)
+

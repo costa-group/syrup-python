@@ -1,0 +1,21 @@
+block0(s(9), s(8), s(7), s(6), s(5), s(4), s(3), s(2), s(1), s(0))=>
+	s(10) = s(2)
+	s(2) = s(9)
+	s(9) = s(10)
+	nop(SWAP7)
+	nop(POP)
+	s(9) = 100
+	nop(PUSH)
+	s(10) = 18258
+	nop(PUSH)
+	s(11) = s(0)
+	nop(DUP11)
+	s(12) = s(2)
+	nop(DUP10)
+	s(13) = 4294967295
+	nop(PUSH)
+	s(14) = 14660
+	nop(PUSH)
+	s(13) = and(s(14), s(13))
+	nop(AND)
+

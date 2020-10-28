@@ -1,0 +1,24 @@
+block0()=>
+	s(0) = 300000
+	nop(PUSH)
+	s(1) = gas
+	nop(GAS)
+	s(0) = gt(s(1), s(0))
+	nop(GT)
+	s(1) = 0
+	nop(PUSH)
+	s(1) = mload(s(1))
+	nop(MLOAD)
+	s(2) = 32
+	nop(PUSH)
+	s(2) = mload(s(2))
+	nop(MLOAD)
+	s(1) = lt(s(2), s(1))
+	nop(LT)
+	s(0) = and(s(1), s(0))
+	nop(AND)
+	s(0)= eq(s(0), 0)
+	nop(ISZERO)
+	s(1) = 379
+	nop(PUSH)
+

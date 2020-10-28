@@ -1,0 +1,16 @@
+block0(s(4), s(3), s(2), s(1), s(0))=>
+	s(3) = s(4)+s(3)
+	nop(ADD)
+	s(2) = s(3)*s(2)
+	nop(MUL)
+	s(1) = s(2)*s(1)
+	nop(MUL)
+	s(2) = s(0)
+	nop(DUP2)
+	s(2)= eq(s(2), 0)
+	nop(ISZERO)
+	s(2)= eq(s(2), 0)
+	nop(ISZERO)
+	s(3) = 2353
+	nop(PUSH)
+

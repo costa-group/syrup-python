@@ -1,0 +1,16 @@
+block0(s(9), s(8), s(7), s(6), s(5), s(4), s(3), s(2), s(1), s(0))=>
+	s(10) = 12
+	nop(PUSH)
+	s(11) = s(0)
+	nop(DUP11)
+	s(12) = 255
+	nop(PUSH)
+	s(11) = and(s(12), s(11))
+	nop(AND)
+	s(10)= eq(s(11), s(10))
+	nop(EQ)
+	s(10)= eq(s(10), 0)
+	nop(ISZERO)
+	s(11) = 7790
+	nop(PUSH)
+

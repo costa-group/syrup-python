@@ -1,0 +1,10 @@
+block0(s(3), s(2), s(1), s(0))=>
+	s(4) = timestamp
+	nop(TIMESTAMP)
+	s(5) = s(0)
+	nop(DUP5)
+	s(4) = gt(s(5), s(4))
+	nop(GT)
+	s(5) = 161
+	nop(PUSH)
+

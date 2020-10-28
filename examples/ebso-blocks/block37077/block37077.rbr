@@ -1,0 +1,32 @@
+block0(s(1), s(0))=>
+	s(2) = 10593
+	nop(PUSH)
+	s(3) = s(0)
+	nop(DUP3)
+	s(4) = 10579
+	nop(PUSH)
+	s(5) = 4
+	nop(PUSH)
+	s(5) = sload(s(5))
+	nop(SLOAD)
+	s(6) = timestamp
+	nop(TIMESTAMP)
+	s(7) = 12334
+	nop(PUSH)
+	s(8) = s(6)
+	s(6) = s(7)
+	s(7) = s(8)
+	nop(SWAP1)
+	s(8) = s(5)
+	s(5) = s(7)
+	s(7) = s(8)
+	nop(SWAP2)
+	s(8) = s(6)
+	s(6) = s(7)
+	s(7) = s(8)
+	nop(SWAP1)
+	s(8) = 4294967295
+	nop(PUSH)
+	s(7) = and(s(8), s(7))
+	nop(AND)
+

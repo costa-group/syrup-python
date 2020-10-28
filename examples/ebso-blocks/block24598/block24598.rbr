@@ -1,0 +1,23 @@
+block0(s(5), s(4), s(3), s(2), s(1), s(0))=>
+	s(6) = 10
+	nop(PUSH)
+	s(5) = s(6)+s(5)
+	nop(ADD)
+	s(6) = s(0)
+	s(0) = s(5)
+	s(5) = s(6)
+	nop(SWAP5)
+	nop(POP)
+	s(5) = 0
+	nop(PUSH)
+	s(6) = s(0)
+	nop(DUP6)
+	s(7) = 1
+	nop(PUSH)
+	s(6) = signextend(s(7),s(6))
+	nop(SIGNEXTEND)
+	s(5) = slt(s(6), s(5))
+	nop(SLT)
+	s(6) = 6594
+	nop(PUSH)
+

@@ -1,0 +1,36 @@
+block0(s(3), s(2), s(1), s(0))=>
+	nop(POP)
+	s(2) = mload(s(2))
+	nop(MLOAD)
+	s(3) = s(0)
+	s(0) = s(2)
+	s(2) = s(3)
+	nop(SWAP2)
+	nop(POP)
+	s(2) = 7
+	nop(PUSH)
+	s(2) = not(s(2))
+	nop(NOT)
+	s(3) = 36
+	nop(PUSH)
+	s(4) = 1
+	nop(PUSH)
+	s(5) = s(1)
+	nop(DUP4)
+	s(6) = s(4)
+	s(4) = s(5)
+	s(5) = s(6)
+	nop(SWAP1)
+	s(4) = signextend(s(5),s(4))
+	nop(SIGNEXTEND)
+	s(3) = s(4)/s(3)
+	nop(SDIV)
+	s(4) = 1
+	nop(PUSH)
+	s(3) = signextend(s(4),s(3))
+	nop(SIGNEXTEND)
+	s(2) = sgt(s(3), s(2))
+	nop(SGT)
+	s(3) = 7838
+	nop(PUSH)
+

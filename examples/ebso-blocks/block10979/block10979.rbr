@@ -1,0 +1,16 @@
+block0(s(0))=>
+	s(1) = 18
+	nop(PUSH)
+	sstore(s(1),s(0))
+	nop(SSTORE)
+	s(0) = 64
+	nop(PUSH)
+	s(1) = s(0)
+	nop(DUP1)
+	s(1) = mload(s(1))
+	nop(MLOAD)
+	s(2) = callvalue
+	nop(CALLVALUE)
+	s(3) = s(1)
+	nop(DUP2)
+

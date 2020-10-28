@@ -1,0 +1,10 @@
+block0(s(0))=>
+	s(1) = s(0)
+	nop(DUP1)
+	s(2) = 3044916678
+	nop(PUSH)
+	s(1) = gt(s(2), s(1))
+	nop(GT)
+	s(2) = 153
+	nop(PUSH)
+

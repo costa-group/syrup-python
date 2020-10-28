@@ -1,0 +1,30 @@
+block0(s(7), s(6), s(5), s(4), s(3), s(2), s(1), s(0))=>
+	s(8) = s(4)
+	s(4) = s(7)
+	s(7) = s(8)
+	nop(SWAP3)
+	s(8) = s(0)
+	s(0) = s(7)
+	s(7) = s(8)
+	nop(SWAP7)
+	nop(POP)
+	s(7) = s(5)
+	s(5) = s(6)
+	s(6) = s(7)
+	nop(SWAP1)
+	nop(POP)
+	s(6) = 32
+	nop(PUSH)
+	s(7) = s(4)
+	nop(DUP3)
+	s(6) = s(7)+s(6)
+	nop(ADD)
+	s(7) = 192
+	nop(PUSH)
+	s(8) = s(7)
+	nop(DUP1)
+	s(9) = codesize
+	nop(CODESIZE)
+	s(10) = s(6)
+	nop(DUP4)
+

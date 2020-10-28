@@ -1,0 +1,26 @@
+block0(s(9), s(8), s(7), s(6), s(5), s(4), s(3), s(2), s(1), s(0))=>
+	s(10) = 2
+	nop(PUSH)
+	s(10) = sload(s(10))
+	nop(SLOAD)
+	s(11) = 32
+	nop(PUSH)
+	s(12) = s(11)
+	nop(DUP1)
+	s(13) = s(0)
+	nop(DUP13)
+	s(12) = s(13)+s(12)
+	nop(ADD)
+	s(12) = mload(s(12))
+	nop(MLOAD)
+	s(13) = 64
+	nop(PUSH)
+	s(14) = s(13)
+	nop(DUP1)
+	s(14) = mload(s(14))
+	nop(MLOAD)
+	s(15) = 88803773400126166358016595867035643945844261411501340367608710381636576870400
+	nop(PUSH)
+	s(16) = s(14)
+	nop(DUP2)
+

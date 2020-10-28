@@ -1,0 +1,26 @@
+block0(s(1), s(0))=>
+	s(2) = 64
+	nop(PUSH)
+	s(3) = s(2)
+	nop(DUP1)
+	s(4) = s(0)
+	nop(DUP4)
+	s(3) = sha3(s(4), s(3))
+	nop(SHA3)
+	s(4) = timestamp
+	nop(TIMESTAMP)
+	s(5) = s(3)
+	s(3) = s(4)
+	s(4) = s(5)
+	nop(SWAP1)
+	sstore(s(4),s(3))
+	nop(SSTORE)
+	s(3) = 1
+	nop(PUSH)
+	s(3) = sload(s(3))
+	nop(SLOAD)
+	s(4) = 26
+	nop(PUSH)
+	s(5) = s(1)
+	nop(DUP4)
+

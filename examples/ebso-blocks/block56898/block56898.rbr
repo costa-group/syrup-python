@@ -1,0 +1,120 @@
+block0(s(8), s(7), s(6), s(5), s(4), s(3), s(2), s(1), s(0))=>
+	nop(POP)
+	s(8) = s(2)
+	s(2) = s(7)
+	s(7) = s(8)
+	nop(SWAP5)
+	s(8) = s(0)
+	s(0) = s(7)
+	s(7) = s(8)
+	nop(SWAP7)
+	nop(POP)
+	nop(POP)
+	s(6) = s(1)
+	s(1) = s(5)
+	s(5) = s(6)
+	nop(SWAP4)
+	s(5) = calldataload
+	nop(CALLDATALOAD)
+	s(6) = s(1)
+	s(1) = s(5)
+	s(5) = s(6)
+	nop(SWAP4)
+	nop(POP)
+	nop(POP)
+	s(4) = 68
+	nop(PUSH)
+	s(4) = calldataload
+	nop(CALLDATALOAD)
+	s(5) = s(2)
+	s(2) = s(4)
+	s(4) = s(5)
+	nop(SWAP2)
+	nop(POP)
+	nop(POP)
+	s(3) = 100
+	nop(PUSH)
+	s(3) = calldataload
+	nop(CALLDATALOAD)
+	s(4) = 132
+	nop(PUSH)
+	s(4) = calldataload
+	nop(CALLDATALOAD)
+	s(5) = 0
+	nop(PUSH)
+	s(6) = 0
+	nop(PUSH)
+	s(7) = 0
+	nop(PUSH)
+	s(8) = 0
+	nop(PUSH)
+	s(9) = 0
+	nop(PUSH)
+	s(10) = 0
+	nop(PUSH)
+	s(11) = 0
+	nop(PUSH)
+	s(12) = 0
+	nop(PUSH)
+	nop(POP)
+	s(12) = s(0)
+	nop(DUP12)
+	s(13) = 64
+	nop(PUSH)
+	s(13) = mload(s(13))
+	nop(MLOAD)
+	s(14) = s(13)
+	nop(DUP1)
+	s(15) = s(12)
+	nop(DUP3)
+	s(16) = s(15)
+	nop(DUP1)
+	s(16) = mload(s(16))
+	nop(MLOAD)
+	s(17) = s(15)
+	s(15) = s(16)
+	s(16) = s(17)
+	nop(SWAP1)
+	s(17) = 32
+	nop(PUSH)
+	s(16) = s(17)+s(16)
+	nop(ADD)
+	s(17) = s(15)
+	s(15) = s(16)
+	s(16) = s(17)
+	nop(SWAP1)
+	s(17) = s(16)
+	nop(DUP1)
+	s(18) = s(14)
+	nop(DUP4)
+	s(19) = s(15)
+	nop(DUP4)
+	s(20) = s(17)
+	nop(DUP3)
+	s(21) = s(19)
+	s(19) = s(20)
+	s(20) = s(21)
+	nop(SWAP1)
+	s(21) = 0
+	nop(PUSH)
+	s(22) = 4
+	nop(PUSH)
+	s(23) = 32
+	nop(PUSH)
+	s(24) = s(19)
+	nop(DUP5)
+	s(25) = 31
+	nop(PUSH)
+	s(24) = s(25)+s(24)
+	nop(ADD)
+	s(23) = s(24)/s(23)
+	nop(DIV)
+	s(24) = 3
+	nop(PUSH)
+	s(23) = s(24)*s(23)
+	nop(MUL)
+	s(24) = 15
+	nop(PUSH)
+	s(23) = s(24)+s(23)
+	nop(ADD)
+

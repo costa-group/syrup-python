@@ -1,0 +1,36 @@
+block0(s(0))=>
+	s(1) = 8
+	nop(PUSH)
+	s(1) = sload(s(1))
+	nop(SLOAD)
+	s(2) = 224
+	nop(PUSH)
+	s(3) = s(0)
+	nop(DUP3)
+	s(2) = s(3)+s(2)
+	nop(ADD)
+	s(2) = mload(s(2))
+	nop(MLOAD)
+	s(3) = 9
+	nop(PUSH)
+	s(3) = sload(s(3))
+	nop(SLOAD)
+	s(4) = 288
+	nop(PUSH)
+	s(5) = s(0)
+	nop(DUP5)
+	s(4) = s(5)+s(4)
+	nop(ADD)
+	s(4) = mload(s(4))
+	nop(MLOAD)
+	s(5) = 64
+	nop(PUSH)
+	s(6) = s(5)
+	nop(DUP1)
+	s(6) = mload(s(6))
+	nop(MLOAD)
+	s(7) = 47735724898219917445558200417473049021548725203753221892215931575028787707904
+	nop(PUSH)
+	s(8) = s(6)
+	nop(DUP2)
+

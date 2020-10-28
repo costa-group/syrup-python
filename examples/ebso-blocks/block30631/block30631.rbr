@@ -1,0 +1,26 @@
+block0()=>
+	s(0) = 2682
+	nop(PUSH)
+	s(1) = caller
+	nop(CALLER)
+	s(2) = 1
+	nop(PUSH)
+	s(3) = 4341
+	nop(PUSH)
+	s(4) = s(2)
+	s(2) = s(3)
+	s(3) = s(4)
+	nop(SWAP1)
+	s(4) = s(1)
+	s(1) = s(3)
+	s(3) = s(4)
+	nop(SWAP2)
+	s(4) = s(2)
+	s(2) = s(3)
+	s(3) = s(4)
+	nop(SWAP1)
+	s(4) = 4294967295
+	nop(PUSH)
+	s(3) = and(s(4), s(3))
+	nop(AND)
+

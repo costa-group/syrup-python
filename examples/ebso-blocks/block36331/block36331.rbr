@@ -1,0 +1,38 @@
+block0(s(6), s(5), s(4), s(3), s(2), s(1), s(0))=>
+	s(5) = s(6)%s(5)
+	nop(MOD)
+	s(5) = blockhash_0
+	nop(BLOCKHASH)
+	s(6) = 11
+	nop(PUSH)
+	s(6) = sload(s(6))
+	nop(SLOAD)
+	s(7) = s(0)
+	nop(DUP7)
+	s(8) = 64
+	nop(PUSH)
+	s(8) = mload(s(8))
+	nop(MLOAD)
+	s(9) = 32
+	nop(PUSH)
+	s(8) = s(9)+s(8)
+	nop(ADD)
+	s(9) = s(8)
+	nop(DUP1)
+	s(10) = s(5)
+	nop(DUP5)
+	s(11) = 0
+	nop(PUSH)
+	s(11) = not(s(11))
+	nop(NOT)
+	s(10) = and(s(11), s(10))
+	nop(AND)
+	s(11) = 0
+	nop(PUSH)
+	s(11) = not(s(11))
+	nop(NOT)
+	s(10) = and(s(11), s(10))
+	nop(AND)
+	s(11) = s(9)
+	nop(DUP2)
+

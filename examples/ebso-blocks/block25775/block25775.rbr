@@ -1,0 +1,20 @@
+block0(s(7), s(6), s(5), s(4), s(3), s(2), s(1), s(0))=>
+	s(8) = 20042
+	nop(PUSH)
+	s(9) = 1000
+	nop(PUSH)
+	s(10) = s(2)
+	nop(DUP8)
+	s(11) = s(0)
+	nop(DUP11)
+	s(10) = s(11)*s(10)
+	nop(MUL)
+	s(11) = s(9)
+	nop(DUP2)
+	s(11)= eq(s(11), 0)
+	nop(ISZERO)
+	s(11)= eq(s(11), 0)
+	nop(ISZERO)
+	s(12) = 20036
+	nop(PUSH)
+

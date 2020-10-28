@@ -1,0 +1,18 @@
+block0(s(2), s(1), s(0))=>
+	s(3) = 32
+	nop(PUSH)
+	s(2) = s(3)*s(2)
+	nop(MUL)
+	s(1) = s(2)+s(1)
+	nop(ADD)
+	s(1) = calldataload
+	nop(CALLDATALOAD)
+	s(0)= eq(s(1), s(0))
+	nop(EQ)
+	s(0)= eq(s(0), 0)
+	nop(ISZERO)
+	s(0)= eq(s(0), 0)
+	nop(ISZERO)
+	s(1) = 3631
+	nop(PUSH)
+

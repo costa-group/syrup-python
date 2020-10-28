@@ -1,0 +1,10 @@
+block0()=>
+	s(0) = 35000000000
+	nop(PUSH)
+	s(1) = gasprice
+	nop(GASPRICE)
+	s(0) = lt(s(1), s(0))
+	nop(LT)
+	s(1) = 379
+	nop(PUSH)
+

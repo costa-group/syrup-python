@@ -1,0 +1,13 @@
+block0(s(4), s(3), s(2), s(1), s(0))=>
+	s(3) = s(4)*s(3)
+	nop(MUL)
+	s(2) = or(s(3), s(2))
+	nop(OR)
+	s(3) = s(1)
+	s(1) = s(2)
+	s(2) = s(3)
+	nop(SWAP1)
+	sstore(s(2),s(1))
+	nop(SSTORE)
+	nop(POP)
+

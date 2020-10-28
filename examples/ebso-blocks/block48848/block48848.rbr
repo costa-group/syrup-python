@@ -1,0 +1,24 @@
+block0(s(0))=>
+	s(1) = 0
+	nop(PUSH)
+	s(2) = s(1)
+	nop(DUP1)
+	s(3) = 340282366920938463463374607431768211456
+	nop(PUSH)
+	s(2) = s(3)*s(2)
+	nop(MUL)
+	s(3) = s(0)
+	nop(DUP3)
+	s(4) = 340282366920938463463374607431768211455
+	nop(PUSH)
+	s(4) = not(s(4))
+	nop(NOT)
+	s(3) = and(s(4), s(3))
+	nop(AND)
+	s(2)= eq(s(3), s(2))
+	nop(EQ)
+	s(2)= eq(s(2), 0)
+	nop(ISZERO)
+	s(3) = 3632
+	nop(PUSH)
+

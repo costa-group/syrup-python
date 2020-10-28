@@ -1,0 +1,12 @@
+block0(s(4), s(3), s(2), s(1), s(0))=>
+	s(5) = 256
+	nop(PUSH)
+	s(6) = s(0)
+	nop(DUP6)
+	s(5) = s(6)+s(5)
+	nop(ADD)
+	s(5) = mload(s(5))
+	nop(MLOAD)
+	s(6) = s(0)
+	nop(DUP6)
+

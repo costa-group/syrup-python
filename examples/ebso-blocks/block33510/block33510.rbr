@@ -1,0 +1,32 @@
+block0()=>
+	s(0) = 352
+	nop(PUSH)
+	s(0) = mload(s(0))
+	nop(MLOAD)
+	s(1) = 0
+	nop(PUSH)
+	s(1) = mload(s(1))
+	nop(MLOAD)
+	s(2) = 64
+	nop(PUSH)
+	s(2) = mload(s(2))
+	nop(MLOAD)
+	s(1) = s(2)-s(1)
+	nop(SUB)
+	s(2) = s(0)
+	nop(DUP2)
+	s(3) = s(1)
+	nop(DUP2)
+	s(2) = gt(s(3), s(2))
+	nop(GT)
+	s(3) = s(0)
+	s(0) = s(2)
+	s(2) = s(3)
+	nop(SWAP2)
+	s(1)= eq(s(2), s(1))
+	nop(EQ)
+	s(0) = or(s(1), s(0))
+	nop(OR)
+	s(1) = 2329
+	nop(PUSH)
+

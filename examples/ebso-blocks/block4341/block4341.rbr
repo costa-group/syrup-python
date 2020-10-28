@@ -1,0 +1,14 @@
+block0(s(1), s(0))=>
+	s(2) = timestamp
+	nop(TIMESTAMP)
+	s(3) = s(0)
+	nop(DUP3)
+	s(4) = s(2)
+	s(2) = s(3)
+	s(3) = s(4)
+	nop(SWAP1)
+	s(2) = lt(s(3), s(2))
+	nop(LT)
+	s(3) = 5168
+	nop(PUSH)
+

@@ -1,0 +1,46 @@
+block0()=>
+	s(0) = 1715
+	nop(PUSH)
+	s(1) = 4
+	nop(PUSH)
+	s(1) = calldataload
+	nop(CALLDATALOAD)
+	s(2) = 36
+	nop(PUSH)
+	s(2) = calldataload
+	nop(CALLDATALOAD)
+	s(3) = 68
+	nop(PUSH)
+	s(3) = calldataload
+	nop(CALLDATALOAD)
+	s(4) = 7
+	nop(PUSH)
+	s(4) = sload(s(4))
+	nop(SLOAD)
+	s(5) = 11
+	nop(PUSH)
+	s(5) = sload(s(5))
+	nop(SLOAD)
+	s(6) = 0
+	nop(PUSH)
+	s(7) = s(4)
+	s(4) = s(6)
+	s(6) = s(7)
+	nop(SWAP2)
+	s(5) = s(6)+s(5)
+	nop(ADD)
+	s(6) = number
+	nop(NUMBER)
+	s(5) = gt(s(6), s(5))
+	nop(GT)
+	s(6) = s(5)
+	nop(DUP1)
+	s(6)= eq(s(6), 0)
+	nop(ISZERO)
+	s(7) = s(5)
+	s(5) = s(6)
+	s(6) = s(7)
+	nop(SWAP1)
+	s(7) = 714
+	nop(PUSH)
+

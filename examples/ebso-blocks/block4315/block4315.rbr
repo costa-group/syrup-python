@@ -1,0 +1,12 @@
+block0()=>
+	s(0) = callvalue
+	nop(CALLVALUE)
+	s(0)= eq(s(0), 0)
+	nop(ISZERO)
+	s(0)= eq(s(0), 0)
+	nop(ISZERO)
+	s(1) = s(0)
+	nop(DUP1)
+	s(2) = 8751
+	nop(PUSH)
+

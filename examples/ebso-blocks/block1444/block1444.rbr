@@ -1,0 +1,9 @@
+block0(s(2), s(1), s(0))=>
+	nop(POP)
+	s(2) = 0
+	nop(PUSH)
+	s(3) = s(0)
+	nop(DUP3)
+	s(2) = gt(s(3), s(2))
+	nop(GT)
+

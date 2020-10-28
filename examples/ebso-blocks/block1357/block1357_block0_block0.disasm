@@ -1,0 +1,5 @@
+ADD
+SWAP2
+ADD
+EQ
+SWAP1

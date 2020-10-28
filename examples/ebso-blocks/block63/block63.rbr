@@ -1,0 +1,5 @@
+block0(s(0))=>
+	nop(POP)
+	s(0) = gas
+	nop(GAS)
+

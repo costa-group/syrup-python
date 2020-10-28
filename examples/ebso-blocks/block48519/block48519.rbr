@@ -1,0 +1,22 @@
+block0()=>
+	s(0) = timestamp
+	nop(TIMESTAMP)
+	s(1) = 8
+	nop(PUSH)
+	sstore(s(1),s(0))
+	nop(SSTORE)
+	s(0) = 92203443120135173855005345149901849651583221108952589187095143152583774808486
+	nop(PUSH)
+	s(1) = 259200
+	nop(PUSH)
+	s(2) = 64
+	nop(PUSH)
+	s(2) = mload(s(2))
+	nop(MLOAD)
+	s(3) = s(1)
+	s(1) = s(2)
+	s(2) = s(3)
+	nop(SWAP1)
+	s(3) = s(1)
+	nop(DUP2)
+

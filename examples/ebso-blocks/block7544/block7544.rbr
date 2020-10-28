@@ -1,0 +1,13 @@
+block0(s(3), s(2), s(1), s(0))=>
+	nop(POP)
+	s(2) = mload(s(2))
+	nop(MLOAD)
+	s(1) = s(2)-s(1)
+	nop(SUB)
+	s(0) = lt(s(1), s(0))
+	nop(LT)
+	s(0)= eq(s(0), 0)
+	nop(ISZERO)
+	s(1) = 4529
+	nop(PUSH)
+

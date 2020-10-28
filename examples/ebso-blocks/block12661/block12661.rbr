@@ -1,0 +1,15 @@
+block0(s(2), s(1), s(0))=>
+	nop(POP)
+	nop(POP)
+	s(1) = 64
+	nop(PUSH)
+	s(1) = mload(s(1))
+	nop(MLOAD)
+	s(1) = mload(s(1))
+	nop(MLOAD)
+	s(2) = 13
+	nop(PUSH)
+	sstore(s(2),s(1))
+	nop(SSTORE)
+	nop(POP)
+

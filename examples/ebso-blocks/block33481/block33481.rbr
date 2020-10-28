@@ -1,0 +1,30 @@
+block0(s(2), s(1), s(0))=>
+	s(3) = 100
+	nop(PUSH)
+	s(2) = s(3)+s(2)
+	nop(ADD)
+	s(3) = 0
+	nop(PUSH)
+	s(4) = 64
+	nop(PUSH)
+	s(4) = mload(s(4))
+	nop(MLOAD)
+	s(5) = s(4)
+	nop(DUP1)
+	s(6) = s(2)
+	nop(DUP4)
+	s(5) = s(6)-s(5)
+	nop(SUB)
+	s(6) = s(4)
+	nop(DUP2)
+	s(7) = 0
+	nop(PUSH)
+	s(8) = s(0)
+	nop(DUP8)
+	s(9) = 25710
+	nop(PUSH)
+	s(10) = gas
+	nop(GAS)
+	s(9) = s(10)-s(9)
+	nop(SUB)
+

@@ -1,0 +1,100 @@
+block0(s(0))=>
+	s(1) = callvalue
+	nop(CALLVALUE)
+	s(2) = s(0)
+	nop(DUP2)
+	sstore(s(2),s(1))
+	nop(SSTORE)
+	s(1) = callvalue
+	nop(CALLVALUE)
+	s(2) = 1
+	nop(PUSH)
+	s(3) = s(0)
+	nop(DUP3)
+	s(2) = s(3)+s(2)
+	nop(ADD)
+	sstore(s(2),s(1))
+	nop(SSTORE)
+	s(1) = callvalue
+	nop(CALLVALUE)
+	s(2) = 2
+	nop(PUSH)
+	s(3) = s(0)
+	nop(DUP3)
+	s(2) = s(3)+s(2)
+	nop(ADD)
+	sstore(s(2),s(1))
+	nop(SSTORE)
+	s(1) = callvalue
+	nop(CALLVALUE)
+	s(2) = 3
+	nop(PUSH)
+	s(3) = s(0)
+	nop(DUP3)
+	s(2) = s(3)+s(2)
+	nop(ADD)
+	sstore(s(2),s(1))
+	nop(SSTORE)
+	s(1) = callvalue
+	nop(CALLVALUE)
+	s(2) = 4
+	nop(PUSH)
+	s(3) = s(0)
+	nop(DUP3)
+	s(2) = s(3)+s(2)
+	nop(ADD)
+	sstore(s(2),s(1))
+	nop(SSTORE)
+	s(1) = callvalue
+	nop(CALLVALUE)
+	s(2) = 5
+	nop(PUSH)
+	s(3) = s(0)
+	nop(DUP3)
+	s(2) = s(3)+s(2)
+	nop(ADD)
+	sstore(s(2),s(1))
+	nop(SSTORE)
+	s(1) = callvalue
+	nop(CALLVALUE)
+	s(2) = 6
+	nop(PUSH)
+	s(3) = s(0)
+	nop(DUP3)
+	s(2) = s(3)+s(2)
+	nop(ADD)
+	sstore(s(2),s(1))
+	nop(SSTORE)
+	s(1) = callvalue
+	nop(CALLVALUE)
+	s(2) = 7
+	nop(PUSH)
+	s(3) = s(0)
+	nop(DUP3)
+	s(2) = s(3)+s(2)
+	nop(ADD)
+	sstore(s(2),s(1))
+	nop(SSTORE)
+	s(1) = callvalue
+	nop(CALLVALUE)
+	s(2) = 8
+	nop(PUSH)
+	s(3) = s(0)
+	nop(DUP3)
+	s(2) = s(3)+s(2)
+	nop(ADD)
+	sstore(s(2),s(1))
+	nop(SSTORE)
+	s(1) = callvalue
+	nop(CALLVALUE)
+	s(2) = 9
+	nop(PUSH)
+	s(3) = s(0)
+	nop(DUP3)
+	s(2) = s(3)+s(2)
+	nop(ADD)
+	sstore(s(2),s(1))
+	nop(SSTORE)
+	s(1) = 162
+	nop(PUSH)
+

@@ -1,0 +1,18 @@
+block0()=>
+	s(0) = 14
+	nop(PUSH)
+	s(0) = sload(s(0))
+	nop(SLOAD)
+	s(1) = 12
+	nop(PUSH)
+	s(1) = sload(s(1))
+	nop(SLOAD)
+	s(2) = number
+	nop(NUMBER)
+	s(1) = s(2)+s(1)
+	nop(ADD)
+	s(0) = lt(s(1), s(0))
+	nop(LT)
+	s(1) = 3727
+	nop(PUSH)
+

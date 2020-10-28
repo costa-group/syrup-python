@@ -1,0 +1,4 @@
+block0()=>
+	s(0) = 2
+	nop(PUSH)
+

@@ -1,0 +1,19 @@
+block0(s(7), s(6), s(5), s(4), s(3), s(2), s(1), s(0))=>
+	nop(POP)
+	s(7) = 12
+	nop(PUSH)
+	s(8) = 255
+	nop(PUSH)
+	s(9) = s(0)
+	nop(DUP9)
+	s(8) = and(s(9), s(8))
+	nop(AND)
+	s(9) = 6
+	nop(PUSH)
+	s(10) = s(8)
+	nop(DUP2)
+	s(9) = lt(s(10), s(9))
+	nop(LT)
+	s(10) = 5522
+	nop(PUSH)
+

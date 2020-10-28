@@ -1,0 +1,24 @@
+block0(s(2), s(1), s(0))=>
+	s(1) = s(2)/s(1)
+	nop(DIV)
+	s(2) = 150000000000000000000000000
+	nop(PUSH)
+	s(1) = s(2)-s(1)
+	nop(SUB)
+	s(0) = s(1)-s(0)
+	nop(SUB)
+	s(1) = 150000000000000000000000000
+	nop(PUSH)
+	s(0) = s(1)-s(0)
+	nop(SUB)
+	s(1) = 0
+	nop(PUSH)
+	s(2) = 64
+	nop(PUSH)
+	s(2) = mload(s(2))
+	nop(MLOAD)
+	s(3) = 32
+	nop(PUSH)
+	s(2) = s(3)+s(2)
+	nop(ADD)
+

@@ -1,0 +1,6 @@
+block0(s(2), s(1), s(0))=>
+	s(3) = 4
+	nop(PUSH)
+	s(4) = s(0)
+	nop(DUP4)
+

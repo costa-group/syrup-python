@@ -1,0 +1,4 @@
+POP
+PUSH1
+DUP2
+LT

@@ -1,0 +1,9 @@
+block0(s(0))=>
+	nop(POP)
+	s(0) = 1519815600
+	nop(PUSH)
+	s(1) = timestamp
+	nop(TIMESTAMP)
+	s(0) = gt(s(1), s(0))
+	nop(GT)
+

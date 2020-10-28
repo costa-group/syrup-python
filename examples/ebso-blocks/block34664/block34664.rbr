@@ -1,0 +1,22 @@
+block0(s(0))=>
+	s(1) = 64
+	nop(PUSH)
+	s(2) = s(0)
+	nop(DUP2)
+	s(1) = sha3(s(2), s(1))
+	nop(SHA3)
+	s(1) = sload(s(1))
+	nop(SLOAD)
+	s(2) = 706
+	nop(PUSH)
+	s(3) = timestamp
+	nop(TIMESTAMP)
+	s(4) = 14400
+	nop(PUSH)
+	s(5) = 4294967295
+	nop(PUSH)
+	s(6) = 1336
+	nop(PUSH)
+	s(5) = and(s(6), s(5))
+	nop(AND)
+

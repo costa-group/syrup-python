@@ -1,0 +1,21 @@
+block0(s(5), s(4), s(3), s(2), s(1), s(0))=>
+	nop(POP)
+	s(5) = 1343032574102412674138348769259954571315235993839708859278832338295021907386
+	nop(PUSH)
+	s(6) = address
+	nop(ADDRESS)
+	s(7) = s(0)
+	nop(DUP7)
+	s(8) = s(1)
+	nop(DUP7)
+	s(9) = s(4)
+	nop(DUP5)
+	s(10) = s(8)
+	nop(DUP2)
+	s(11) = s(9)
+	nop(DUP2)
+	s(10) = lt(s(11), s(10))
+	nop(LT)
+	s(11) = 7551
+	nop(PUSH)
+

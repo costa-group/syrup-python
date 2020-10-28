@@ -1,0 +1,50 @@
+block0(s(0))=>
+	s(1) = 18
+	nop(PUSH)
+	s(2) = 10
+	nop(PUSH)
+	s(1) = s(2)^s(1)
+	nop(EXP)
+	s(2) = 200000000
+	nop(PUSH)
+	s(1) = s(2)*s(1)
+	nop(MUL)
+	s(2) = 18
+	nop(PUSH)
+	s(3) = 10
+	nop(PUSH)
+	s(2) = s(3)^s(2)
+	nop(EXP)
+	s(3) = 200000000
+	nop(PUSH)
+	s(2) = s(3)*s(2)
+	nop(MUL)
+	s(3) = 18
+	nop(PUSH)
+	s(4) = 10
+	nop(PUSH)
+	s(3) = s(4)^s(3)
+	nop(EXP)
+	s(4) = 500000000
+	nop(PUSH)
+	s(3) = s(4)*s(3)
+	nop(MUL)
+	s(4) = 18
+	nop(PUSH)
+	s(5) = 10
+	nop(PUSH)
+	s(4) = s(5)^s(4)
+	nop(EXP)
+	s(5) = 100000000
+	nop(PUSH)
+	s(4) = s(5)*s(4)
+	nop(MUL)
+	s(3) = s(4)+s(3)
+	nop(ADD)
+	s(2) = s(3)+s(2)
+	nop(ADD)
+	s(1) = s(2)+s(1)
+	nop(ADD)
+	s(2) = s(0)
+	nop(DUP2)
+

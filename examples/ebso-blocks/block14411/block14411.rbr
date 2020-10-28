@@ -1,0 +1,14 @@
+block0(s(2), s(1), s(0))=>
+	s(3) = s(0)
+	nop(DUP3)
+	s(4) = 255
+	nop(PUSH)
+	s(3) = and(s(4), s(3))
+	nop(AND)
+	s(4) = 2
+	nop(PUSH)
+	s(3)= eq(s(4), s(3))
+	nop(EQ)
+	s(4) = 12036
+	nop(PUSH)
+

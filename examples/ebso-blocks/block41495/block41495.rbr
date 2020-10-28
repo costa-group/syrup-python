@@ -1,0 +1,21 @@
+block0(s(0))=>
+	s(1) = 0
+	nop(PUSH)
+	s(2) = address
+	nop(ADDRESS)
+	s(3) = 1461501637330902918203684832716283019655932542975
+	nop(PUSH)
+	s(2) = and(s(3), s(2))
+	nop(AND)
+	s(2) = balance
+	nop(BALANCE)
+	s(3) = s(1)
+	s(1) = s(2)
+	s(2) = s(3)
+	nop(SWAP1)
+	nop(POP)
+	s(2) = s(0)
+	s(0) = s(1)
+	s(1) = s(2)
+	nop(SWAP1)
+

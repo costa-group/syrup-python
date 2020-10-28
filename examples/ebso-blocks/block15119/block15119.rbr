@@ -1,0 +1,19 @@
+block0(s(7), s(6), s(5), s(4), s(3), s(2), s(1), s(0))=>
+	nop(POP)
+	s(7) = s(0)
+	nop(DUP7)
+	s(8) = 1
+	nop(PUSH)
+	s(7) = s(8)+s(7)
+	nop(ADD)
+	s(7) = sload(s(7))
+	nop(SLOAD)
+	s(8) = 44
+	nop(PUSH)
+	s(8) = sload(s(8))
+	nop(SLOAD)
+	s(7) = gt(s(8), s(7))
+	nop(GT)
+	s(7)= eq(s(7), 0)
+	nop(ISZERO)
+

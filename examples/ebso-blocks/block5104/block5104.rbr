@@ -1,0 +1,10 @@
+block0()=>
+	s(0) = timestamp
+	nop(TIMESTAMP)
+	s(1) = 6
+	nop(PUSH)
+	sstore(s(1),s(0))
+	nop(SSTORE)
+	s(0) = 2577
+	nop(PUSH)
+

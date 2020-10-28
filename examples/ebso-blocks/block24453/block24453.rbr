@@ -1,0 +1,24 @@
+block0(s(5), s(4), s(3), s(2), s(1), s(0))=>
+	s(6) = 1
+	nop(PUSH)
+	s(7) = s(0)
+	nop(DUP7)
+	s(8) = s(4)
+	nop(DUP4)
+	s(7) = s(8)-s(7)
+	nop(SUB)
+	s(6) = s(7)+s(6)
+	nop(ADD)
+	s(7) = 64
+	nop(PUSH)
+	s(7) = mload(s(7))
+	nop(MLOAD)
+	s(8) = s(7)
+	nop(DUP1)
+	s(9) = msize
+	nop(MSIZE)
+	s(8) = lt(s(9), s(8))
+	nop(LT)
+	s(9) = 4548
+	nop(PUSH)
+

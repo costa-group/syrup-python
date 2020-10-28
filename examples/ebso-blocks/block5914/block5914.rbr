@@ -1,0 +1,12 @@
+block0(s(3), s(2), s(1), s(0))=>
+	s(4) = 255
+	nop(PUSH)
+	s(3) = and(s(4), s(3))
+	nop(AND)
+	s(4) = 96
+	nop(PUSH)
+	s(5) = s(0)
+	nop(DUP5)
+	s(4) = s(5)+s(4)
+	nop(ADD)
+

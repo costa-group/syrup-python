@@ -1,0 +1,20 @@
+block0(s(6), s(5), s(4), s(3), s(2), s(1), s(0))=>
+	s(7) = s(1)
+	nop(DUP6)
+	s(8) = 1
+	nop(PUSH)
+	s(7) = signextend(s(8),s(7))
+	nop(SIGNEXTEND)
+	s(8) = s(0)
+	nop(DUP8)
+	s(9) = 1
+	nop(PUSH)
+	s(8) = signextend(s(9),s(8))
+	nop(SIGNEXTEND)
+	s(7) = slt(s(8), s(7))
+	nop(SLT)
+	s(7)= eq(s(7), 0)
+	nop(ISZERO)
+	s(8) = 11840
+	nop(PUSH)
+

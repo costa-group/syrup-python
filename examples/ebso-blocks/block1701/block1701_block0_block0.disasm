@@ -1,0 +1,4 @@
+PUSH
+DUP1
+DUP3
+ADD

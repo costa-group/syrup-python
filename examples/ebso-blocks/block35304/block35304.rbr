@@ -1,0 +1,34 @@
+block0(s(2), s(1), s(0))=>
+	nop(POP)
+	s(2) = s(0)
+	nop(DUP2)
+	s(3) = s(1)
+	s(1) = s(2)
+	s(2) = s(3)
+	nop(SWAP1)
+	nop(POP)
+	s(2) = 1
+	nop(PUSH)
+	s(3) = 160
+	nop(PUSH)
+	s(4) = 2
+	nop(PUSH)
+	s(3) = s(4)^s(3)
+	nop(EXP)
+	s(2) = s(3)-s(2)
+	nop(SUB)
+	s(3) = s(1)
+	nop(DUP2)
+	s(2) = and(s(3), s(2))
+	nop(AND)
+	s(2) = balance
+	nop(BALANCE)
+	s(3) = 0
+	nop(PUSH)
+	s(4) = s(2)
+	nop(DUP2)
+	s(3) = gt(s(4), s(3))
+	nop(GT)
+	s(4) = 5501
+	nop(PUSH)
+

@@ -1,0 +1,24 @@
+block0(s(2), s(1), s(0))=>
+	s(3) = s(1)
+	nop(DUP2)
+	s(4) = 10000010
+	nop(PUSH)
+	s(4) = sload(s(4))
+	nop(SLOAD)
+	s(3) = s(4)+s(3)
+	nop(ADD)
+	s(4) = 10000010
+	nop(PUSH)
+	s(5) = s(3)
+	nop(DUP2)
+	s(6) = s(4)
+	s(4) = s(5)
+	s(5) = s(6)
+	nop(SWAP1)
+	sstore(s(5),s(4))
+	nop(SSTORE)
+	nop(POP)
+	nop(POP)
+	nop(POP)
+	nop(POP)
+

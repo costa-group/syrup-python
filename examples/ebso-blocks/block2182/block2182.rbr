@@ -1,0 +1,7 @@
+block0(s(0))=>
+	nop(POP)
+	s(0) = 4
+	nop(PUSH)
+	s(1) = 7356
+	nop(PUSH)
+

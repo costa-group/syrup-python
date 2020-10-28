@@ -1,0 +1,22 @@
+block0(s(0))=>
+	s(1) = 5
+	nop(PUSH)
+	sstore(s(1),s(0))
+	nop(SSTORE)
+	s(0) = 4
+	nop(PUSH)
+	s(1) = s(0)
+	nop(DUP1)
+	s(1) = sload(s(1))
+	nop(SLOAD)
+	s(2) = 64
+	nop(PUSH)
+	s(3) = s(2)
+	nop(DUP1)
+	s(3) = mload(s(3))
+	nop(MLOAD)
+	s(4) = 53031092613589377562284695292841680937003059294551115343424488801617873731584
+	nop(PUSH)
+	s(5) = s(3)
+	nop(DUP2)
+

@@ -1,0 +1,30 @@
+block0()=>
+	s(0) = 0
+	nop(PUSH)
+	s(1) = 3045
+	nop(PUSH)
+	s(2) = 2817
+	nop(PUSH)
+	s(3) = caller
+	nop(CALLER)
+	s(4) = 0
+	nop(PUSH)
+	s(4) = calldataload
+	nop(CALLDATALOAD)
+	s(5) = 1
+	nop(PUSH)
+	s(6) = 224
+	nop(PUSH)
+	s(7) = 2
+	nop(PUSH)
+	s(6) = s(7)^s(6)
+	nop(EXP)
+	s(5) = s(6)-s(5)
+	nop(SUB)
+	s(5) = not(s(5))
+	nop(NOT)
+	s(4) = and(s(5), s(4))
+	nop(AND)
+	s(5) = 6948
+	nop(PUSH)
+

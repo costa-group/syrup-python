@@ -1,0 +1,26 @@
+block0(s(8), s(7), s(6), s(5), s(4), s(3), s(2), s(1), s(0))=>
+	s(9) = 3
+	nop(PUSH)
+	s(10) = s(0)
+	nop(DUP10)
+	s(9) = s(10)+s(9)
+	nop(ADD)
+	s(10) = 3
+	nop(PUSH)
+	s(9) = signextend(s(10),s(9))
+	nop(SIGNEXTEND)
+	s(10) = s(6)
+	nop(DUP4)
+	s(11) = 3
+	nop(PUSH)
+	s(10) = signextend(s(11),s(10))
+	nop(SIGNEXTEND)
+	s(9) = sgt(s(10), s(9))
+	nop(SGT)
+	s(9)= eq(s(9), 0)
+	nop(ISZERO)
+	s(9)= eq(s(9), 0)
+	nop(ISZERO)
+	s(10) = 13771
+	nop(PUSH)
+

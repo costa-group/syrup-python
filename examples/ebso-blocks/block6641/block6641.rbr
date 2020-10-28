@@ -1,0 +1,12 @@
+block0(s(5), s(4), s(3), s(2), s(1), s(0))=>
+	s(6) = s(3)
+	nop(DUP3)
+	s(7) = s(0)
+	nop(DUP7)
+	s(6) = slt(s(7), s(6))
+	nop(SLT)
+	s(6)= eq(s(6), 0)
+	nop(ISZERO)
+	s(7) = 9042
+	nop(PUSH)
+

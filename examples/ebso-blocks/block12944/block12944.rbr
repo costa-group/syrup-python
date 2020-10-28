@@ -1,0 +1,12 @@
+block0()=>
+	s(0) = 0
+	nop(PUSH)
+	s(1) = 352
+	nop(PUSH)
+	s(1) = mload(s(1))
+	nop(MLOAD)
+	s(0) = sgt(s(1), s(0))
+	nop(SGT)
+	s(1) = 443
+	nop(PUSH)
+

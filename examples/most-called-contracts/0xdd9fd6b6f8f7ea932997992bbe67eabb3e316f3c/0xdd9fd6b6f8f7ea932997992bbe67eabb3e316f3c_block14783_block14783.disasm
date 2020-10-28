@@ -1,0 +1,4 @@
+POP
+PUSH8
+DUP9
+LT

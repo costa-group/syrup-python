@@ -1,0 +1,23 @@
+block0(s(2), s(1), s(0))=>
+	s(3) = 64
+	nop(PUSH)
+	s(4) = s(2)
+	s(2) = s(3)
+	s(3) = s(4)
+	nop(SWAP1)
+	s(2) = sha3(s(3), s(2))
+	nop(SHA3)
+	s(3) = s(0)
+	s(0) = s(2)
+	s(2) = s(3)
+	nop(SWAP2)
+	nop(POP)
+	s(2) = 11110000000000
+	nop(PUSH)
+	s(3) = callvalue
+	nop(CALLVALUE)
+	s(2)= eq(s(3), s(2))
+	nop(EQ)
+	s(3) = 758
+	nop(PUSH)
+

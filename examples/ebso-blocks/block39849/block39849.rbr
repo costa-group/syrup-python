@@ -1,0 +1,18 @@
+block0(s(1), s(0))=>
+	s(2) = s(0)
+	nop(DUP2)
+	s(2) = sload(s(2))
+	nop(SLOAD)
+	s(3) = 340282366841710300949110269838224261120
+	nop(PUSH)
+	s(3) = not(s(3))
+	nop(NOT)
+	s(2) = and(s(3), s(2))
+	nop(AND)
+	s(3) = s(0)
+	nop(DUP3)
+	sstore(s(3),s(2))
+	nop(SSTORE)
+	s(2) = 7193
+	nop(PUSH)
+

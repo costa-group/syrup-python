@@ -1,0 +1,23 @@
+block0(s(4), s(3), s(2), s(1), s(0))=>
+	s(5) = s(1)
+	nop(DUP4)
+	s(6) = s(2)
+	nop(DUP4)
+	s(5) = or(s(6), s(5))
+	nop(OR)
+	s(6) = s(2)
+	s(2) = s(5)
+	s(5) = s(6)
+	nop(SWAP3)
+	nop(POP)
+	s(5) = s(2)
+	nop(DUP3)
+	s(6) = 14
+	nop(PUSH)
+	s(7) = 0
+	nop(PUSH)
+	s(8) = s(0)
+	nop(DUP8)
+	s(9) = s(7)
+	nop(DUP2)
+

@@ -1,0 +1,34 @@
+block0(s(1), s(0))=>
+	s(2) = caller
+	nop(CALLER)
+	s(3) = 1461501637330902918203684832716283019655932542975
+	nop(PUSH)
+	s(2) = and(s(3), s(2))
+	nop(AND)
+	s(3) = 2300
+	nop(PUSH)
+	s(4) = 1911
+	nop(PUSH)
+	s(5) = s(0)
+	nop(DUP5)
+	s(6) = callvalue
+	nop(CALLVALUE)
+	s(7) = 5426
+	nop(PUSH)
+	s(8) = s(6)
+	s(6) = s(7)
+	s(7) = s(8)
+	nop(SWAP1)
+	s(8) = s(5)
+	s(5) = s(7)
+	s(7) = s(8)
+	nop(SWAP2)
+	s(8) = s(6)
+	s(6) = s(7)
+	s(7) = s(8)
+	nop(SWAP1)
+	s(8) = 4294967295
+	nop(PUSH)
+	s(7) = and(s(8), s(7))
+	nop(AND)
+

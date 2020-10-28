@@ -1,0 +1,20 @@
+block0(s(2), s(1), s(0))=>
+	s(3) = 4951604151618473522208239494075575588854869330357829580884448754705073002059
+	nop(PUSH)
+	s(4) = s(0)
+	nop(DUP4)
+	s(5) = caller
+	nop(CALLER)
+	s(6) = timestamp
+	nop(TIMESTAMP)
+	s(7) = 64
+	nop(PUSH)
+	s(7) = mload(s(7))
+	nop(MLOAD)
+	s(8) = s(4)
+	s(4) = s(7)
+	s(7) = s(8)
+	nop(SWAP3)
+	s(8) = s(4)
+	nop(DUP4)
+

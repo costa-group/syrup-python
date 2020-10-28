@@ -1,0 +1,9 @@
+block0(s(1), s(0))=>
+	nop(POP)
+	s(1) = s(0)
+	nop(DUP1)
+	s(2) = timestamp
+	nop(TIMESTAMP)
+	s(1) = lt(s(2), s(1))
+	nop(LT)
+

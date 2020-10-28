@@ -1,0 +1,8 @@
+block0(s(0))=>
+	s(1) = 4822
+	nop(PUSH)
+	s(2) = caller
+	nop(CALLER)
+	s(3) = s(0)
+	nop(DUP3)
+

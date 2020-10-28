@@ -1,0 +1,88 @@
+block0()=>
+	s(0) = 350
+	nop(PUSH)
+	s(1) = 4
+	nop(PUSH)
+	s(1) = calldataload
+	nop(CALLDATALOAD)
+	s(2) = 36
+	nop(PUSH)
+	s(2) = calldataload
+	nop(CALLDATALOAD)
+	s(3) = 68
+	nop(PUSH)
+	s(3) = calldataload
+	nop(CALLDATALOAD)
+	s(4) = 100
+	nop(PUSH)
+	s(4) = calldataload
+	nop(CALLDATALOAD)
+	s(5) = 132
+	nop(PUSH)
+	s(5) = calldataload
+	nop(CALLDATALOAD)
+	s(6) = 164
+	nop(PUSH)
+	s(6) = calldataload
+	nop(CALLDATALOAD)
+	s(7) = 196
+	nop(PUSH)
+	s(7) = calldataload
+	nop(CALLDATALOAD)
+	s(8) = 228
+	nop(PUSH)
+	s(8) = calldataload
+	nop(CALLDATALOAD)
+	s(9) = 260
+	nop(PUSH)
+	s(9) = calldataload
+	nop(CALLDATALOAD)
+	s(10) = 292
+	nop(PUSH)
+	s(10) = calldataload
+	nop(CALLDATALOAD)
+	s(11) = 324
+	nop(PUSH)
+	s(11) = calldataload
+	nop(CALLDATALOAD)
+	s(12) = 3
+	nop(PUSH)
+	s(12) = sload(s(12))
+	nop(SLOAD)
+	s(13) = 1
+	nop(PUSH)
+	s(14) = 160
+	nop(PUSH)
+	s(15) = 2
+	nop(PUSH)
+	s(14) = s(15)^s(14)
+	nop(EXP)
+	s(13) = s(14)-s(13)
+	nop(SUB)
+	s(14) = s(12)
+	s(12) = s(13)
+	s(13) = s(14)
+	nop(SWAP1)
+	s(14) = s(12)
+	nop(DUP2)
+	s(13) = and(s(14), s(13))
+	nop(AND)
+	s(14) = caller
+	nop(CALLER)
+	s(15) = s(13)
+	s(13) = s(14)
+	s(14) = s(15)
+	nop(SWAP1)
+	s(15) = s(12)
+	s(12) = s(14)
+	s(14) = s(15)
+	nop(SWAP2)
+	s(13) = and(s(14), s(13))
+	nop(AND)
+	s(12)= eq(s(13), s(12))
+	nop(EQ)
+	s(12)= eq(s(12), 0)
+	nop(ISZERO)
+	s(13) = 1415
+	nop(PUSH)
+

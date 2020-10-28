@@ -1,0 +1,34 @@
+block0(s(0))=>
+	s(1) = s(0)
+	nop(DUP1)
+	s(2) = 5
+	nop(PUSH)
+	s(1) = s(2)^s(1)
+	nop(EXP)
+	s(2) = 1
+	nop(PUSH)
+	s(3) = s(1)
+	nop(DUP2)
+	s(4) = 6277101735386680763835789423207666416102355444464034512896
+	nop(PUSH)
+	s(5) = 96
+	nop(PUSH)
+	s(6) = 96
+	nop(PUSH)
+	s(7) = msize
+	nop(MSIZE)
+	s(8) = s(6)
+	s(6) = s(7)
+	s(7) = s(8)
+	nop(SWAP1)
+	s(8) = msize
+	nop(MSIZE)
+	s(7) = s(8)+s(7)
+	nop(ADD)
+	s(8) = 0
+	nop(PUSH)
+	s(9) = s(7)
+	s(7) = s(8)
+	s(8) = s(9)
+	nop(SWAP1)
+

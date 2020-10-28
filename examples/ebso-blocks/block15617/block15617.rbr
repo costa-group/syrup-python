@@ -1,0 +1,18 @@
+block0(s(4), s(3), s(2), s(1), s(0))=>
+	s(5) = 4
+	nop(PUSH)
+	s(6) = 1
+	nop(PUSH)
+	s(7) = s(0)
+	nop(DUP7)
+	s(8) = s(6)
+	s(6) = s(7)
+	s(7) = s(8)
+	nop(SWAP1)
+	s(6) = signextend(s(7),s(6))
+	nop(SIGNEXTEND)
+	s(5) = s(6)/s(5)
+	nop(SDIV)
+	s(6) = 6606
+	nop(PUSH)
+

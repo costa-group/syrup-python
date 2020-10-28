@@ -1,0 +1,14 @@
+block0(s(1), s(0))=>
+	s(2) = s(1)
+	nop(DUP1)
+	s(2) = mload(s(2))
+	nop(MLOAD)
+	s(3) = s(0)
+	nop(DUP3)
+	s(2) = gt(s(3), s(2))
+	nop(GT)
+	s(2)= eq(s(2), 0)
+	nop(ISZERO)
+	s(3) = 2631
+	nop(PUSH)
+

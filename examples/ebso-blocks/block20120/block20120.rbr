@@ -1,0 +1,20 @@
+block0(s(1), s(0))=>
+	s(2) = 0
+	nop(PUSH)
+	s(3) = s(1)
+	nop(DUP2)
+	sstore(s(3),s(2))
+	nop(SSTORE)
+	s(2) = 1
+	nop(PUSH)
+	s(1) = s(2)+s(1)
+	nop(ADD)
+	s(2) = s(0)
+	nop(DUP2)
+	s(3) = s(1)
+	nop(DUP2)
+	s(2) = lt(s(3), s(2))
+	nop(LT)
+	s(3) = 1298
+	nop(PUSH)
+

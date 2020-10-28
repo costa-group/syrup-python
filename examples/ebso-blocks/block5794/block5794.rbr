@@ -1,0 +1,10 @@
+block0()=>
+	s(0) = 128
+	nop(PUSH)
+	s(0) = mload(s(0))
+	nop(MLOAD)
+	s(1) = 65535
+	nop(PUSH)
+	sstore(s(1),s(0))
+	nop(SSTORE)
+

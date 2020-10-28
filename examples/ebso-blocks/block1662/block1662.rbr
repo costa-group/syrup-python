@@ -1,0 +1,11 @@
+block0(s(4), s(3), s(2), s(1), s(0))=>
+	s(5) = 19
+	nop(PUSH)
+	s(5) = sload(s(5))
+	nop(SLOAD)
+	s(6) = s(0)
+	s(0) = s(5)
+	s(5) = s(6)
+	nop(SWAP5)
+	nop(POP)
+

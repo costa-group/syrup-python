@@ -1,0 +1,14 @@
+block0(s(0))=>
+	s(1) = 3735928559
+	nop(PUSH)
+	s(2) = 1
+	nop(PUSH)
+	s(3) = s(0)
+	nop(DUP3)
+	s(2)= eq(s(3), s(2))
+	nop(EQ)
+	s(2)= eq(s(2), 0)
+	nop(ISZERO)
+	s(3) = 1282
+	nop(PUSH)
+

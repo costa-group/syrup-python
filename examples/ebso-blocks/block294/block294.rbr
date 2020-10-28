@@ -1,0 +1,7 @@
+block0(s(1), s(0))=>
+	nop(POP)
+	s(1) = s(0)
+	nop(DUP1)
+	s(1)= eq(s(1), 0)
+	nop(ISZERO)
+

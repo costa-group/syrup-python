@@ -1,0 +1,9 @@
+block0(s(0))=>
+	nop(POP)
+	s(0) = callvalue
+	nop(CALLVALUE)
+	s(1) = 0
+	nop(PUSH)
+	s(0)= eq(s(1), s(0))
+	nop(EQ)
+

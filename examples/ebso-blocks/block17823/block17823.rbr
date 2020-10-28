@@ -1,0 +1,18 @@
+block0(s(0))=>
+	s(1) = 0
+	nop(PUSH)
+	s(2) = s(0)
+	nop(DUP2)
+	s(3) = 3
+	nop(PUSH)
+	s(2) = signextend(s(3),s(2))
+	nop(SIGNEXTEND)
+	s(1) = slt(s(2), s(1))
+	nop(SLT)
+	s(2) = s(1)
+	nop(DUP1)
+	s(2)= eq(s(2), 0)
+	nop(ISZERO)
+	s(3) = 19069
+	nop(PUSH)
+

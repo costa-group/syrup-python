@@ -1,0 +1,14 @@
+block0(s(6), s(5), s(4), s(3), s(2), s(1), s(0))=>
+	s(7) = s(0)
+	nop(DUP7)
+	s(8) = 2
+	nop(PUSH)
+	s(9) = s(7)
+	nop(DUP2)
+	s(8) = gt(s(9), s(8))
+	nop(GT)
+	s(8)= eq(s(8), 0)
+	nop(ISZERO)
+	s(9) = 5369
+	nop(PUSH)
+

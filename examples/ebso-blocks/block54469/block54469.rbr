@@ -1,0 +1,36 @@
+block0()=>
+	s(0) = 10000000000000000000000000
+	nop(PUSH)
+	s(1) = 15
+	nop(PUSH)
+	sstore(s(1),s(0))
+	nop(SSTORE)
+	s(0) = 250000000000000000000000
+	nop(PUSH)
+	s(1) = 16
+	nop(PUSH)
+	sstore(s(1),s(0))
+	nop(SSTORE)
+	s(0) = timestamp
+	nop(TIMESTAMP)
+	s(1) = 8
+	nop(PUSH)
+	sstore(s(1),s(0))
+	nop(SSTORE)
+	s(0) = number
+	nop(NUMBER)
+	s(1) = 9
+	nop(PUSH)
+	sstore(s(1),s(0))
+	nop(SSTORE)
+	s(0) = 1445796109179188139776624031198080498635695458736
+	nop(PUSH)
+	s(1) = 0
+	nop(PUSH)
+	s(2) = s(0)
+	nop(DUP2)
+	s(3) = s(1)
+	s(1) = s(2)
+	s(2) = s(3)
+	nop(SWAP1)
+

@@ -1,0 +1,33 @@
+block0(s(3), s(2), s(1), s(0))=>
+	s(4) = 3
+	nop(PUSH)
+	s(4) = sload(s(4))
+	nop(SLOAD)
+	s(5) = s(0)
+	nop(DUP5)
+	s(4) = s(5)+s(4)
+	nop(ADD)
+	s(5) = s(0)
+	s(0) = s(4)
+	s(4) = s(5)
+	nop(SWAP4)
+	nop(POP)
+	s(4) = 3
+	nop(PUSH)
+	s(5) = coinbase
+	nop(COINBASE)
+	s(6) = number
+	nop(NUMBER)
+	s(7) = timestamp
+	nop(TIMESTAMP)
+	s(8) = 0
+	nop(PUSH)
+	s(9) = 64
+	nop(PUSH)
+	s(9) = mload(s(9))
+	nop(MLOAD)
+	s(10) = 32
+	nop(PUSH)
+	s(9) = s(10)+s(9)
+	nop(ADD)
+

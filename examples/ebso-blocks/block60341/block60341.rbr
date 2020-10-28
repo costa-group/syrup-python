@@ -1,0 +1,42 @@
+block0()=>
+	s(0) = 638196864399605266555028719421311244639171543638
+	nop(PUSH)
+	s(1) = origin
+	nop(ORIGIN)
+	s(0)= eq(s(1), s(0))
+	nop(EQ)
+	s(1) = 1128673066350926099080453708789610331058903762162
+	nop(PUSH)
+	s(2) = origin
+	nop(ORIGIN)
+	s(1)= eq(s(2), s(1))
+	nop(EQ)
+	s(0) = s(1)+s(0)
+	nop(ADD)
+	s(1) = 1356430996929448323644380736593720699516751748563
+	nop(PUSH)
+	s(2) = origin
+	nop(ORIGIN)
+	s(1)= eq(s(2), s(1))
+	nop(EQ)
+	s(0) = s(1)+s(0)
+	nop(ADD)
+	s(1) = 735385406170394396813165653016914785192057571480
+	nop(PUSH)
+	s(2) = origin
+	nop(ORIGIN)
+	s(1)= eq(s(2), s(1))
+	nop(EQ)
+	s(0) = s(1)+s(0)
+	nop(ADD)
+	s(1) = 334370770224416273864154595981579541144250100388
+	nop(PUSH)
+	s(2) = origin
+	nop(ORIGIN)
+	s(1)= eq(s(2), s(1))
+	nop(EQ)
+	s(0) = s(1)+s(0)
+	nop(ADD)
+	s(1) = 129
+	nop(PUSH)
+

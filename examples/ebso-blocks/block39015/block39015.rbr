@@ -1,0 +1,16 @@
+block0(s(5), s(4), s(3), s(2), s(1), s(0))=>
+	s(6) = s(4)
+	nop(DUP2)
+	s(7) = 9461
+	nop(PUSH)
+	s(8) = s(0)
+	nop(DUP8)
+	s(9) = 20000000000000000000000
+	nop(PUSH)
+	s(10) = 4294967295
+	nop(PUSH)
+	s(11) = 14976
+	nop(PUSH)
+	s(10) = and(s(11), s(10))
+	nop(AND)
+

@@ -1,0 +1,17 @@
+block0(s(0))=>
+	nop(POP)
+	s(0) = 0
+	nop(PUSH)
+	s(1) = s(0)
+	nop(DUP1)
+	s(2) = 356
+	nop(PUSH)
+	s(3) = 28
+	nop(PUSH)
+	s(4) = 0
+	nop(PUSH)
+	s(5) = 805383188830244934838275473784301907651370706969
+	nop(PUSH)
+	s(6) = gas
+	nop(GAS)
+

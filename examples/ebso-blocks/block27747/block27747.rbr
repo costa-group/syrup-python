@@ -1,0 +1,18 @@
+block0(s(7), s(6), s(5), s(4), s(3), s(2), s(1), s(0))=>
+	s(8) = s(0)
+	s(0) = s(7)
+	s(7) = s(8)
+	nop(SWAP7)
+	nop(POP)
+	s(7) = 18446744073709551616
+	nop(PUSH)
+	s(8) = s(0)
+	nop(DUP8)
+	s(7) = s(8)*s(7)
+	nop(MUL)
+	s(8) = s(3)
+	s(3) = s(7)
+	s(7) = s(8)
+	nop(SWAP4)
+	nop(POP)
+

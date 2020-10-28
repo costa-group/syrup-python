@@ -1,0 +1,11 @@
+block0(s(0))=>
+	nop(POP)
+	s(0) = 100000000000000000
+	nop(PUSH)
+	s(1) = 8
+	nop(PUSH)
+	s(1) = sload(s(1))
+	nop(SLOAD)
+	s(0) = lt(s(1), s(0))
+	nop(LT)
+

@@ -1,0 +1,20 @@
+block0(s(1), s(0))=>
+	s(2) = 53571117125395028169237466399025365288069010161451318195568818386907247595208
+	nop(PUSH)
+	s(3) = caller
+	nop(CALLER)
+	s(4) = 9033
+	nop(PUSH)
+	s(5) = s(0)
+	nop(DUP5)
+	s(6) = 9028
+	nop(PUSH)
+	s(7) = 5
+	nop(PUSH)
+	s(7) = sload(s(7))
+	nop(SLOAD)
+	s(8) = caller
+	nop(CALLER)
+	s(9) = 10055
+	nop(PUSH)
+

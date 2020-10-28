@@ -1,0 +1,72 @@
+block0(s(1), s(0))=>
+	s(2) = 2811
+	nop(PUSH)
+	s(3) = caller
+	nop(CALLER)
+	s(4) = 255
+	nop(PUSH)
+	s(5) = 248
+	nop(PUSH)
+	s(6) = 2
+	nop(PUSH)
+	s(5) = s(6)^s(5)
+	nop(EXP)
+	s(6) = 2
+	nop(PUSH)
+	s(7) = s(0)
+	nop(DUP7)
+	s(8) = s(6)
+	s(6) = s(7)
+	s(7) = s(8)
+	nop(SWAP1)
+	s(6) = byte(s(6) , s(7))
+	nop(BYTE)
+	s(7) = s(5)
+	nop(DUP2)
+	s(6) = s(7)*s(6)
+	nop(MUL)
+	s(5) = s(6)/s(5)
+	nop(DIV)
+	s(4) = and(s(5), s(4))
+	nop(AND)
+	s(5) = s(0)
+	nop(DUP5)
+	s(6) = 3
+	nop(PUSH)
+	s(5) = byte(s(5) , s(6))
+	nop(BYTE)
+	s(6) = 248
+	nop(PUSH)
+	s(7) = 2
+	nop(PUSH)
+	s(6) = s(7)^s(6)
+	nop(EXP)
+	s(5) = s(6)*s(5)
+	nop(MUL)
+	s(6) = 248
+	nop(PUSH)
+	s(7) = 2
+	nop(PUSH)
+	s(6) = s(7)^s(6)
+	nop(EXP)
+	s(7) = s(5)
+	s(5) = s(6)
+	s(6) = s(7)
+	nop(SWAP1)
+	s(5) = s(6)/s(5)
+	nop(DIV)
+	s(6) = 255
+	nop(PUSH)
+	s(5) = and(s(6), s(5))
+	nop(AND)
+	s(6) = timestamp
+	nop(TIMESTAMP)
+	s(7) = 0
+	nop(PUSH)
+	s(8) = 340282366920938463463374607431768211456
+	nop(PUSH)
+	s(7) = s(8)*s(7)
+	nop(MUL)
+	s(8) = 5580
+	nop(PUSH)
+

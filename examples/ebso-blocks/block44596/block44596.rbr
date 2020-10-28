@@ -1,0 +1,23 @@
+block0(s(0))=>
+	nop(POP)
+	s(0) = 181
+	nop(PUSH)
+	s(1) = 1461501637330902918203684832716283019655932542975
+	nop(PUSH)
+	s(2) = 4
+	nop(PUSH)
+	s(2) = calldataload
+	nop(CALLDATALOAD)
+	s(1) = and(s(2), s(1))
+	nop(AND)
+	s(2) = 36
+	nop(PUSH)
+	s(2) = calldataload
+	nop(CALLDATALOAD)
+	s(2)= eq(s(2), 0)
+	nop(ISZERO)
+	s(2)= eq(s(2), 0)
+	nop(ISZERO)
+	s(3) = 213
+	nop(PUSH)
+

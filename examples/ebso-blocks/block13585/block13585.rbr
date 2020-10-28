@@ -1,0 +1,14 @@
+block0(s(0))=>
+	s(1) = 32
+	nop(PUSH)
+	s(2) = 64
+	nop(PUSH)
+	s(3) = 36
+	nop(PUSH)
+	s(4) = 28
+	nop(PUSH)
+	s(5) = s(0)
+	nop(DUP5)
+	s(6) = gas
+	nop(GAS)
+

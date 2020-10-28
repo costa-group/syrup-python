@@ -1,0 +1,18 @@
+block0()=>
+	s(0) = 79
+	nop(PUSH)
+	s(0) = calldataload
+	nop(CALLDATALOAD)
+	s(1) = address
+	nop(ADDRESS)
+	s(2) = 122
+	nop(PUSH)
+	s(2) = calldataload
+	nop(CALLDATALOAD)
+	s(1) = xor(s(2), s(1))
+	nop(XOR)
+	s(0) = xor(s(1), s(0))
+	nop(XOR)
+	s(1) = 737
+	nop(PUSH)
+

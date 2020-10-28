@@ -1,0 +1,4 @@
+DUP2
+LT
+ISZERO
+PUSH

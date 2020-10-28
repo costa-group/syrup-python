@@ -1,0 +1,28 @@
+block0(s(4), s(3), s(2), s(1), s(0))=>
+	s(5) = 64
+	nop(PUSH)
+	s(6) = s(4)
+	s(4) = s(5)
+	s(5) = s(6)
+	nop(SWAP1)
+	s(4) = sha3(s(5), s(4))
+	nop(SHA3)
+	s(5) = 10
+	nop(PUSH)
+	s(4) = s(5)+s(4)
+	nop(ADD)
+	s(4) = sload(s(4))
+	nop(SLOAD)
+	s(5) = 18452
+	nop(PUSH)
+	s(6) = s(0)
+	nop(DUP6)
+	s(7) = 1000000000000000000
+	nop(PUSH)
+	s(8) = 4294967295
+	nop(PUSH)
+	s(9) = 14976
+	nop(PUSH)
+	s(8) = and(s(9), s(8))
+	nop(AND)
+

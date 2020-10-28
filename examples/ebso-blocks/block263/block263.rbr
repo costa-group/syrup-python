@@ -1,0 +1,8 @@
+block0(s(0))=>
+	s(1) = callvalue
+	nop(CALLVALUE)
+	s(2) = s(0)
+	nop(DUP2)
+	sstore(s(2),s(1))
+	nop(SSTORE)
+

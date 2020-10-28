@@ -1,0 +1,12 @@
+block0()=>
+	s(0) = 7
+	nop(PUSH)
+	s(0) = sload(s(0))
+	nop(SLOAD)
+	s(1) = number
+	nop(NUMBER)
+	s(0) = gt(s(1), s(0))
+	nop(GT)
+	s(1) = 2260
+	nop(PUSH)
+

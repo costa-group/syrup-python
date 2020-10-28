@@ -1,0 +1,1 @@
+{"max_progr_len": 2, "src_ws": [], "vars": ["s(1)"], "init_progr_len": 2, "max_sk_sz": 1, "current_cost": 203, "user_instrs": [{"outpt_sk": ["s(1)"], "commutative": false, "inpt_sk": [21], "gas": 200, "disasm": "SLOAD", "opcode": "54", "id": "SLOAD_0"}], "tgt_ws": ["s(1)"]}

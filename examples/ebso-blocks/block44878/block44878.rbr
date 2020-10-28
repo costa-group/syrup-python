@@ -1,0 +1,36 @@
+block0()=>
+	s(0) = 2217
+	nop(PUSH)
+	s(1) = 4
+	nop(PUSH)
+	s(1) = calldataload
+	nop(CALLDATALOAD)
+	s(2) = 36
+	nop(PUSH)
+	s(2) = calldataload
+	nop(CALLDATALOAD)
+	s(3) = 0
+	nop(PUSH)
+	s(4) = 0
+	nop(PUSH)
+	s(5) = 0
+	nop(PUSH)
+	s(6) = 0
+	nop(PUSH)
+	s(7) = 0
+	nop(PUSH)
+	s(8) = 0
+	nop(PUSH)
+	s(9) = 2747
+	nop(PUSH)
+	s(10) = s(1)
+	nop(DUP9)
+	s(11) = 0
+	nop(PUSH)
+	s(12) = 0
+	nop(PUSH)
+	s(13) = 3324
+	nop(PUSH)
+	s(14) = 1952
+	nop(PUSH)
+

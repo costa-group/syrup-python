@@ -1,0 +1,4 @@
+PUSH
+GT
+ISZERO
+PUSH

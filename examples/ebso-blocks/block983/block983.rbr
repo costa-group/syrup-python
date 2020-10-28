@@ -1,0 +1,7 @@
+block0(s(1), s(0))=>
+	nop(POP)
+	s(1) = 3
+	nop(PUSH)
+	sstore(s(1),s(0))
+	nop(SSTORE)
+
