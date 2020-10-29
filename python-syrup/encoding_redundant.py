@@ -22,8 +22,8 @@ def each_function_is_used_at_most_once(b0, initial_idx, end_idx):
         remaining_instr = set(range(b0))
         remaining_instr.remove(j)
         for instr in range(initial_idx, end_idx):
-            write_encoding(add_assert(add_implies(add_eq(t(j)),
-                                         add_and(*list(map(lambda i: add_not(add_eq(t(i), instr)), remaining_instr))))),file=enc.encoding_stream)
+            write_encoding(add_assert(add_implies(add_eq(t(j), instr),
+                                         add_and(*list(map(lambda i: add_not(add_eq(t(i), instr)), remaining_instr))))))
 
 
 # We combine both constraints: each instruction is used at least once and at most once.
@@ -43,7 +43,7 @@ def no_output_before_pop(b0, theta_stack):
     no_output_instr_theta = [theta_push, *theta_swaps]
     for j in range(b0-1):
         write_encoding(add_assert(add_implies(add_eq(t(j+1)),
-                         add_or(*list(map(lambda instr: add_eq(t(j), instr), no_output_instr_theta))))), file=enc.encoding_stream)
+                         add_or(*list(map(lambda instr: add_eq(t(j), instr), no_output_instr_theta))))))
 
 
 # If we choose swap as an instruction, then it cannot swap the same two elements.
