@@ -9,6 +9,9 @@ encoding_stream = sys.stdout
 
 def initialize_dir_and_streams():
     global encoding_stream
+
+    # Files will be stored in costabs path, so we create it just in case
+    # it doesn't exist.
     pathlib.Path(costabs_path).mkdir(parents=True, exist_ok=True)
     encoding_stream = open(costabs_path + encoding_name, 'w')
 
