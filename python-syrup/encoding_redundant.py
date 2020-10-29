@@ -42,7 +42,7 @@ def no_output_before_pop(b0, theta_stack):
     theta_swaps = [v for k,v in theta_stack.items() if k.startswith('SWAP')]
     no_output_instr_theta = [theta_push, *theta_swaps]
     for j in range(b0-1):
-        write_encoding(add_assert(add_implies(add_eq(t(j+1)),
+        write_encoding(add_assert(add_implies(add_eq(t(j+1), theta_nop),
                          add_or(*list(map(lambda instr: add_eq(t(j), instr), no_output_instr_theta))))))
 
 
