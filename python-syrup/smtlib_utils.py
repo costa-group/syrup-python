@@ -80,23 +80,23 @@ def add_assert_soft(statement, weight, id=None):
 # SMT-Lib
 
 def set_logic(mode):
-    print("(set-logic " + mode + ")")
+    return "(set-logic " + mode + ")"
 
 
 def check_sat():
-    print("(check-sat)")
+    return "(check-sat)"
 
 
 def get_objectives():
-    print("(get-objectives)")
+    return "(get-objectives)"
 
 
 def get_model():
-    print("(get-model)")
+    return "(get-model)"
 
 
 def get_value(variable):
-    print("(get-value (" + str(variable) + "))")
+    return "(get-value (" + str(variable) + "))"
 
 
 

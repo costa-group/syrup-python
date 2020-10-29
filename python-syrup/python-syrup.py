@@ -1,9 +1,11 @@
 #!/usr/bin/python3
+from typing import TextIO
 
 from superoptimization_enconding import generate_smtlib_encoding
 from utils import  add_bars_to_string
 import json
 import argparse
+from encoding_files import initialize_dir_and_streams
 
 def parse_data(json_path):
     with open(json_path) as path:
@@ -37,6 +39,8 @@ if __name__ == "__main__":
 
     args = vars(ap.parse_args())
     json_path = args['json_path']
+
+    initialize_dir_and_streams()
 
     b0, bs, user_instr, variables, initial_stack, final_stack = parse_data(json_path)
     generate_smtlib_encoding(b0, bs, user_instr, variables, initial_stack, final_stack)

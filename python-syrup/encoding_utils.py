@@ -4,7 +4,6 @@
 from smtlib_utils import *
 from collections import OrderedDict
 
-
 # We set the maximum k dup and swap instructions
 # can have.
 
@@ -117,3 +116,87 @@ def generate_disjoint_sets_from_cost(ordered_costs):
         else:
             disjoint_set[gas_cost] = [id]
     return OrderedDict(sorted(disjoint_set.items(), key=lambda t: t[0]))
+
+
+def generate_recursive_dependence(elem, user_instr, initial_stack, ):
+
+    # Case base: if an element is already at initial_stack, then we
+    # don't need to perform additional instructions to get its value.
+    # This could include int values, so it is fundamental that this
+    # condition comes before the next one
+    if elem in initial_stack:
+        return 0
+
+    # Case base: if an element is a number, then it returns 1, as we
+    # need to push that element.
+    if type(elem) == int:
+        return 1
+
+    # Case base: we have already analyzed that value, so there's no
+    # change.
+
+    # We search for instruction that contains elem as output
+    instruction = list(filter(lambda instr: elem in instr['outpt_sk'], user_instr))[0]
+    precedence = 0
+    ids = []
+    for antecedent in instruction['inpt_sk']:
+        generate_recursive_dependence(antecedent, user_instr, initial_stack)
+
+
+# Generates a list containing graphs that represent the dependencies between
+# inputs and outputs from different instructions
+def generate_instr_dependencies(user_instr, initial_stack, final_stack, theta):
+    evolving = {}
+
+    # Dict that contains theta value of an instruction and the theta value from the
+    # instructions before
+
+    theta_before = {}
+    # Elements in initial stack are leafs in our graph, and they have
+    # no restrictions in appearing from first instruction
+    for elem in initial_stack:
+        elem += 1
+
+    for elem in final_stack:
+
+        # We are only interested in those variables that have been generated
+        # from an uninterpreted function.
+        if type(elem) == str and elem not in initial_stack:
+            pass
+
+
+# We generate a dict that given the theta value of an instruction, returns the
+# theta values of instructions that must be executed to obtain its input
+def generate_dependency_theta_graph(user_instr, theta):
+    dependency_theta_graph = {}
+    for instr in user_instr:
+        theta_id_act = theta[instr['id']]
+        dependency_theta_graph[theta_id_act]= set()
+        for stack_elem in instr['inpt_sk']:
+
+            # We don't consider ints, as we will explicitely state that
+            # all values in instr['inpt_sk] must be eventually pushed
+
+            # We search for another instruction that generates the
+            # stack elem as an output and add it to the set
+            if type(stack_elem) == str:
+                previous_instr = list(filter(lambda instruction: instruction['outpt_sk'][0] == stack_elem, user_instr))
+
+                # It might be in the initial stack, so the list can be empty
+                if previous_instr:
+                    dependency_theta_graph[theta_id_act].add(previous_instr[0])
+
+    return dependency_theta_graph
+
+
+# Generate a dict that contains the real value as a key, and
+# its associated index as a value.
+def generate_phi_dict(user_instr):
+    idx = 0
+    phi = {}
+    for instr in user_instr:
+        for elem in instr['inpt_sk']:
+            if type(elem) == int and elem not in phi:
+                phi[elem] = idx
+                idx += 1
+    return phi

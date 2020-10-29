@@ -1,10 +1,11 @@
 from encoding_utils import *
+from encoding_files import write_encoding
 
 # Soft constraints
 
 # Generates the soft constraints contained in the paper.
 def paper_soft_constraints(b0, bs, user_instr, theta_stack, theta_comm, theta_non_comm):
-    print("; Soft constraints from paper")
+    write_encoding("; Soft constraints from paper")
     instr_costs = generate_costs_ordered_dict(bs, user_instr, theta_stack, theta_comm, theta_non_comm)
     disjoin_sets = generate_disjoint_sets_from_cost(instr_costs)
     previous_cost = 0
@@ -23,7 +24,7 @@ def paper_soft_constraints(b0, bs, user_instr, theta_stack, theta_comm, theta_no
         # Before adding current associated opcodes, we generate
         # the constraints for each tj.
         for j in range(b0):
-            print(add_assert_soft(add_or(*list(map(lambda var: add_eq(t(j), var), or_variables))), wi, 'gas'))
+            write_encoding(add_assert_soft(add_or(*list(map(lambda var: add_eq(t(j), var), or_variables))), wi, 'gas'))
         for instr in disjoin_sets[gas_cost]:
             or_variables.append(instr)
 
