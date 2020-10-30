@@ -24,8 +24,8 @@ def generate_smtlib_encoding(b0, bs, usr_instr, variables, initial_stack, final_
     final_stack_encoding(final_stack, bs, b0)
     each_function_is_used_at_least_once(b0, len(theta_stack), len(theta_stack) + len(theta_comm) + len(theta_non_comm))
     paper_soft_constraints(b0, bs, usr_instr, theta_stack, theta_comm, theta_non_comm)
-    check_sat()
-    get_objectives()
+    write_encoding(check_sat())
+    write_encoding(get_objectives())
     # get_model()
     for j in range(b0):
         write_encoding(get_value(t(j)))
