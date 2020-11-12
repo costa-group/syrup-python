@@ -8,7 +8,7 @@ from encoding_initialize import initialize_variables, variables_assignment_const
 from encoding_cost import paper_soft_constraints
 from encoding_instructions import instructions_constraints
 from encoding_redundant import each_function_is_used_at_least_once
-from encoding_files import write_encoding
+from encoding_files import write_encoding, write_opcode_map, write_instruction_map
 
 # Method to generate complete representation
 
@@ -33,3 +33,8 @@ def generate_smtlib_encoding(b0, bs, usr_instr, variables, initial_stack, final_
     write_encoding("; Stack: " + str(theta_stack))
     write_encoding("; Comm: " + str(theta_comm))
     write_encoding("; Non-Comm: " + str(theta_non_comm))
+
+    theta_dict = dict(theta_stack, **theta_comm, **theta_non_comm)
+
+    write_instruction_map(generate_instr_map(usr_instr, theta_stack, theta_comm, theta_non_comm))
+    write_opcode_map(generate_disasm_map(usr_instr, theta_dict))

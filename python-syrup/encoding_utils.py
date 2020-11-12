@@ -3,6 +3,7 @@
 
 from smtlib_utils import *
 from collections import OrderedDict
+import re
 
 # We set the maximum k dup and swap instructions
 # can have.
@@ -200,3 +201,54 @@ def generate_phi_dict(user_instr):
                 phi[elem] = idx
                 idx += 1
     return phi
+
+
+# Generate a dict that contains the theta associated to a
+# instruction as values, and its corresponding opcode representation as values.
+# Note that push has several possible opcodes depending on the size of the pushed value,
+# and nop has no opcode associated. We will associated push to 60, the corresponding opcode
+# for PUSH1.
+def generate_disasm_map(user_instr, theta_instr):
+
+    pattern_swap = re.compile("SWAP(.*)")
+    pattern_dup = re.compile("DUP(.*)")
+
+    instr_opcodes = {0: "60", 1: "50"}
+    for id, theta in theta_instr.items():
+        # This cases are already considered
+        if id == "PUSH" or id == "POP" or id == "NOP":
+            continue
+
+        uninterpreted_function = True
+        for match in re.finditer(pattern_swap, id):
+            opcode = hex(int(match.group(1)) + int(str("90"), 16) - 1)[2:]
+            uninterpreted_function = False
+        for match in re.finditer(pattern_dup, id):
+            opcode = hex(int(match.group(1)) + int(str("80"), 16) - 1)[2:]
+            uninterpreted_function = False
+        if uninterpreted_function:
+            instr = list(filter(lambda instr: instr['id'] == id, user_instr))[0]
+            opcode = instr['opcode']
+        instr_opcodes[theta] = opcode
+
+    return instr_opcodes
+
+# Generate a dict that contains the theta associated to a instruction
+# as keys and its corresponding EVM opcode as values. Note that it is similar
+# to theta_comm and theta_non_comm, but instead of using id, we directly use
+# disasm field (i.e. intead of having 14 : ADD_0, we would have 14 : ADD)
+def generate_instr_map(user_instr, theta_stack, theta_comm, theta_non_comm):
+
+    # We will consider in general the theta associated to instructions
+    # in user instr structure
+    theta_uninterpreted = dict(theta_comm, **theta_non_comm)
+
+    # We reverse the theta stack, to have the theta value as key,
+    # and its corresponding instruction as values
+    theta_dict_reversed = {v: k for k, v in theta_stack.items()}
+    for instr in user_instr:
+        theta_value = theta_uninterpreted[instr['id']]
+        disasm = instr['disasm']
+        theta_dict_reversed[theta_value] = disasm
+
+    return theta_dict_reversed
