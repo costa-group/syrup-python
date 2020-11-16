@@ -15,7 +15,7 @@ visited = []
 
 terminate_block = ["ASSERTFAIL","RETURN","REVERT","SUICIDE","STOP"]
 
-split_block = ["LOG0","LOG1","LOG2","LOG3","LOG4","MSTORE","SSTORE","CALL","CALLDATACOPY","CODECOPY","EXTCODECOPY","CALLCODE","CALLSTATIC","DELEGATECALL","RETURNDATACOPY","MSTORE8","STATICCALL"]
+split_block = ["LOG0","LOG1","LOG2","LOG3","LOG4","MSTORE","SSTORE","CALLDATACOPY","CODECOPY","EXTCODECOPY","RETURNDATACOPY","MSTORE8"]
 
 pre_defined_functions = ["PUSH","POP","SWAP","DUP"]
 
@@ -489,7 +489,7 @@ def get_involved_vars(instr,var):
     elif instr.find("create2(",0)!=-1:
         instr_new = instr.strip("\n")
         pos = instr_new.find("create2(")
-        arg0123 = instr[pos+7:-1]
+        arg0123 = instr[pos+8:-1]
         var0123 = arg0123.split(",")
         var0 = var0123[0].strip()
         var1 = var0123[1].strip()
@@ -851,6 +851,117 @@ def get_involved_vars(instr,var):
     elif instr.find("coinbase")!=-1:
         var_list.append("coinbase")
         funct =  "coinbase"
+
+    elif instr.startswith("call("):
+        instr_new = instr.strip("\n")
+        pos = instr_new.find("call(")
+        arg = instr[pos+5:-1]
+        vars06 = arg.split(",")
+        var0 = vars06[0].strip()
+        var1 = vars06[1].strip()
+        var2 = vars06[2].strip()
+        var3 = vars06[3].strip()
+        var4 = vars06[4].strip()
+        var5 = vars06[5].strip()
+        var6 = vars06[6].strip()
+                                
+        var_list.append(var0)
+        var_list.append(var1)
+        var_list.append(var2)
+        var_list.append(var3)
+        var_list.append(var4)
+        var_list.append(var5)
+        var_list.append(var6)
+
+        funct = "call"
+
+    elif instr.startswith("callcode("):
+        instr_new = instr.strip("\n")
+        pos = instr_new.find("callcode(")
+        arg = instr[pos+9:-1]
+        vars06 = arg.split(",")
+        var0 = vars06[0].strip()
+        var1 = vars06[1].strip()
+        var2 = vars06[2].strip()
+        var3 = vars06[3].strip()
+        var4 = vars06[4].strip()
+        var5 = vars06[5].strip()
+        var6 = vars06[6].strip()
+                                
+        var_list.append(var0)
+        var_list.append(var1)
+        var_list.append(var2)
+        var_list.append(var3)
+        var_list.append(var4)
+        var_list.append(var5)
+        var_list.append(var6)
+
+        funct = "callcode"
+
+    elif instr.startswith("callstatic("):
+        instr_new = instr.strip("\n")
+        pos = instr_new.find("callstatic(")
+        arg = instr[pos+11:-1]
+        vars06 = arg.split(",")
+        var0 = vars06[0].strip()
+        var1 = vars06[1].strip()
+        var2 = vars06[2].strip()
+        var3 = vars06[3].strip()
+        var4 = vars06[4].strip()
+        var5 = vars06[5].strip()
+        var6 = vars06[6].strip()
+                                
+        var_list.append(var0)
+        var_list.append(var1)
+        var_list.append(var2)
+        var_list.append(var3)
+        var_list.append(var4)
+        var_list.append(var5)
+        var_list.append(var6)
+
+        funct = "callstatic"
+
+    elif instr.startswith("delegatecall("):
+        instr_new = instr.strip("\n")
+        pos = instr_new.find("delegatecall(")
+        arg = instr[pos+13:-1]
+        vars05 = arg.split(",")
+        var0 = vars05[0].strip()
+        var1 = vars05[1].strip()
+        var2 = vars05[2].strip()
+        var3 = vars05[3].strip()
+        var4 = vars05[4].strip()
+        var5 = vars05[5].strip()
+                                
+        var_list.append(var0)
+        var_list.append(var1)
+        var_list.append(var2)
+        var_list.append(var3)
+        var_list.append(var4)
+        var_list.append(var5)
+
+        funct = "delegatecall"
+
+    elif instr.startswith("staticcall("):
+        instr_new = instr.strip("\n")
+        pos = instr_new.find("staticcall(")
+        arg = instr[pos+11:-1]
+        vars05 = arg.split(",")
+        var0 = vars05[0].strip()
+        var1 = vars05[1].strip()
+        var2 = vars05[2].strip()
+        var3 = vars05[3].strip()
+        var4 = vars05[4].strip()
+        var5 = vars05[5].strip()
+                                
+        var_list.append(var0)
+        var_list.append(var1)
+        var_list.append(var2)
+        var_list.append(var3)
+        var_list.append(var4)
+        var_list.append(var5)
+
+        funct = "staticcall"
 
     else:
         var_list.append(instr)
@@ -1479,7 +1590,22 @@ def generate_userdefname(u_var,funct,args,already_defined,arity):
 
     elif funct.find("returndatasize")!=-1:
         instr_name = "RETURNDATASIZE"
-        
+
+    elif funct.find("callcode")!=-1:
+        instr_name = "CALLCODE"
+
+    elif funct.find("delegatecall")!=-1:
+        instr_name = "DELEGATECALL"
+
+    elif funct.find("staticcall")!=-1:
+        instr_name = "STATICCALL"
+
+    elif funct.find("callstatic")!=-1:
+        instr_name = "CALLSTATIC"
+
+    elif funct.find("call")!=-1:
+        instr_name = "CALL"
+
     #TODO: Add more opcodes
     
     if instr_name in already_defined:
