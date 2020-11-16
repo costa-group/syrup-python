@@ -42,6 +42,7 @@ opcodes = {
     "EXTCODESIZE": [0x3b, 1, 1],
     "EXTCODECOPY": [0x3c, 4, 0],
     "MCOPY": [0x3d, 3, 0],
+    "EXTCODEHASH":[0x3f,1,1],
     "BLOCKHASH": [0x40, 1, 1],
     "COINBASE": [0x41, 0, 1],
     "TIMESTAMP": [0x42, 0, 1],
@@ -104,6 +105,7 @@ GCOST = {
     "Gmid": 8,
     "Ghigh": 10,
     "Gextcode": 700,
+    "Gextcodehash": 400,
     "Gbalance": 400,
     "Gsload": 200,
     "Gjumpdest": 1,
@@ -142,7 +144,7 @@ Wbase = ("ADDRESS", "ORIGIN", "CALLER", "CALLVALUE", "CALLDATASIZE",
 
 Wverylow = ("ADD", "SUB", "NOT", "LT", "GT", "SLT", "SGT", "EQ",
             "ISZERO", "AND", "OR", "XOR", "BYTE", "CALLDATALOAD",
-            "MLOAD", "MSTORE", "MSTORE8", "PUSH", "DUP", "SWAP")
+            "MLOAD", "MSTORE", "MSTORE8", "PUSH", "DUP", "SWAP","SHL","SHR","SAR")
 
 Wlow = ("MUL", "DIV", "SDIV", "MOD", "SMOD", "SIGNEXTEND")
 
@@ -151,6 +153,8 @@ Wmid = ("ADDMOD", "MULMOD", "JUMP")
 Whigh = ("JUMPI")
 
 Wext = ("EXTCODESIZE")
+
+Wextcodehash = ("EXTCODEHASH")
 
 def get_opcode(opcode):
     if opcode in opcodes:
@@ -196,6 +200,8 @@ def get_ins_cost(opcode,params=None):
         return GCOST["Ghigh"]
     elif opcode in Wext:
         return GCOST["Gextcode"]
+    elif opcode in Wextcodehash:
+        return GCOST["Gextcodehash"]
     elif opcode == "EXP":
         return 60#GCOST["Gexp"]
     elif opcode == "SLOAD":
@@ -206,13 +212,11 @@ def get_ins_cost(opcode,params=None):
         return GCOST["Gsha3"]
     elif opcode == "CREATE":
         return GCOST["Gcreate"]
-    elif opcode in ("CALL", "CALLCODE","DELEGATECALL"):
+    elif opcode in ("CALL", "CALLCODE","DELEGATECALL","STATICCALL"):
         return GCOST["Gcall"]
     elif opcode in ("LOG0", "LOG1", "LOG2", "LOG3", "LOG4"):
         num_topics = int(opcode[3:])
         return GCOST["Glog"] + num_topics * GCOST["Glogtopic"]
-    elif opcode == "EXTCODECOPY":
-        return GCOST["Gextcode"]
     elif opcode in ("CALLDATACOPY", "CODECOPY","RETURNDATACOPY"):
         return GCOST["Gverylow"]
     elif opcode == "BALANCE":
@@ -242,13 +246,17 @@ def get_ebso_cost(opcode,params=None):
         return GCOST["Ghigh"]
     elif opcode in Wext:
         return GCOST["Gextcode"]
+    elif opcode in Wextcodehash:
+        return GCOST["Gextcodehash"]
     elif opcode == "SLOAD":
         return GCOST["Gsload"]
     elif opcode == "JUMPDEST":
         return GCOST["Gjumpdest"]
     elif opcode == "CREATE":
         return GCOST["Gcreate"]
-    elif opcode in ("CALL", "CALLCODE","DELEGATECALL"):
+    elif opcode == "CREATE2":
+        return GCOST["Gcreate"]
+    elif opcode in ("CALL", "CALLCODE","DELEGATECALL","STATICCALL"):
         return GCOST["Gcall"]
     elif opcode in ("LOG0", "LOG1", "LOG2", "LOG3", "LOG4"):
         num_topics = int(opcode[3:])
