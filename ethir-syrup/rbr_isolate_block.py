@@ -966,7 +966,7 @@ def translateOpcodesF(opcode, index_variables, addr):
         else:
             instr = v1 +" = 1"
 
-     elif opcode == "STATICCALL":
+    elif opcode == "STATICCALL":
         v00, updated_variables = get_consume_variable(index_variables)
         v01, updated_variables = get_consume_variable(updated_variables)
         v02, updated_variables = get_consume_variable(updated_variables)
