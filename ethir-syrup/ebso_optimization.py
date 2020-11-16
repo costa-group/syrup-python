@@ -15,11 +15,11 @@ visited = []
 
 terminate_block = ["ASSERTFAIL","RETURN","REVERT","SUICIDE","STOP"]
 
-split_block = ["LOG0","LOG1","LOG2","LOG3","LOG4","MSTORE","SSTORE","CALL","CALLDATACOPY","CODECOPY","EXTCODECOPY","CALLCODE","CALLSTATIC","DELEGATECALL","RETURNDATACOPY","MSTORE8"]
+split_block = ["LOG0","LOG1","LOG2","LOG3","LOG4","MSTORE","SSTORE","CALL","CALLDATACOPY","CODECOPY","EXTCODECOPY","CALLCODE","CALLSTATIC","DELEGATECALL","RETURNDATACOPY","MSTORE8","STATICCALL"]
 
 pre_defined_functions = ["PUSH","POP","SWAP","DUP"]
 
-zero_ary = ["origin","caller","callvalue","address","number","gasprice","difficulty","coinbase","timestamp","codesize","gaslimit","gas","calldatasize","returndatasize","msize"]
+zero_ary = ["origin","caller","callvalue","address","number","gasprice","difficulty","coinbase","timestamp","codesize","gaslimit","gas","calldatasize","returndatasize","msize","selfbalance","chainid"]
 
 commutative_bytecodes = ["ADD","MUL","EQ","AND","OR","XOR"]
 
@@ -486,11 +486,31 @@ def get_involved_vars(instr,var):
         var_list.append(var2)
         funct = "create"
 
+    elif instr.find("create2(",0)!=-1:
+        instr_new = instr.strip("\n")
+        pos = instr_new.find("create2(")
+        arg0123 = instr[pos+7:-1]
+        var0123 = arg0123.split(",")
+        var0 = var0123[0].strip()
+        var1 = var0123[1].strip()
+        var2 = var0123[2].strip()
+        var3 = var0123[3].strip()
+        var_list.append(var0)
+        var_list.append(var1)
+        var_list.append(var2)
+        var_list.append(var3)
+        funct = "create2"
+
     elif instr.find("extcodesize",0)!=-1:
         var0 = var.strip()
         var_list.append(var0)
         funct = "extcodesize"
 
+    elif instr.find("extcodehash",0)!=-1:
+        var0 = var.strip()
+        var_list.append(var0)
+        funct = "extcodehash"
+        
     elif instr.find("gaslimit",0)!=-1:
         var_list.append("gaslimit")
         funct = "gaslimit"
@@ -787,6 +807,14 @@ def get_involved_vars(instr,var):
         var0 = var.strip()
         var_list.append(var0)
         funct = "balance"
+
+    elif instr.find("selfbalance")!=-1:
+        var_list.append("selfbalance")
+        funct =  "selfbalance"
+
+    elif instr.find("chainid")!=-1:
+        var_list.append("chainid")
+        funct =  "chainid"
 
     elif instr.find("origin")!=-1:
         var_list.append("origin")
@@ -1360,6 +1388,18 @@ def generate_userdefname(u_var,funct,args,already_defined,arity):
 
     elif funct.find("slt") !=-1:
         instr_name = "SLT"
+
+    elif funct.find("selfbalance") !=-1:
+        instr_name = "SELFBALANCE"
+
+    elif funct.find("extcodehash") !=-1:
+        instr_name = "EXTCODEHASH"
+
+    elif funct.find("chainid") !=-1:
+        instr_name = "CHAINID"
+
+    elif funct.find("create2") !=-1:
+        instr_name = "CREATE2"
 
     elif funct.find("byte") !=-1:
         instr_name = "BYTE"
