@@ -900,34 +900,35 @@ def translateOpcodesF(opcode, index_variables, addr):
 
             
     elif opcode == "CALL": #Suppose that all the calls are executed without errors
-        _, updated_variables = get_consume_variable(index_variables)
-        _, updated_variables = get_consume_variable(updated_variables)
-        _, updated_variables = get_consume_variable(updated_variables)
-        _, updated_variables = get_consume_variable(updated_variables)
-        _, updated_variables = get_consume_variable(updated_variables)
-        _, updated_variables = get_consume_variable(updated_variables)
-        _, updated_variables = get_consume_variable(updated_variables)
+        v00, updated_variables = get_consume_variable(index_variables)
+        v01, updated_variables = get_consume_variable(updated_variables)
+        v02, updated_variables = get_consume_variable(updated_variables)
+        v03, updated_variables = get_consume_variable(updated_variables)
+        v04, updated_variables = get_consume_variable(updated_variables)
+        v05, updated_variables = get_consume_variable(updated_variables)
+        v06, updated_variables = get_consume_variable(updated_variables)
         v1, updated_variables = get_new_variable(updated_variables)
 
         if ebso_flag:
-            instr = v1+" = call"  
+            instr = v1+" = call("+v00+","+v01+","+v02+","+v03+","+v04+","+v05+","+v06+")"  
         else:
             instr = v1 +" = 1"
         
     elif opcode == "CALLCODE":
-        _, updated_variables = get_consume_variable(index_variables)
-        _, updated_variables = get_consume_variable(updated_variables)
-        _, updated_variables = get_consume_variable(updated_variables)
-        _, updated_variables = get_consume_variable(updated_variables)
-        _, updated_variables = get_consume_variable(updated_variables)
-        _, updated_variables = get_consume_variable(updated_variables)
-        _, updated_variables = get_consume_variable(updated_variables)
+        v00, updated_variables = get_consume_variable(index_variables)
+        v01, updated_variables = get_consume_variable(updated_variables)
+        v02, updated_variables = get_consume_variable(updated_variables)
+        v03, updated_variables = get_consume_variable(updated_variables)
+        v04, updated_variables = get_consume_variable(updated_variables)
+        v05, updated_variables = get_consume_variable(updated_variables)
+        v06, updated_variables = get_consume_variable(updated_variables)
         v1, updated_variables = get_new_variable(updated_variables)
 
         if ebso_flag:
-            instr = v1+" = callcode"  
+            instr = v1+" = callcode("+v00+","+v01+","+v02+","+v03+","+v04+","+v05+","+v06+")"  
         else:
             instr = v1 +" = 1"
+
         
     elif opcode == "RETURN":
         # var = get_local_variable(addr)
@@ -952,30 +953,30 @@ def translateOpcodesF(opcode, index_variables, addr):
             instr = ""
         updated_variables = index_variables
     elif opcode == "DELEGATECALL":
-        _, updated_variables = get_consume_variable(index_variables)
-        _, updated_variables = get_consume_variable(updated_variables)
-        _, updated_variables = get_consume_variable(updated_variables)
-        _, updated_variables = get_consume_variable(updated_variables)
-        _, updated_variables = get_consume_variable(updated_variables)
-        _, updated_variables = get_consume_variable(updated_variables)
+        v00, updated_variables = get_consume_variable(index_variables)
+        v01, updated_variables = get_consume_variable(updated_variables)
+        v02, updated_variables = get_consume_variable(updated_variables)
+        v03, updated_variables = get_consume_variable(updated_variables)
+        v04, updated_variables = get_consume_variable(updated_variables)
+        v05, updated_variables = get_consume_variable(updated_variables)
         v1, updated_variables = get_new_variable(updated_variables)
 
         if ebso_flag :
-            instr = v1+" = delegatecall"
+            instr = v1+" = delegatecall("+v00+","+v01+","+v02+","+v03+","+v04+","+v05+")"  
         else:
             instr = v1 +" = 1"
 
-    elif opcode == "STATICCALL":
-        _, updated_variables = get_consume_variable(index_variables)
-        _, updated_variables = get_consume_variable(updated_variables)
-        _, updated_variables = get_consume_variable(updated_variables)
-        _, updated_variables = get_consume_variable(updated_variables)
-        _, updated_variables = get_consume_variable(updated_variables)
-        _, updated_variables = get_consume_variable(updated_variables)
+     elif opcode == "STATICCALL":
+        v00, updated_variables = get_consume_variable(index_variables)
+        v01, updated_variables = get_consume_variable(updated_variables)
+        v02, updated_variables = get_consume_variable(updated_variables)
+        v03, updated_variables = get_consume_variable(updated_variables)
+        v04, updated_variables = get_consume_variable(updated_variables)
+        v05, updated_variables = get_consume_variable(updated_variables)
         v1, updated_variables = get_new_variable(updated_variables)
 
         if ebso_flag :
-            instr = v1+" = staticcall"
+            instr = v1+" = staticcall("+v00+","+v01+","+v02+","+v03+","+v04+","+v05+")"  
         else:
             instr = v1 +" = 1"
 
@@ -998,17 +999,17 @@ def translateOpcodesF(opcode, index_variables, addr):
     # elif opcode == "TXEXECGAS":
     #     pass
     elif opcode == "CALLSTATIC":
-        _, updated_variables = get_consume_variable(index_variables)
-        _, updated_variables = get_consume_variable(updated_variables)
-        _, updated_variables = get_consume_variable(updated_variables)
-        _, updated_variables = get_consume_variable(updated_variables)
-        _, updated_variables = get_consume_variable(updated_variables)
-        _, updated_variables = get_consume_variable(updated_variables)
-        _, updated_variables = get_consume_variable(updated_variables)
+        v00, updated_variables = get_consume_variable(index_variables)
+        v01, updated_variables = get_consume_variable(updated_variables)
+        v02, updated_variables = get_consume_variable(updated_variables)
+        v03, updated_variables = get_consume_variable(updated_variables)
+        v04, updated_variables = get_consume_variable(updated_variables)
+        v05, updated_variables = get_consume_variable(updated_variables)
+        v06, updated_variables = get_consume_variable(updated_variables)
         v1, updated_variables = get_new_variable(updated_variables)
 
         if ebso_flag:
-            instr = v1+" = callstatic"  
+            instr = v1+" = callstatic("+v00+","+v01+","+v02+","+v03+","+v04+","+v05+","+v06+")"  
         else:
             instr = v1 +" = 1"
 
