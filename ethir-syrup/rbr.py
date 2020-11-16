@@ -36,20 +36,21 @@ def init_globals():
 
     global opcodes10
     opcodes10 = ["LT", "GT", "SLT", "SGT", "EQ", "ISZERO", "AND", "OR",
-                "XOR", "NOT", "BYTE"]
-
+                 "XOR", "NOT", "BYTE","SHL","SHR","SAR"]
+    
     global opcodes20
     opcodes20 = ["SHA3"]
 
     global opcodes30
-    opcodes30 = ["ADDRESS", "BALANCE", "ORIGIN", "CALLER", "CALLVALUE",
-                "CALLDATALOAD", "CALLDATASIZE", "CALLDATACOPY", "CODESIZE",
-                "CODECOPY", "GASPRICE", "EXTCODESIZE", "EXTCODECOPY", "MCOPY"]
+    opcodes30 = ["ADDRESS", "BALANCE", "ORIGIN", "CALLER",
+                 "CALLVALUE", "CALLDATALOAD", "CALLDATASIZE",
+                 "CALLDATACOPY", "CODESIZE", "CODECOPY", "GASPRICE",
+                 "EXTCODESIZE", "EXTCODECOPY", "MCOPY","EXTCODEHASH"]
 
     global opcodes40
     opcodes40 = ["BLOCKHASH", "COINBASE", "TIMESTAMP", "NUMBER",
-                 "DIFFICULTY", "GASLIMIT"]
-
+                 "DIFFICULTY", "GASLIMIT","SELFBALANCE","CHAINID"]
+    
     global opcodes50
     opcodes50 = ["POP", "MLOAD", "MSTORE", "MSTORE8", "SLOAD",
                  "SSTORE", "JUMP", "JUMPI", "PC", "MSIZE", "GAS", "JUMPDEST",
@@ -71,7 +72,7 @@ def init_globals():
     opcodesF = ["CREATE", "CALL", "CALLCODE", "RETURN", "REVERT",
                 "ASSERTFAIL", "DELEGATECALL", "BREAKPOINT", "RNGSEED", "SSIZEEXT",
                 "SLOADBYTES", "SSTOREBYTES", "SSIZE", "STATEROOT", "TXEXECGAS",
-                "CALLSTATIC", "INVALID", "SUICIDE"]
+                "CALLSTATIC", "INVALID", "SUICIDE","STATICCALL","CREATE2"]
 
     global opcodesZ
     opcodesZ = ["RETURNDATACOPY","RETURNDATASIZE"]
@@ -464,6 +465,26 @@ def translateOpcodes10(opcode, index_variables,cond):
         v1, updated_variables = get_consume_variable(updated_variables)
         v2, updated_variables = get_new_variable(updated_variables)
         instr = v2+" = byte(" + v1 + " , " + v0 + ")" 
+
+    elif opcode == "SHL":
+        v0, updated_variables = get_consume_variable(index_variables)
+        v1, updated_variables = get_consume_variable(updated_variables)
+        v2, updated_variables = get_new_variable(updated_variables)
+        instr = v2+" = shl(" + v1 + " , " + v0 + ")" 
+
+    elif opcode == "SHR":
+        v0, updated_variables = get_consume_variable(index_variables)
+        v1, updated_variables = get_consume_variable(updated_variables)
+        v2, updated_variables = get_new_variable(updated_variables)
+        instr = v2+" = shr(" + v1 + " , " + v0 + ")" 
+
+    elif opcode == "SAR":
+        v0, updated_variables = get_consume_variable(index_variables)
+        v1, updated_variables = get_consume_variable(updated_variables)
+        v2, updated_variables = get_new_variable(updated_variables)
+        instr = v2+" = sar(" + v1 + " , " + v0 + ")" 
+        
+
     else:    
         instr = "Error opcodes10: "+ opcode
         updated_variables = index_variables
@@ -564,7 +585,7 @@ def translateOpcodes30(opcode, value, index_variables,block):
         v2, updated_variables = get_consume_variable(updated_variables)
 
         if ebso_flag:
-            instr = "calldatacopy("+v0+","+v1+","+v2+")"  
+            instr = "codecopy("+v0+","+v1+","+v2+")"  
         else:
             instr = ""
         
@@ -577,6 +598,12 @@ def translateOpcodes30(opcode, value, index_variables,block):
         v1, updated_variables = get_new_variable(updated_variables)
         instr = v1+" = extcodesize"
         update_bc_in_use("extcodesize",block)
+
+    elif opcode == "EXTCODEHASH":
+        _, updated_variables = get_consume_variable(index_variables)
+        v1, updated_variables = get_new_variable(updated_variables)        
+        instr = v1+" = extcodehash("+v1+")"
+
     elif opcode == "EXTCODECOPY":
         v0, updated_variables = get_consume_variable(index_variables)
         v1, updated_variables = get_consume_variable(updated_variables)
@@ -632,6 +659,16 @@ def translateOpcodes40(opcode, index_variables,block):
         v1, updated_variables = get_new_variable(index_variables)
         instr = v1+" = gaslimit"
         update_bc_in_use("gaslimit",block)
+    elif opcode == "SELFBALANCE":
+        v1, updated_variables = get_new_variable(index_variables)
+        instr = v1+" = selfbalance"
+        update_bc_in_use("selfbalance",block)
+    elif opcode == "CHAINID":
+        v1, updated_variables = get_new_variable(index_variables)
+        instr = v1+" = chainid"
+        update_bc_in_use("chainid",block)
+
+        
     else:
         instr = "Error opcodes40: "+opcode
         updated_variables = index_variables
@@ -853,6 +890,19 @@ def translateOpcodesF(opcode, index_variables, addr):
             instr = v1+" = create("+v00+","+v01+","+v02+")"
         else:
             instr=""
+
+    elif opcode == "CREATE2":
+        v00, updated_variables = get_consume_variable(index_variables)
+        v01, updated_variables = get_consume_variable(updated_variables)
+        v02, updated_variables = get_consume_variable(updated_variables)
+        v03, updated_variables = get_consume_variable(updated_variables)
+        v1, updated_variables = get_new_variable(updated_variables)
+
+        if ebso_flag:
+            instr = v1+" = create2("+v00+","+v01+","+v02+","+v03+")"
+        else:
+            instr=""
+            
     elif opcode == "CALL": #Suppose that all the calls are executed without errors
         _, updated_variables = get_consume_variable(index_variables)
         _, updated_variables = get_consume_variable(updated_variables)
@@ -918,6 +968,21 @@ def translateOpcodesF(opcode, index_variables, addr):
             instr = v1+" = delegatecall"
         else:
             instr = v1 +" = 1"
+
+    elif opcode == "STATICCALL":
+        _, updated_variables = get_consume_variable(index_variables)
+        _, updated_variables = get_consume_variable(updated_variables)
+        _, updated_variables = get_consume_variable(updated_variables)
+        _, updated_variables = get_consume_variable(updated_variables)
+        _, updated_variables = get_consume_variable(updated_variables)
+        _, updated_variables = get_consume_variable(updated_variables)
+        v1, updated_variables = get_new_variable(updated_variables)
+
+        if ebso_flag :
+            instr = v1+" = staticcall"
+        else:
+            instr = v1 +" = 1"
+
             
     # elif opcode == "BREAKPOINT":
     #     pass
