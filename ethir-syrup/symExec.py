@@ -27,7 +27,7 @@ import global_params
 
 import rbr
 from clone import compute_cloning
-from utils import cfg_dot, write_cfg, update_map, get_public_fields, getLevel, update_sstore_map,correct_map_fields1, get_push_value, get_initial_block_address, check_graph_consistency
+from utils import cfg_dot, write_cfg, update_map, get_public_fields, getLevel, update_sstore_map,correct_map_fields1, get_push_value, get_initial_block_address, check_graph_consistency, find_first_closing_parentheses, check_if_same_stack
 from opcodes import get_opcode
 from graph_scc import Graph_SCC, get_entry_all,filter_nested_scc
 from pattern import look_for_string_pattern,check_sload_fragment_pattern,sstore_fragment
@@ -65,6 +65,7 @@ class Parameter:
 
 def initGlobalVars():
     global g_src_map
+    global g_src_map_init
     global solver
     # Z3 solver
 
@@ -259,6 +260,9 @@ def initGlobalVars():
     global update_fields
     update_fields = {}
 
+    global source_n
+    source_n = ""
+    
     global ebso_opt
     ebso_opt = ""
     
@@ -280,6 +284,11 @@ def change_format(evm_version):
             line = line.replace('Missing opcode 0xfd', 'REVERT')
             line = line.replace('Missing opcode 0xfe', 'ASSERTFAIL')
             line = line.replace('Missing opcode', 'INVALID')
+
+            #Newer versions
+            line = line.replace('opcode 0xfe not defined', 'ASSERTFAIL')
+            line = line.replace('opcode 0xfd not defined', 'REVERT')
+            
             line = line.replace(':', '')
             lineParts = line.split(' ')
             try: # removing initial zeroes
@@ -846,10 +855,15 @@ def sym_exec_block(params, block, pre_block, depth, func_call,level,path):
     param_abs = ("","")
     
     vertices[block].add_stack(list(stack))
+    vertices[block].add_path(path)
+
     if debug_info:
         print ("\nBLOCK "+ str(block))
         print ("PATH")
         print (path)
+        print ("STACK")
+        print (stack)
+
 
     update_stack_heigh(block,len(stack),0)
     Edge = namedtuple("Edge", ["v1", "v2"]) # Factory Function for tuples is used as dictionary key
@@ -904,7 +918,15 @@ def sym_exec_block(params, block, pre_block, depth, func_call,level,path):
     result = False
     instr_index = 0
 
+    
+    bl = vertices[block]
+    
+    instr_idx = 0
     for instr in block_ins:
+        #print instr
+        if not bl.get_pcs_stored():
+            bl.add_pc(hex(global_state["pc"]))
+        
         sym_exec_ins(params, block, instr, func_call,stack_old,instr_index)
         instr_index+=1
         if sha_identify and not result:
@@ -919,6 +941,20 @@ def sym_exec_block(params, block, pre_block, depth, func_call,level,path):
             print ("Stack despues de la ejecucion de la instruccion "+ instr)
             print (stack)
 
+            
+        if instr.strip() == "STOP" or instr.strip() == "ASSERTFAIL" or instr.strip() == "REVERT":
+            j,new_block_ins = remove_unnecesary_opcodes(instr_idx, block_ins)
+            if j == "jump" or j == "jumpi":
+                vertices[block].set_block_type("terminal")
+                jump_type[block] = "terminal"
+            vertices[block].set_instructions(new_block_ins)
+            break
+
+        instr_idx+=1
+    if not bl.get_pcs_stored():
+        bl.set_pcs_stored(True)
+
+            
     if result:
 
         falls = vertices[pre_block].get_falls_to()
@@ -997,76 +1033,15 @@ def sym_exec_block(params, block, pre_block, depth, func_call,level,path):
             if source_code in g_src_map.func_call_names:
                 func_call = global_state['pc']
                 
-         # AHC: If we find an already cloned block, we must check whether to copy it,
-        # if leads to a possible non cloned path; or we can redirect to an existing one.
-        if successor in visited_blocks:
-            if debug_info:
-                print("Successor already visited: ")
-                print successor
-                print("From unconditional block: ")
-                print block
-            
-            # We filter all nodes with same beginning, and check if there's one of those
-            # nodes with same stack. Notice that one block may contain several stacks
-                
-            same_stack_successors = get_all_blocks_with_same_stack(successor, stack)
-            
-            if len(same_stack_successors) > 0:
-                update_matching_successor(successor, same_stack_successors[0], block, "jump_target")
-            else:
-                copy_already_visited_node(successor, new_params, block, depth, func_call,current_level,path, "jump_target")
+        analyze_next_block(block, successor, stack, path, func_call, depth, current_level, new_params, "jump_target")
         
-        elif successor in vertices:
-            
-            # Mirar si clonarlo o no TODO
-            vertices[successor].add_origin(block) #to compute which are the blocks that leads to successor
-
-            if not(vertices[successor].known_stack(list(stack))):
-                path.append((block,successor))
-                sym_exec_block(new_params, successor, block, depth, func_call,current_level+1,path)
-                path.pop()
-            # else:
-            #     if vertices[successor].get_depth_level()<(current_level+1): 
-            #         vertices[successor].set_depth_level(current_level+1)
-            #         update_depth_level(successor,current_level+1,[])
-                    
-        else:
-            if successor not in blocks_to_create:
-                blocks_to_create.append(successor)
-                
     elif jump_type[block] == "falls_to":  # just follow to the next basic block
         successor = vertices[block].get_falls_to()
 
         new_params = params.copy()
         new_params.global_state["pc"] = get_initial_block_address(successor)
 
-        # AHC: If we find an already cloned block, we must check whether to copy it,
-        # if leads to a possible non cloned path; or we can redirect to an existing one.
-        if successor in visited_blocks:
-
-            # We filter all nodes with same beginning, and check if there's one of those
-            # nodes with same stack. Notice that one block may contain several stacks
-            same_stack_successors = get_all_blocks_with_same_stack(successor, stack)
-
-
-            if len(same_stack_successors) > 0:
-                update_matching_successor(successor, same_stack_successors[0], block, "falls_to")
-                
-            else:
-                copy_already_visited_node(successor, new_params, block, depth, func_call,current_level,path, "falls_to")
-
-        elif not(vertices[successor].known_stack(list(stack))):
-            vertices[successor].add_origin(block) #to compute which are the blocks that leads to successor
-            path.append((block,successor))
-            
-            sym_exec_block(new_params, successor, block, depth, func_call,current_level+1,path)
-            path.pop()
-        else:
-            vertices[successor].add_origin(block) #to compute which are the blocks that leads to successor
-            # if vertices[successor].get_depth_level()<(current_level+1):
-            #     vertices[successor].set_depth_level(current_level+1)
-            #     update_depth_level(successor,current_level+1,[])
-
+        analyze_next_block(block, successor, stack, path, func_call, depth, current_level, new_params, "falls_to")
             
     elif jump_type[block] == "conditional":  # executing "JUMPI"
 
@@ -1081,47 +1056,8 @@ def sym_exec_block(params, block, pre_block, depth, func_call,level,path):
         last_idx = len(new_params.path_conditions_and_vars["path_condition"]) - 1
                 #new_params.analysis["time_dependency_bug"][last_idx] = global_state["pc"]
 
-        # AHC: If we find an already cloned block, we must check whether to copy it,
-        # if leads to a possible non cloned path; or we can redirect to an existing one.
-        if left_branch in visited_blocks:
-
-            # We filter all nodes with same beginning, and check if there's one of those
-            # nodes with same stack. Notice that one block may contain several stacks
-            same_stack_successors = get_all_blocks_with_same_stack(left_branch, stack)
-            if len(same_stack_successors) > 0:
-                update_matching_successor(left_branch, same_stack_successors[0], block, "jump_target")
-                
-            else:
-                copy_already_visited_node(left_branch, new_params, block, depth, func_call,current_level,path, "jump_target")
-                
-        elif left_branch in vertices:
-            vertices[left_branch].add_origin(block) #to compute which are the blocks that leads to successor
-            if not(vertices[left_branch].known_stack(list(stack))):
-            # if (((block,left_branch) not in path)):
-            #     if potential_jump:
-            #         potential_jump = False
-                path.append((block,left_branch))
-                sym_exec_block(new_params, left_branch, block, depth, func_call,current_level+1,path)
-                path.pop()
-            # else:
-            #     if vertices[left_branch].get_depth_level() < (current_level+1):
-            #         vertices[left_branch].set_depth_level(current_level+1)
-            #         update_depth_level(left_branch,current_level+1,[])
-                # else:
-            #     # if not potential_jump:
-            #     #     potential_jump = True
-            #     if not(vertices[left_branch].known_stack(list(stack))):
-            #         path.append((block,left_branch))
-            #         sym_exec_block(new_params, left_branch, block, depth, func_call,level+1,path)
-            #         path.pop()
-            #     # else:
-            #     #     print "PASO"
-            #     # else:
-            #     #     potential_jump = False
-        else:
-            if left_branch not in blocks_to_create:
-                blocks_to_create.append(left_branch)
-
+        analyze_next_block(block, left_branch, stack, path, func_call, depth, current_level, new_params, jump_type)
+        
         # solver.pop()  # POP SOLVER CONTEXT
 
         # solver.push()  # SET A BOUNDARY FOR SOLVER
@@ -1148,42 +1084,7 @@ def sym_exec_block(params, block, pre_block, depth, func_call,level,path):
         # print right_branch
         # print path
         # print "\n"
-        # AHC: If we find an already cloned block, we must check whether to copy it,
-        # if leads to a possible non cloned path; or we can redirect to an existing one.
-        if right_branch in visited_blocks:
-
-            # We filter all nodes with same beginning, and check if there's one of those
-            # nodes with same stack. Notice that one block may contain several stacks
-            same_stack_successors = get_all_blocks_with_same_stack(right_branch, stack)
-            
-            if len(same_stack_successors) > 0:
-                update_matching_successor(right_branch, same_stack_successors[0], block, "falls_to")
-            else:
-                copy_already_visited_node(right_branch, new_params, block, depth, func_call,current_level,path, "falls_to")
-                
-        elif right_branch in vertices:
-            vertices[right_branch].add_origin(block)
-            
-            if not(vertices[right_branch].known_stack(list(stack))):
-                path.append((block,right_branch))
-                sym_exec_block(new_params, right_branch, block, depth, func_call,current_level+1,path)
-                path.pop()
-                # else:
-                #     print "PASO"
-                # else:
-                #     potential_jump = False
-            # else:
-            #     if vertices[right_branch].get_depth_level < (current_level+1):
-            #         vertices[right_branch].set_depth_level(current_level+1)
-            #         update_depth_level(right_branch,current_level+1,[])
-        else:
-            if right_branch not in blocks_to_create:
-                blocks_to_create.append(right_branch)
-        # except TimeoutError:
-        #     raise
-        # except Exception as e:
-        #     if global_params.DEBUG_MODE:
-        #         traceback.print_exc()
+        analyze_next_block(block, right_branch, stack, path, func_call, depth, current_level, new_params, "falls_to")
         # solver.pop()  # POP SOLVER CONTEXT
         updated_count_number = visited_edges[current_edge] - 1
         visited_edges.update({current_edge: updated_count_number})
@@ -1397,6 +1298,11 @@ def sym_exec_ins(params, block, instr, func_call,stack_first,instr_index):
                 first = BitVecVal(first, 256)
             elif isSymbolic(first) and isReal(second):
                 second = BitVecVal(second, 256)
+
+            if isReal(first):
+                first = long(first)
+            if isReal(second):
+                second = long(second)
             computed = first * second & UNSIGNED_BOUND_NUMBER
             #computed = simplify(computed) if is_expr(computed) else computed
             stack.insert(0, computed)
@@ -1582,7 +1488,7 @@ def sym_exec_ins(params, block, instr, func_call,stack_first,instr_index):
                 second = to_symbolic(second)
                 # solver.push()
                 # solver.add( Not(third == 0) )
-                if third == unsat:
+                if isReal(third) and third == 0:
                     computed = 0
                 else:
                     # first = ZeroExt(256, first)
@@ -1827,6 +1733,13 @@ def sym_exec_ins(params, block, instr, func_call,stack_first,instr_index):
             
             first_aux = get_push_value(first)
             second_aux = get_push_value(second)
+
+            if isReal(first_aux):
+                first_aux = long(first_aux)
+            if isReal(second_aux):
+                second_aux = long(second_aux)
+
+            
             
             computed = first_aux & second_aux
 
@@ -1906,6 +1819,11 @@ def sym_exec_ins(params, block, instr, func_call,stack_first,instr_index):
             second = get_push_value(second)
             
             if isAllReal(first, second):
+                
+                first = long(first)
+                second = long(second)
+
+
                 if first >= 32 or first < 0 or byte_index < 0:
                     computed = 0
                 else:
@@ -1916,7 +1834,7 @@ def sym_exec_ins(params, block, instr, func_call,stack_first,instr_index):
                 second = to_symbolic(second)
                 # solver.push()
                 # solver.add( Not (Or( first >= 32, first < 0 ) ) )
-                if byte_index < 0:
+                if isReal(byte_index) and byte_index < 0:
                     computed = 0
                 else:
                     computed = second & (255 << (8 * byte_index))
@@ -2006,11 +1924,13 @@ def sym_exec_ins(params, block, instr, func_call,stack_first,instr_index):
             position = stack.pop(0)
 
             position = get_push_value(position)
-            
+
             if g_src_map:
                 source_code = g_src_map.get_source_code(global_state['pc'] - 1)
                 if source_code.startswith("function") and isReal(position):
-                    #Delete commment blocks
+                    # Delete commment blocks
+                    # print("Source code: ")
+                    # print(source_code)
                     idx1_cb = source_code.find("/*")
                     idx2_cb = source_code.find("*/")
                     
@@ -2018,36 +1938,79 @@ def sym_exec_ins(params, block, instr, func_call,stack_first,instr_index):
                         source_code = source_code[:idx1_cb]+source_code[idx2_cb+2:]
                         idx1_cb = source_code.find("/*")
                         idx2_cb = source_code.find("*/")
-                    
-                    idx1 = source_code.index("(") + 1
-                    idx2 = source_code.index(")")
-                    params = source_code[idx1:idx2]
 
-                    if params.find("//")!=-1:
-                        p = params.split("\n")
+                    if source_code.find("//") != -1:
+                        p = source_code.split("\n")
                         params = []
                         for e in p:
                             idx = e.find("//")
                             if idx != -1:
                                 params.append(e[:idx])
-                                
                             else:
                                 params.append(e)
-                        params = ",".join(params)
-                        
-                    params_list = params.split(",")
-                    params_list_aux = []
-                    for param in params_list:
-                        comments = param.split("\n")
-                        params_list_aux+= filter(lambda x: (not x.strip().startswith("//")) and x != "",comments)
+                        source_code = "\n".join(params)
 
-                    params_list_aux = filter(lambda x: x.strip() != "",params_list_aux)
-                  
-                    params_list = [param.split("//")[0].rstrip().rstrip("\n").split(" ")[-1] for param in params_list_aux]
-                    param_idx = (position - 4) // 32
-                    new_var_name = params_list[param_idx]
-                    g_src_map.var_names.append(new_var_name)
-                    param_abs = (block,new_var_name)
+                    # print("Source code without comments")
+                    # print(source_code)
+
+                    try:
+                        idx1 = source_code.index("(") + 1
+                    
+                        idx2 = find_first_closing_parentheses(source_code)
+                    
+                        params = source_code[idx1:idx2]
+
+                        # print("Args")
+                        # print(params)
+                        
+                        params_list = params.split(",")
+                        params_list_aux = []
+                        for param in params_list:
+                            comments = param.split("\n")
+                            params_list_aux+= filter(lambda x: (not x.strip().startswith("//")) and x != "",comments)
+
+                        params_list_aux = filter(lambda x: x.strip() != "",params_list_aux)
+                        # print("Params list aux")
+                        # print params_list_aux
+                    
+                        params_list = [param.split("//")[0].rstrip().rstrip("\n").split(" ")[-1] for param in params_list_aux]
+
+                        params_type = [param.split("//")[0].rstrip().rstrip("\n").split(" ")[0] for param in params_list_aux]
+
+                        replicated_params_list = []
+                        for param_name, param_type in zip(params_list,params_type):
+                            # Means current param is an array
+                            if param_type.find("[") != -1:
+                                number_init = param_type.find("[") + 1
+                                number_end = param_type.find("]")
+                                # If both numbers are the same, then argument forma is type[], so we just add the name.
+                                if number_init == number_end:
+                                    replicated_params_list.append(param_name)
+                                else:
+                                    number = int(param_type[number_init:number_end])
+                                    for i in range(number):
+                                        replicated_params_list.append(param_name + "[" +  str(i) + "]")
+                            else:
+                                replicated_params_list.append(param_name)
+                            # print("Duplicated params list")
+                            # print(replicated_params_list)
+                            
+                    
+                            param_idx = (position - 4) // 32
+                    
+                            # print("Param idx")
+                            # print param_idx
+                            # print replicated_params_list
+                            if param_idx < len(replicated_params_list):
+                                new_var_name = replicated_params_list[param_idx]
+                            else:
+                                new_var_name = gen.gen_data_var(position)
+                            g_src_map.var_names.append(new_var_name)
+                            param_abs = (block,new_var_name)
+                    except:
+                        new_var_name = gen.gen_data_var(position)
+                        g_src_map.var_names.append(new_var_name)
+                        param_abs = (block,new_var_name)
                 else:
                     if param_abs[1] != "":
                         new_var_name = param_abs[1]
@@ -2690,6 +2653,21 @@ def sym_exec_ins(params, block, instr, func_call,stack_first,instr_index):
             stack.insert(0, new_var)
         else:
             raise ValueError('STACK underflow')
+
+        
+    elif opcode == "CREATE2":
+        if len(stack) > 3:
+            global_state["pc"] += 1
+            stack.pop(0)
+            stack.pop(0)
+            stack.pop(0)
+            stack.pop(0)
+            new_var_name = gen.gen_arbitrary_var()
+            new_var = BitVec(new_var_name, 256)
+            stack.insert(0, new_var)
+        else:
+            raise ValueError('STACK underflow')
+
     elif opcode == "CALL":
         # TODO: Need to handle miu_i
         if len(stack) > 6:
@@ -2704,7 +2682,7 @@ def sym_exec_ins(params, block, instr, func_call,stack_first,instr_index):
             start_data_input = stack.pop(0)
             size_data_input = stack.pop(0)
             start_data_output = stack.pop(0)
-            size_data_ouput = stack.pop(0)
+            size_data_output = stack.pop(0)
 
             outgas = get_push_value(outgas)
             recipient = get_push_value(recipient)
@@ -2712,7 +2690,7 @@ def sym_exec_ins(params, block, instr, func_call,stack_first,instr_index):
             start_data_input = get_push_value(start_data_input)
             size_data_input = get_push_value(size_data_input)
             start_data_output = get_push_value(start_data_output)
-            size_data_ouput = get_push_value(size_data_ouput)
+            size_data_output = get_push_value(size_data_output)
             
             # in the paper, it is shaky when the size of data output is
             # min of stack[6] and the | o |
@@ -2871,6 +2849,7 @@ def sym_exec_ins(params, block, instr, func_call,stack_first,instr_index):
             pass
         else:
             raise ValueError('STACK underflow')
+
     elif opcode == "SUICIDE":
         global_state["pc"] = global_state["pc"] + 1
         recipient = stack.pop(0)
@@ -2894,42 +2873,143 @@ def sym_exec_ins(params, block, instr, func_call,stack_first,instr_index):
         # TODO
         return
 
+
+    elif opcode == "SHL":
+        if len(stack) > 1:
+            global_state["pc"] = global_state["pc"] + 1
+            first = stack.pop(0)
+            second = stack.pop(0)
+
+            first = get_push_value(first)
+            second = get_push_value(second)
+
+            # Type conversion is needed when they are mismatched
+            if isReal(first) and isReal(second):
+                first = to_unsigned(first)
+                second = to_unsigned(second)
+                computed = second*(2**first) % (2**256)
+            else:
+                computed = "shl("+str(first)+","+str(second)+")"
+                c_val = BitVec(computed, 256)
+                computed = simplify(c_val) if is_expr(c_val) else computed
+                #computed = simplify(computed) if is_expr(computed) else computed
+            stack.insert(0, computed)
+            
+        else:
+            raise ValueError('STACK underflow')
+    elif opcode == "SHR":
+        if len(stack) > 1:
+
+            global_state["pc"] = global_state["pc"] + 1
+            first = stack.pop(0)
+            second = stack.pop(0)
+            
+            first = get_push_value(first)
+            second = get_push_value(second)
+            # Type conversion is needed when they are mismatched
+            if isReal(first) and isReal(second):
+                first = to_unsigned(first)
+                second = to_unsigned(second)
+
+                #computed = second >> first
+                computed = math.floor(second/(2**first))
+            else:
+                computed = "shr("+str(first)+","+str(second)+")"
+                c_val = BitVec(computed, 256)
+                computed = simplify(c_val) if is_expr(c_val) else computed
+            stack.insert(0, computed)
+            
+        else:
+            raise ValueError('STACK underflow')
+
+    elif opcode == "SAR":
+        if len(stack) > 1:
+            global_state["pc"] = global_state["pc"] + 1
+            first = stack.pop(0)
+            second = stack.pop(0)
+            
+            first = get_push_value(first)
+            second = get_push_value(second)
+            # Type conversion is needed when they are mismatched
+            if isReal(first) and isReal(second):
+                #computed = second >> first
+                computed = math.floor(second/(2**first))
+            else:
+                computed = "sar("+str(first)+","+str(second)+")"
+                c_val = BitVec(computed, 256)
+                computed = simplify(c_val) if is_expr(c_val) else computed
+            #computed = simplify(computed) if is_expr(computed) else computed
+            stack.insert(0, computed)
+            
+        else:
+            raise ValueError('STACK underflow')
+
+    elif opcode == "CHAINID":
+        global_state["pc"] = global_state["pc"] + 1
+        val = BitVec("chainid", 256)
+        stack.insert(0, val)
+
+    elif opcode == "SELFBALANCE":
+        global_state["pc"] = global_state["pc"] + 1
+        new_var_name = gen.gen_balance_var()
+        new_var = BitVec(new_var_name, 256)
+        stack.insert(0, new_var)
+
+
+    elif opcode == "EXTCODEHASH":
+        if len(stack) > 0:
+            global_state["pc"] = global_state["pc"] + 1
+            s0 = stack.pop(0)
+
+            s0 = get_push_value(s0)
+            
+            new_var_name = gen.gen_arbitrary_var()
+            new_var = BitVec(new_var_name, 256)
+                # path_conditions_and_vars[new_var_name] = new_var
+            stack.insert(0, new_var)
+        else:
+            raise ValueError('STACK underflow')
+
     else:
         log.debug("UNKNOWN INSTRUCTION: " + opcode)
+        print "UNKNOWN : "+source_n
         # if global_params.UNIT_TEST == 2 or global_params.UNIT_TEST == 3:
         #     log.critical("Unknown instruction: %s" % opcode)
         #     exit(UNKNOWN_INSTRUCTION)
         raise Exception('UNKNOWN INSTRUCTION: ' + opcode)
 
-# def update_depth_level(b,level,updated,list_jumps = False):
-#     # print "BLOCK: "+str(b)+" LEVEL: "+str(level)
-#     if b not in updated:
-#         updated.append(b)
-#         vertices[b].set_depth_level(level)
-#         jump = vertices[b].get_jump_target()
-#         falls = vertices[b].get_falls_to()
-#         l_jumps = vertices[b].get_list_jumps()
-#         # print "JUMP: "+str(jump)
-#         # print "FALLS: "+str(falls)
-#         # print "MAS: "+str(vertices[b].get_list_jumps())
+def analyze_next_block(block, successor, stack, path, func_call, depth, current_level, new_params, jump_type):
+    global visited_blocks
+    global vertices
+    global blocks_to_create
 
-#         if not list_jumps:
-#             exist_bl = vertices.get(jump,False)
-            
-#             if exist_bl!=False and jump != 0 and exist_bl.get_depth_level()<(level+1):
-#                 update_depth_level(jump,level+1,updated)
+    if successor in visited_blocks:
+        # We filter all nodes with same beginning, and check if there's one of those
+        # nodes with same stack. Notice that one block may contain several stacks
 
-#         else:
-#             for l in l_jumps:
-#                 update_depth_level(l,level+1,updated)
-                    
-#         if falls != None and vertices[falls].get_depth_level()<(level+1):
+        same_stack_successors = get_all_blocks_with_same_stack(successor, stack)
 
-#             update_depth_level(falls,level+1,updated)
-#         # if jump == 0 and falls == None:
-#         #     print "TERMINAL"
+        if len(same_stack_successors) > 0:
+            update_matching_successor(successor, same_stack_successors[0], block, jump_type)
+        else:
+            copy_already_visited_node(successor, new_params, block, depth, func_call,current_level,path, jump_type)
 
-    
+    elif successor in vertices:
+
+        vertices[successor].add_origin(block) #to compute which are the blocks that leads to successor
+
+        path.append((block,successor))
+        sym_exec_block(new_params, successor, block, depth, func_call,current_level+1,path)
+        path.pop()
+            # else:
+            #     if vertices[successor].get_depth_level()<(current_level+1): 
+            #         vertices[successor].set_depth_level(current_level+1)
+            #         update_depth_level(successor,current_level+1,[])
+
+    else:
+        if successor not in blocks_to_create:
+            blocks_to_create.append(successor)
+
 
 def access_array_sim(opcode_ins,fake_stack):
     end = False
@@ -3231,7 +3311,7 @@ def get_scc(edges):
         scc_multiple.update(scc)
         return scc_multiple
         
-def run(disasm_file=None,disasm_file_init=None, source_map=None , source_file=None, cfg=None, saco = None, execution = None,cname = None, hashes = None, debug = None,ms_unknown=False,evm_version = False,cfile = None,svc = None,go = None,opt = None, ebso = None,source_name = None):    
+def run(disasm_file=None,disasm_file_init=None, source_map=None,source_map_init = None, source_file=None, cfg=None, saco = None, execution = None,cname = None, hashes = None, debug = None,ms_unknown=False,evm_version = False,cfile = None,svc = None,go = None,opt = None, ebso = None,source_name = None):    
     global g_disasm_file
     global g_source_file
     global g_src_map
@@ -3244,7 +3324,12 @@ def run(disasm_file=None,disasm_file_init=None, source_map=None , source_file=No
     global public_fields
     global invalid_option
     global ebso_opt
+    global source_n
 
+    if disasm_file_init != None:
+        analyze_init(disasm_file_init,source_file,source_map_init,source_map,evm_version)
+    
+    
     g_disasm_file = disasm_file
     g_source_file = source_file
     g_src_map = source_map
@@ -3257,8 +3342,11 @@ def run(disasm_file=None,disasm_file_init=None, source_map=None , source_file=No
     ebso_opt = ebso
 
     if source_name != None:
+        source_n = source_name
+
         s_name = source_name.split("/")[-1].split(".")[0]
     else:
+        source_n = source_name
         s_name = source_name
         
     if hashes != None:
@@ -3303,7 +3391,7 @@ def run(disasm_file=None,disasm_file_init=None, source_map=None , source_file=No
     #         raise Exception("Error in clonning process",3)
         
     
-    check_cfg_option(cfg,cname,execution,True,blocks_to_clone)
+    # check_cfg_option(cfg,cname,execution,True,blocks_to_clone)
     
     begin1 = dtimer()
     compute_component_of_cfg()
@@ -3410,3 +3498,22 @@ def get_evm_block():
         f.write(blocks[b])
         f.close()
         
+
+def remove_unnecesary_opcodes(idx, instructions):
+    # print idx
+    # print len(instructions)
+    # print instructions[:idx+1]
+    # print instructions
+    if idx < len(instructions):
+
+        new_ins = map(lambda x: x.strip(), instructions[idx+1:])
+        
+        if "JUMP" in new_ins:
+            j = "jump"
+        elif "JUMPI" in new_ins:
+            j = "jumpi"
+        else:
+            j = ""
+        return (j,instructions[:idx+1])
+    else:
+        return ("",instructions)

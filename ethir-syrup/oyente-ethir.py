@@ -55,7 +55,7 @@ def has_dependencies_installed():
         cmd = "evm --version"
         out = run_command(cmd).strip()
         evm_version = re.findall(r"evm version (\d*.\d*.\d*)", out)[0]
-        tested_evm_version = '1.8.18'
+        tested_evm_version = '1.9.23'
         if compare_versions(evm_version, tested_evm_version) > 0:
             evm_version_modifications = True
             logging.warning("You are using evm version %s. The supported version is %s" % (evm_version, tested_evm_version))
@@ -67,7 +67,7 @@ def has_dependencies_installed():
         cmd = "solc --version"
         out = run_command(cmd).strip()
         solc_version = re.findall(r"Version: (\d*.\d*.\d*)", out)[0]
-        tested_solc_version = '0.4.25'
+        tested_solc_version = '0.7.4'
         if compare_versions(solc_version, tested_solc_version) > 0:
             logging.warning("You are using solc version %s, The latest supported version is %s" % (solc_version, tested_solc_version))
 
@@ -207,7 +207,7 @@ def run_solidity_analysis(inputs,hashes):
         function_names = hashes[inp["c_name"]]
         # result, return_code = symExec.run(disasm_file=inp['disasm_file'], source_map=inp['source_map'], source_file=inp['source'],cfg = args.control_flow_graph,saco = args.saco,execution = 0, cname = inp["c_name"],hashes = function_names,debug = args.debug,evm_version = evm_version_modifications,cfile = args.cfile,svc=svc_options,go = args.goto)
         try:
-            result, return_code = symExec.run(disasm_file=inp['disasm_file'], source_map=inp['source_map'], source_file=inp['source'],cfg = args.control_flow_graph,saco = args.saco,execution = 0, cname = inp["c_name"],hashes = function_names,debug = args.debug,evm_version = evm_version_modifications,cfile = args.cfile,svc=svc_options,go = args.goto, ebso = args.ebso)
+            result, return_code = symExec.run(disasm_file=inp['disasm_file'], disasm_file_init = inp['disasm_file_init'], source_map=inp['source_map'], source_file=inp['source'],cfg = args.control_flow_graph,saco = args.saco,execution = 0, cname = inp["c_name"],hashes = function_names,debug = args.debug,evm_version = evm_version_modifications,cfile = args.cfile,svc=svc_options,go = args.goto, ebso = args.ebso,source_name = args.source)
             
         except Exception as e:
             traceback.print_exc()
@@ -227,7 +227,7 @@ def run_solidity_analysis(inputs,hashes):
             function_names = hashes[inp["c_name"]]
             #logging.info("contract %s:", inp['contract'])
             try:            
-                result, return_code = symExec.run(disasm_file=inp['disasm_file'], source_map=inp['source_map'], source_file=inp['source'],cfg = args.control_flow_graph,saco = args.saco,execution = i,cname = inp["c_name"],hashes = function_names,debug = args.debug,evm_version = evm_version_modifications,cfile = args.cfile,svc=svc_options,go = args.goto, ebso = args.ebso)
+                result, return_code = symExec.run(disasm_file=inp['disasm_file'], disasm_file_init = inp['disasm_file_init'], source_map=inp['source_map'], source_file=inp['source'],cfg = args.control_flow_graph,saco = args.saco,execution = i,cname = inp["c_name"],hashes = function_names,debug = args.debug,evm_version = evm_version_modifications,cfile = args.cfile,svc=svc_options,go = args.goto, ebso = args.ebso)
                 
             except Exception as e:
                 #traceback.print_exc()
@@ -333,15 +333,19 @@ def analyze_solidity(input_type='solidity'):
     global args
 
     x = dtimer()
-
+    is_runtime = not(args.init)
+    
     if input_type == 'solidity':
-        helper = InputHelper(InputHelper.SOLIDITY, source=args.source,evm =args.evm)
+        helper = InputHelper(InputHelper.SOLIDITY, source=args.source,evm =args.evm,runtime=is_runtime)
     elif input_type == 'standard_json':
         helper = InputHelper(InputHelper.STANDARD_JSON, source=args.source,evm=args.evm, allow_paths=args.allow_paths)
     elif input_type == 'standard_json_output':
         helper = InputHelper(InputHelper.STANDARD_JSON_OUTPUT, source=args.source,evm=args.evm)
     inputs = helper.get_inputs()
-    hashes = process_hashes(args.source)
+
+    solc_version = helper.get_solidity_version()
+    # print solc_version
+    hashes = process_hashes(args.source,solc_version)
     
     y = dtimer()
     print("*************************************************************")
@@ -431,6 +435,7 @@ def main():
     
     #Added by Pablo Gordillo
     parser.add_argument( "-disasm", "--disassembly",        help="Consider a dissasembly evm file directly", action="store_true")
+    parser.add_argument( "-in", "--init",        help="Consider the initialization of the fields", action="store_true")
     parser.add_argument( "-d", "--debug",                   help="Display the status of the stack after each opcode", action = "store_true")
     parser.add_argument( "-cfg", "--control-flow-graph",    help="Store the CFG", action="store_true")
     # parser.add_argument( "-eop", "--evm-opcodes",           help="Include the EVM opcodes in the translation", action="store_true")

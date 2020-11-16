@@ -2322,6 +2322,7 @@ def smt_translate(rules,sname):
                     
             elif rule.get_type() == "block" and rule.get_isTerminal():
                 if not is_visited(rule):
+
                     info = "INFO DEPLOY "+costabs_path+"ethir_OK_"+source_name+"_blocks_"+rule.get_rule_name()+" LENGTH="+str(len(opcodes))+" PUSH="+str(len(filter(lambda x: x.find("nop(PUSH")!=-1,opcodes)))
                     info_deploy.append(info)
 

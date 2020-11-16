@@ -354,8 +354,12 @@ def get_function_names(i,lineas):
 It returns a map that for each contract, it returns a list of pairs (hash, name_function).
 Solidity file is a string that contains the name of the solidity file that is going to be analized.
 '''
-def process_hashes(solidity_file):
-    cmd = "solc --hashes "+str(solidity_file)
+def process_hashes(solidity_file,solidity_version):
+    
+    solc = get_solc_executable(solidity_version)
+
+    cmd = solc+" --hashes "+str(solidity_file)
+        
     delimiter = "======="
 
     m = {}
@@ -844,3 +848,37 @@ def all_integers(variables):
 #     prev_var = state_variables[0]
 #     while(i < len(state_variables)):
 
+
+# Given a string, returns closing parentheses index that closes first parenthese,
+# assuming parentheses are well-placed.
+def find_first_closing_parentheses(string):
+    idx_ini = string.find("(") + 1
+    filtered_string = string[idx_ini:]
+    cont = 1
+    while cont > 0:
+        opening_index = filtered_string.find("(")
+        closing_index = filtered_string.find(")")
+        if opening_index == -1:
+            return idx_ini + closing_index
+        elif opening_index < closing_index:
+            cont = cont+1
+            idx_ini = idx_ini + opening_index + 1
+            filtered_string = filtered_string[opening_index+1:]
+        else:
+            cont = cont-1
+            if cont == 0:
+                return idx_ini + closing_index
+            else:
+                idx_ini = idx_ini + closing_index + 1
+                filtered_string = filtered_string[closing_index+1:]
+    raise ValueError("Parentheses are not consistent")
+
+def get_solc_executable(version):
+    if version == "v4":
+        return "solc"
+    elif version == "v5":
+        return "solcv5"
+    elif version == "v6":
+        return "solcv6"
+    elif version == "v7":
+        return "solcv7"
