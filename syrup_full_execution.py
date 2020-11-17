@@ -1,10 +1,11 @@
-#!/usr/bin/python3
+#!/usr/bin/python
 
 import glob
 import os
 import shlex
 import subprocess
-
+import argparse
+from ethir.oyente_ethir import clean_dir
 
 def init():
 
@@ -20,11 +21,11 @@ def init():
 
     disasm_generation_file = project_path + "scripts/disasm_generation.py"
     tmp_costabs = "/tmp/costabs/"
-    json_dir = project_path + "jsons/"
-    sol_dir = project_path + "sols/"
+    json_dir = tmp_costabs + "jsons/"
+    sol_dir = tmp_costabs + "sols/"
     
     encoding_file = tmp_costabs + "encoding_Z3.smt2"
-    z3_result_file = tmp_costabs + "solution.txt"
+    result_file = tmp_costabs + "solution.txt"
     instruction_file = tmp_costabs + "optimized_block_instructions.disasm_opt"
 
     
@@ -35,14 +36,50 @@ def run_command(cmd):
     return solc_p.communicate()[0].decode()
 
 
-if __name__=="__main__":
+def clean_dir():
+    #TODO
+    pass
+
+
+def main():
+
+    global args
+    parser = argparse.ArgumentParser()
+    group = parser.add_mutually_exclusive_group(required=True)
+
+    group.add_argument("-s",  "--source",    type=str, help="local source file name. Solidity by default. Use -b to process evm instead. Use stdin to read from stdin.")
+
+    # parser.add_argument("--version", action="version", version="EthIR version 1.0.7 - Commonwealth")
+    parser.add_argument( "-e",   "--evm",                    help="Do not remove the .evm file.", action="store_true")
+    parser.add_argument( "-b",   "--bytecode",               help="read bytecode in source instead of solidity file", action="store_true")
+    
+    #Added by Pablo Gordillo
+    parser.add_argument( "-disasm", "--disassembly",        help="Consider a dissasembly evm file directly", action="store_true")
+    parser.add_argument( "-d", "--debug",                   help="Display the status of the stack after each opcode", action = "store_true")
+    parser.add_argument( "-cfg", "--control-flow-graph",    help="Store the CFG", action="store_true")
+    parser.add_argument( "-saco", "--saco",                 help="Translate EthIR RBR to SACO RBR", action="store_true")
+    #parser.add_argument("-ebso", "--ebso", help="Generate the info for EBSO in a json file", action = "store_true")
+    parser.add_argument("-isb", "--isolate_block", help="Generate the RBR for an isolate block", action = "store_true")
+    parser.add_argument( "-hashes", "--hashes",             help="Generate a file that contains the functions of the solidity file", action="store_true")
+    parser.add_argument("-solver", "--solver",             help="Choose the solver", choices = ["z3","barcelogic","oms"])
+    args = parser.parse_args()
+
+    args["ebso"] = True
 
     init()
+
+    clean_dir()
+
+    
     
     for file in glob.glob(json_dir + "/*.json"):
         run_command(syrup_bend_path + " " + file)
         solution = run_command(z3_exec + " -smt2 " + encoding_file)
-        with open(z3_result_file, 'w') as f:
+        with open(result_file, 'w') as f:
             f.write(solution)
         run_command(disasm_generation_file)
         run_command("mv " + instruction_file + " " + sol_dir + file.split('/')[-1].split('.')[0] + "_instructions.disasm-opt")
+
+
+if __name__=="__main__":
+    main()
