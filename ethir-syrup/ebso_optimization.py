@@ -6,7 +6,7 @@ import os
 from timeit import default_timer as dtimer
 
 
-ebso_path = "/tmp/costabs/blocks"
+ebso_path = "/tmp/costabs/jsons"
 costabs_path = "/tmp/costabs/"
 tmp_path = "/tmp/"
 
@@ -1319,13 +1319,13 @@ def generate_json(block_name,ss,ts,max_ss_idx1,gas,subblock = None):
     else:
         block_nm = block_name
 
-    # if "blocks" not in os.listdir(costabs_path):
-    #     os.mkdir(ebso_path)
+    if "jsons" not in os.listdir(costabs_path):
+        os.mkdir(ebso_path)
 
     # if block_nm not in os.listdir(ebso_path):
     #     os.mkdir(ebso_path+"/"+block_nm)
     
-    with open(costabs_path+"/ethir_OK_"+source_name+"_blocks_"+block_nm+"_input.json","w") as json_file:
+    with open(ebso_path+"/"+source_name+"_"+block_nm+"_input.json","w") as json_file:
         json.dump(json_dict,json_file)
 
 
@@ -2324,10 +2324,10 @@ def write_instruction_block(rule_name,opcodes,subblock = None):
 
     op = map(lambda x: x[4:-1],opcodes)
     
-    # if block_nm not in os.listdir(ebso_path):
-    #     os.mkdir(ebso_path+"/"+block_nm)
+    if "disasms" not in os.listdir(costabs_path):
+        os.mkdir(costabs_path+"/disasms")
     
-    byte_file =  open(costabs_path+source_name+"_"+block_nm+"_"+block_nm+".disasm","w")
+    byte_file =  open(costabs_path+"/disasms/"+source_name+"_"+block_nm+".disasm","w")
     for e in op:
         byte_file.write(e+"\n")
     byte_file.close()

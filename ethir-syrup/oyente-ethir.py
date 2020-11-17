@@ -16,7 +16,7 @@ from utils import run_command, process_hashes, process_isolate_block
 from input_helper import InputHelper
 import traceback
 
-ebso_path = "/tmp/costabs/blocks/"
+ebso_path = "/tmp/costabs/jsons/"
 costabs_path = "/tmp/costabs/"
 tmp_path = "/tmp/"
 
@@ -82,12 +82,15 @@ def clean_dir():
                 os.remove(costabs_path+elem)
 
 
-        if "blocks" in os.listdir(costabs_path):
+        if "jsons" in os.listdir(costabs_path):
             for e in os.listdir(ebso_path):
-                for bl in os.listdir(ebso_path+e):
-                    os.remove(ebso_path+e+"/"+bl)
-                os.rmdir(ebso_path+e)
+                os.remove(ebso_path+"/"+e)
             os.rmdir(ebso_path)
+
+        if "disasms" in os.listdir(costabs_path):
+            for e in os.listdir(costabs_path+"/disasms"):
+                os.remove(costabs_path+"/disasms/"+e)
+            os.rmdir(costabs_path+"/disasms")
 
 '''
 The flag -i has to be used with the flag -v

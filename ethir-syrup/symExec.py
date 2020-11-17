@@ -3489,7 +3489,7 @@ def get_evm_block():
 
     if "costabs" not in os.listdir(tmp_path):
         os.mkdir(costabs_path)
-    if "blocks" not in os.listdir(costabs_path):
+    if "jsons" not in os.listdir(costabs_path):
         os.mkdir(ebso_path)
     for b in blocks:
         bl_path = ebso_path+"/block"+str(b)
