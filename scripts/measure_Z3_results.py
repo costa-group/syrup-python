@@ -13,7 +13,7 @@ project_path = "/home/alejandro/repos/syrup-backend-python/"
 tmp_costabs = "/tmp/costabs/"
 
 z3_path = project_path + "bin/z3"
-syrup_path = project_path + "python-syrup/python-syrup.py"
+syrup_path = project_path + "python-syrup-backend/python-syrup.py"
 syrup_flags = " "
 json_dir = project_path + "jsons/"
 sol_dir = project_path + "sols/"
