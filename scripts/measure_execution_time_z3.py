@@ -9,7 +9,7 @@ import re
 import json
 import math
 
-project_path = "/home/alejandro/repos/syrup-backend-python/"
+project_path = "/home/alejandro/repos/syrup-python/"
 tmp_costabs = "/tmp/costabs/"
 
 z3_path = project_path + "bin/z3"
