@@ -19,11 +19,11 @@ def each_function_is_used_at_least_once(b0, initial_idx, end_idx):
 def each_function_is_used_at_most_once(b0, initial_idx, end_idx):
     write_encoding("; All interpreted functions can be used at most once")
     for j in range(b0):
-        remaining_instr = set(range(b0))
-        remaining_instr.remove(j)
+        remaining_pos = set(range(b0))
+        remaining_pos.remove(j)
         for instr in range(initial_idx, end_idx):
             write_encoding(add_assert(add_implies(add_eq(t(j), instr),
-                                         add_and(*list(map(lambda i: add_not(add_eq(t(i), instr)), remaining_instr))))))
+                                         add_and(*list(map(lambda i: add_not(add_eq(t(i), instr)), remaining_pos))))))
 
 
 # We combine both constraints: each instruction is used at least once and at most once.

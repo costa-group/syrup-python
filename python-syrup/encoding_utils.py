@@ -192,7 +192,7 @@ def generate_dependency_theta_graph(user_instr, theta):
 
 # Generate a dict that contains the real value as a key, and
 # its associated index as a value.
-def generate_phi_dict(user_instr):
+def generate_phi_dict(user_instr, final_stack):
     idx = 0
     phi = {}
     for instr in user_instr:
@@ -200,6 +200,10 @@ def generate_phi_dict(user_instr):
             if type(elem) == int and elem not in phi:
                 phi[elem] = idx
                 idx += 1
+    for elem in final_stack:
+        if type(elem) == int and elem not in phi:
+            phi[elem] = idx
+            idx += 1
     return phi
 
 
