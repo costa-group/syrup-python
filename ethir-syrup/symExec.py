@@ -14,12 +14,13 @@ from timeit import default_timer as dtimer
 import logging
 import six
 from collections import namedtuple
-#from z3 import *
+from z3 import *
 import gasol
+import errno
 
 from vargenerator import *
 from basicblock import BasicBlock
-from analysis import *
+
 # from test_evm.global_test_params import (TIME_OUT, UNKNOWN_INSTRUCTION,
 #                                          EXCEPTION, PICKLE_PATH)
 from vulnerability import CallStack, TimeDependency, MoneyConcurrency, Reentrancy, AssertionFailure, ParityMultisigBug2
@@ -27,7 +28,7 @@ import global_params
 
 import rbr
 from clone import compute_cloning
-from utils import cfg_dot, write_cfg, update_map, get_public_fields, getLevel, update_sstore_map,correct_map_fields1, get_push_value, get_initial_block_address, check_graph_consistency, find_first_closing_parentheses, check_if_same_stack
+from utils import *#cfg_dot, write_cfg, update_map, get_public_fields, getLevel, update_sstore_map,correct_map_fields1, get_push_value, get_initial_block_address, check_graph_consistency, find_first_closing_parentheses, check_if_same_stack
 from opcodes import get_opcode
 from graph_scc import Graph_SCC, get_entry_all,filter_nested_scc
 from pattern import look_for_string_pattern,check_sload_fragment_pattern,sstore_fragment
@@ -809,8 +810,7 @@ def full_sym_exec():
     # executing, starting from beginning
     path_conditions_and_vars = {"path_condition" : []}
     global_state = get_init_global_state(path_conditions_and_vars)
-    analysis = init_analysis()
-    params = Parameter(path_conditions_and_vars=path_conditions_and_vars, global_state=global_state, analysis=analysis)
+    params = Parameter(path_conditions_and_vars=path_conditions_and_vars, global_state=global_state)
 
     #vertices[0].set_cost(vertices[0].get_block_gas())
     return sym_exec_block(params, 0, 0, 0, -1, 0,[(0,0)])
