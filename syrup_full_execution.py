@@ -5,7 +5,7 @@ import os
 import shlex
 import subprocess
 import argparse
-from ethir.oyente_ethir import clean_dir
+from ethir.oyente_ethir import clean_dir, analyze_disasm_bytecode, analyze_bytecode, analyze_solidity, analyze_isolate_block, has_dependencies_installed
 
 def init():
 
@@ -35,12 +35,6 @@ def run_command(cmd):
                               stderr=FNULL)
     return solc_p.communicate()[0].decode()
 
-
-def clean_dir():
-    #TODO
-    pass
-
-
 def main():
 
     global args
@@ -55,6 +49,7 @@ def main():
     
     #Added by Pablo Gordillo
     parser.add_argument( "-disasm", "--disassembly",        help="Consider a dissasembly evm file directly", action="store_true")
+    parser.add_argument( "-in", "--init",        help="Consider the initialization of the fields", action="store_true")
     parser.add_argument( "-d", "--debug",                   help="Display the status of the stack after each opcode", action = "store_true")
     parser.add_argument( "-cfg", "--control-flow-graph",    help="Store the CFG", action="store_true")
     parser.add_argument( "-saco", "--saco",                 help="Translate EthIR RBR to SACO RBR", action="store_true")
@@ -62,24 +57,42 @@ def main():
     parser.add_argument("-isb", "--isolate_block", help="Generate the RBR for an isolate block", action = "store_true")
     parser.add_argument( "-hashes", "--hashes",             help="Generate a file that contains the functions of the solidity file", action="store_true")
     parser.add_argument("-solver", "--solver",             help="Choose the solver", choices = ["z3","barcelogic","oms"])
+    parser.add_argument("-json", "--json",             help="The input file is a json that contains the SFS of the block to be analyzed", choices = ["z3","barcelogic","oms"])
     args = parser.parse_args()
 
-    args["ebso"] = True
+    if not has_dependencies_installed():
+        return
 
+    
     init()
 
     clean_dir()
 
-    
-    
-    for file in glob.glob(json_dir + "/*.json"):
-        run_command(syrup_bend_path + " " + file)
-        solution = run_command(z3_exec + " -smt2 " + encoding_file)
-        with open(result_file, 'w') as f:
-            f.write(solution)
-        run_command(disasm_generation_file)
-        run_command("mv " + instruction_file + " " + sol_dir + file.split('/')[-1].split('.')[0] + "_instructions.disasm-opt")
 
+    if not args.json:
+    
+        if args.isolate_block:
+            analyze_isolate_block(args_i = args)
+
+        elif args.bytecode:
+            analyze_bytecode(args_i = args)
+
+        else:
+            analyze_solidity(args_i = args)
+
+
+        if args.solver:
+            pass
+            # for file in glob.glob(json_dir + "/*.json"):
+            #     run_command(syrup_bend_path + " " + file)
+            #     solution = run_command(z3_exec + " -smt2 " + encoding_file)
+            #     with open(result_file, 'w') as f:
+            #         f.write(solution)
+            #     run_command(disasm_generation_file)
+            #     run_command("mv " + instruction_file + " " + sol_dir + file.split('/')[-1].split('.')[0] + "_instructions.disasm-opt")
+    else:
+        pass
+        #byP: Add to analyze only the sfs provided
 
 if __name__=="__main__":
     main()
