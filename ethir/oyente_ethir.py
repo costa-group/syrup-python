@@ -146,15 +146,19 @@ def analyze_disasm_bytecode(args_i = None):
 
     if args_i != None:
         args = args_i
+        args.ebso = True
+        args.optimize = None
+        args.cfile = False
+        args.goto = False
     
-    r = check_c_translation_dependencies()
-    
+    # r = check_c_translation_dependencies()
+    r = True
     if r:
         svc_options={}
-        if args.verify:
-            svc_options["verify"]=args.verify
-        if args.invalid:
-            svc_options["invalid"]=args.invalid
+        # if args.verify:
+        #     svc_options["verify"]=args.verify
+        # if args.invalid:
+        #     svc_options["invalid"]=args.invalid
 
         result, exit_code = symExec.run(disasm_file=args.source,cfg = args.control_flow_graph,saco = args.saco,debug = args.debug,evm_version = evm_version_modifications,cfile = args.cfile,svc=svc_options,go = args.goto, ebso = args.ebso)
     else:
@@ -180,14 +184,15 @@ def analyze_bytecode(args_i = None):
     print("Compilation time: "+str(y-x)+"s")
     print("*************************************************************")
 
-    r = check_c_translation_dependencies()
+    # r = check_c_translation_dependencies()
+    r = True
     
     if r:
         svc_options={}
-        if args.verify:
-            svc_options["verify"]=args.verify
-        if args.invalid:
-            svc_options["invalid"]=args.invalid
+        # if args.verify:
+        #     svc_options["verify"]=args.verify
+        # if args.invalid:
+        #     svc_options["invalid"]=args.invalid
         
         result, exit_code = symExec.run(disasm_file=inp['disasm_file'],cfg = args.control_flow_graph,saco = args.saco,debug = args.debug,evm_version = evm_version_modifications,cfile = args.cfile,svc=svc_options,go = args.goto, ebso = args.ebso,source_name = args.source)
         helper.rm_tmp_files()
@@ -205,13 +210,14 @@ def run_solidity_analysis(inputs,hashes):
     returns = []
     
     i = 0
-    r = check_c_translation_dependencies()
+    # r = check_c_translation_dependencies()
     svc_options={}
-    if args.verify:
-        svc_options["verify"]=args.verify
-    if args.invalid:
-        svc_options["invalid"]=args.invalid
-
+    # if args.verify:
+    #     svc_options["verify"]=args.verify
+    # if args.invalid:
+    #     svc_options["invalid"]=args.invalid
+    r = True
+    
     if len(inputs) == 1 and r:
         inp = inputs[0]
         function_names = hashes[inp["c_name"]]
@@ -344,7 +350,11 @@ def analyze_solidity(input_type='solidity', args_i = None):
 
     if args_i != None:
         args = args_i
-    
+        args.ebso = True
+        args.optimize = None
+        args.cfile = False
+        args.goto = False
+        
     x = dtimer()
     is_runtime = not(args.init)
     
@@ -365,18 +375,9 @@ def analyze_solidity(input_type='solidity', args_i = None):
     print("Compilation time: "+str(y-x)+"s")
     print("*************************************************************")
 
-    if check_optimize_dependencies():
-        i = 0
-        found = False
-        while(i<len(inputs) and (not found)):
-            if inputs[i]["c_name"]==args.contract_name:
-                inp = inputs[i]
-                found = True
-            i+=1
-        results, exit_code = run_solidity_analysis_optimized(inp,hashes)
-    else:
-        results, exit_code = run_solidity_analysis(inputs,hashes)
-        helper.rm_tmp_files()
+
+    results, exit_code = run_solidity_analysis(inputs,hashes)
+    helper.rm_tmp_files()
 
     if global_params.WEB:
         six.print_(json.dumps(results))
@@ -388,7 +389,10 @@ def analyze_isolate_block(args_i = None):
 
     if args_i != None:
         args = args_i
-
+        args.ebso = True
+        args.optimize = None
+        args.cfile = False
+        args.goto = False
     
     block_data = {}
     
