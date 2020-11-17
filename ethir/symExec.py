@@ -340,11 +340,11 @@ def build_cfg_and_analyze(evm_version):
     build_push_jump_relations()
 
     if debug_info:
-        print "*****************************"
-        print "Graph"
+        print ("*****************************")
+        print ("Graph")
         show_graph(vertices)
-        print "Is Graph consistent?"
-        print check_graph_consistency(vertices)
+        print ("Is Graph consistent?")
+        print (check_graph_consistency(vertices))
 
 
 #Added by Pablo Gordillo
@@ -353,8 +353,8 @@ def update_block_info():
     
     vert = sorted(vertices.values(), key = getKey)
     if debug_info:
-        print "Updating block info"
-        print vertices.keys()
+        print ("Updating block info")
+        print (vertices.keys())
         
     for block in vert:    
         block.compute_list_jump(edges[block.get_start_address()])
@@ -1188,8 +1188,8 @@ def copy_already_visited_node(successor, new_params, block, depth, func_call,cur
     path.append((block, new_successor_address))
 
     if debug_info:
-        print "LLegue aqui con" + str(new_successor_address)
-        print block
+        print ("LLegue aqui con" + str(new_successor_address))
+        print (block)
     sym_exec_block(new_params, new_successor_address, block, depth, func_call,current_level+1,path)
     path.pop()
         
@@ -2589,7 +2589,7 @@ def sym_exec_ins(params, block, instr, func_call,stack_first,instr_index):
     elif opcode.startswith('PUSH', 0):  # this is a push instruction
         position = int(opcode[4:], 10)
         if debug_info:
-            print global_state["pc"]
+            print (global_state["pc"])
 
         global_state["pc"] = global_state["pc"] + 1 + position
         hs = str(instr_parts[1])[2:] #To delete 0x...
@@ -2972,7 +2972,7 @@ def sym_exec_ins(params, block, instr, func_call,stack_first,instr_index):
 
     else:
         log.debug("UNKNOWN INSTRUCTION: " + opcode)
-        print "UNKNOWN : "+source_n
+        print ("UNKNOWN : "+source_n)
         # if global_params.UNIT_TEST == 2 or global_params.UNIT_TEST == 3:
         #     log.critical("Unknown instruction: %s" % opcode)
         #     exit(UNKNOWN_INSTRUCTION)
