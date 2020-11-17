@@ -1,6 +1,6 @@
 #!/bin/bash
 
-PROJECT_DIR=/home/alejandro/repos/syrup-backend-python
+PROJECT_DIR=/home/alejandro/repos/syrup-python
 FILES_DIR=$PROJECT_DIR/experiments/examples
 LOG_FILE=$PROJECT_DIR/experiments/analyzing_log.txt
 RESULTS_FILE=$PROJECT_DIR/experiments/analyzing_results.txt

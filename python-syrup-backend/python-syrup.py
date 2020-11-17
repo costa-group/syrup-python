@@ -40,7 +40,9 @@ def execute_syrup_backend(args):
     initialize_dir_and_streams(path)
 
     b0, bs, user_instr, variables, initial_stack, final_stack = parse_data(json_path)
-    generate_smtlib_encoding(b0, bs, user_instr, variables, initial_stack, final_stack)
+    flags = {'at-most': args['at_most'], 'pushed-at-least' : args['pushed_once']}
+
+    generate_smtlib_encoding(b0, bs, user_instr, variables, initial_stack, final_stack, flags)
 
 
 if __name__ == "__main__":
@@ -50,13 +52,18 @@ if __name__ == "__main__":
                     nargs='?', default=costabs_path, metavar='dir')
     ap.add_argument('-write-only', help='print smt constraint in SMT-LIB format, '
                                                              'a mapping to instructions, and objectives',
-                    action='store_true')
+                    action='store_true', dest='write_only')
+    ap.add_argument('-at-most', help='add a constraint for each uninterpreted function so that they are used at most once',
+                    action='store_true', dest='at_most')
+    ap.add_argument('-pushed-once', help='add a constraint to indicate that each pushed value is pushed at least once',
+                    action='store_true', dest='pushed_once')
 
     args = vars(ap.parse_args())
     json_path = args['json_path']
     path = args['out']
 
+    flags = {'at-most': args['at_most'], 'pushed-at-least' : args['pushed_once']}
     initialize_dir_and_streams(path)
 
     b0, bs, user_instr, variables, initial_stack, final_stack = parse_data(json_path)
-    generate_smtlib_encoding(b0, bs, user_instr, variables, initial_stack, final_stack)
+    generate_smtlib_encoding(b0, bs, user_instr, variables, initial_stack, final_stack, flags)

@@ -3,9 +3,9 @@
 
 import pandas as pd
 
-csv_path = "../opti-eval-cav/ebso-comparison/results-syrup-cluster/results_Z3.csv"
+csv_path = "/home/alejandro/repos/syrup-python/opti-eval-cav/most-called-contracts/results_Z3.csv"
 results_path = "../scripts/examples.txt"
-number_of_analyzed = 15
+number_of_analyzed = 30
 
 if __name__ == "__main__":
     contracts_z3 = pd.read_csv(csv_path)
