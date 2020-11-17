@@ -32,6 +32,17 @@ def parse_data(json_path):
 
 
 
+
+def execute_syrup_backend(args):
+    json_path = args['json_path']
+    path = args['out']
+
+    initialize_dir_and_streams(path)
+
+    b0, bs, user_instr, variables, initial_stack, final_stack = parse_data(json_path)
+    generate_smtlib_encoding(b0, bs, user_instr, variables, initial_stack, final_stack)
+
+
 if __name__ == "__main__":
     ap = argparse.ArgumentParser(description='Backend of syrup tool')
     ap.add_argument('json_path', help='Path to json file that contains the SFS')
