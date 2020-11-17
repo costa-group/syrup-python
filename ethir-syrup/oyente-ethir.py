@@ -141,9 +141,12 @@ def check_optimize_dependencies():
 '''
 We believe that source is a dissasembly evm file
 '''
-def analyze_disasm_bytecode():
+def analyze_disasm_bytecode(args_i = None):
     global args
 
+    if args_i != None:
+        args = args_i
+    
     r = check_c_translation_dependencies()
     
     if r:
@@ -162,9 +165,13 @@ def analyze_disasm_bytecode():
 
     return exit_code
 
-def analyze_bytecode():
+def analyze_bytecode(args_i = None):
     global args
 
+    if args_i != None:
+        args = args_i
+
+    
     x = dtimer()
     helper = InputHelper(InputHelper.BYTECODE, source=args.source,evm = args.evm)
     inp = helper.get_inputs()[0]
@@ -332,9 +339,12 @@ def run_solidity_analysis_optimized(inp,hashes):
             
     return results, exit_code
 
-def analyze_solidity(input_type='solidity'):
+def analyze_solidity(input_type='solidity', args_i = None):
     global args
 
+    if args_i != None:
+        args = args_i
+    
     x = dtimer()
     is_runtime = not(args.init)
     
@@ -373,9 +383,13 @@ def analyze_solidity(input_type='solidity'):
     return exit_code
 
 
-def analyze_isolate_block():
+def analyze_isolate_block(args_i = None):
     global args
 
+    if args_i != None:
+        args = args_i
+
+    
     block_data = {}
     
     x,y = process_isolate_block(args.source)
