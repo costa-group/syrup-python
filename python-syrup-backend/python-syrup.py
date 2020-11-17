@@ -40,7 +40,9 @@ def execute_syrup_backend(args):
     initialize_dir_and_streams(path)
 
     b0, bs, user_instr, variables, initial_stack, final_stack = parse_data(json_path)
-    generate_smtlib_encoding(b0, bs, user_instr, variables, initial_stack, final_stack)
+    flags = {'at-most': args['at_most'], 'pushed-at-least' : args['pushed_once']}
+
+    generate_smtlib_encoding(b0, bs, user_instr, variables, initial_stack, final_stack, flags)
 
 
 if __name__ == "__main__":
