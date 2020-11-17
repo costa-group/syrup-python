@@ -35,6 +35,16 @@ def run_command(cmd):
                               stderr=FNULL)
     return solc_p.communicate()[0].decode()
 
+def get_solver_to_execute(smt_file):
+
+    if args.solver == "z3":
+        return z3_exec + " -smt2 " + smt_file
+    elif args.solver == "barcelogic":
+        return bclt_exec
+    else:
+        return oms_exec
+
+
 def main():
 
     global args
@@ -82,14 +92,16 @@ def main():
 
 
         if args.solver:
-            pass
-            # for file in glob.glob(json_dir + "/*.json"):
-            #     run_command(syrup_bend_path + " " + file)
-            #     solution = run_command(z3_exec + " -smt2 " + encoding_file)
-            #     with open(result_file, 'w') as f:
-            #         f.write(solution)
-            #     run_command(disasm_generation_file)
-            #     run_command("mv " + instruction_file + " " + sol_dir + file.split('/')[-1].split('.')[0] + "_instructions.disasm-opt")
+            for file in glob.glob(json_dir + "/*.json"):
+                run_command(syrup_bend_path + " " + file)
+
+                exec_command = get_solver_to_execute(encoding_file)
+                
+                solution = run_command(exec_command)
+                with open(result_file, 'w') as f:
+                    f.write(solution)
+                run_command(disasm_generation_file)
+                run_command("mv " + instruction_file + " " + sol_dir + file.split('/')[-1].split('.')[0] + "_instructions.disasm-opt")
     else:
         pass
         #byP: Add to analyze only the sfs provided
