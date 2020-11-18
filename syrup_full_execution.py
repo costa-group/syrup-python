@@ -1,31 +1,47 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
-import glob
 import os
+import sys
+sys.path.append(os.path.dirname(os.path.realpath(__file__))+"/ethir")
+sys.path.append(os.path.dirname(os.path.realpath(__file__))+"/backend")
+import glob
 import shlex
 import subprocess
 import argparse
-from ethir.oyente_ethir import clean_dir, analyze_disasm_bytecode, analyze_bytecode, analyze_solidity, analyze_isolate_block, has_dependencies_installed
+from oyente_ethir import clean_dir, analyze_disasm_bytecode, analyze_bytecode, analyze_solidity, analyze_isolate_block, has_dependencies_installed
+
 
 def init():
-
+    global project_path
     project_path =  os.path.dirname(os.path.realpath(__file__))
 
-    ethir_syrup = project_path + "ethir-syrup/"
-    syrup_bend_path = project_path + "python-syrup-backend/python-syrup.py"
-    
-    z3_exec = project_path + "bin/z3"
-    bclt_exec = project_path + "bin/barcelogic"
-    oms_exec = project_path + "bin/optimathsat"
+    global ethir_syrup
+    ethir_syrup = project_path + "/ethir"
 
+    global syrup_bend_path
+    syrup_bend_path = project_path + "/backend/python-syrup.py"
 
-    disasm_generation_file = project_path + "scripts/disasm_generation.py"
+    global z3_exec
+    z3_exec = project_path + "/bin/z3"
+    global bclt_exec
+    bclt_exec = project_path + "/bin/barcelogic"
+    global oms_exec
+    oms_exec = project_path + "/bin/optimathsat"
+
+    global disasm_generation_file
+    disasm_generation_file = project_path + "/scripts/disasm_generation.py"
+    global tmp_costabs
     tmp_costabs = "/tmp/costabs/"
+    global json_dir
     json_dir = tmp_costabs + "jsons/"
+    global sol_dir
     sol_dir = tmp_costabs + "sols/"
-    
+
+    global encoding_file
     encoding_file = tmp_costabs + "encoding_Z3.smt2"
+    global result_file
     result_file = tmp_costabs + "solution.txt"
+    global instruction_file
     instruction_file = tmp_costabs + "optimized_block_instructions.disasm_opt"
 
     
@@ -68,14 +84,16 @@ def main():
     parser.add_argument( "-hashes", "--hashes",             help="Generate a file that contains the functions of the solidity file", action="store_true")
     parser.add_argument("-solver", "--solver",             help="Choose the solver", choices = ["z3","barcelogic","oms"])
     parser.add_argument("-json", "--json",             help="The input file is a json that contains the SFS of the block to be analyzed", choices = ["z3","barcelogic","oms"])
+    parser.add_argument('-write-only', help="print smt constraint in SMT-LIB format,a mapping to instructions, and objectives", action='store_true')
+
+
     args = parser.parse_args()
 
     if not has_dependencies_installed():
         return
 
-    
-    init()
 
+    init()    
     clean_dir()
 
 

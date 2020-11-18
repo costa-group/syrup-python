@@ -1,13 +1,13 @@
 #Pablo Gordillo
 
 from rbr_rule import RBRRule
-import opcodes
+import opcodes as opcodes
 from basicblock import Tree
 from utils import getKey, orderRBR, getLevel, store_times
 import os
-import saco
-import c_translation
-import c_utranslation
+# import saco
+# import c_translation
+# import c_utranslation
 from timeit import default_timer as dtimer
 from graph_scc import get_entry_scc
 import traceback
@@ -1592,7 +1592,7 @@ def evm2rbr_compiler(contract_name = None, ebso = None,block = None):
     try:
         instructions = block["instructions"]
         input_stack = int(block["input"])
-        print input_stack
+        print (input_stack)
         rule = compile_block(instructions,input_stack)
 
             

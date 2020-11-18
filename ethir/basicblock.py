@@ -391,7 +391,7 @@ class BasicBlock:
             self.stacks_old.append(s)
             
     def known_stack(self,s):
-        s_aux = filter(lambda x: isinstance(x,tuple),s)
+        s_aux = list(filter(lambda x: isinstance(x,tuple),s))
         is_in = self._is_in_old_stacks(s_aux)
         return is_in
 
@@ -412,7 +412,7 @@ class BasicBlock:
 
     def add_path(self,p):
         if p not in self.path:
-            end = map(lambda x: x[1],p)
+            end = list(map(lambda x: x[1],p))
             self.path.append(end)
 
     

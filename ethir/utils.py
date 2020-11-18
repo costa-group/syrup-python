@@ -12,6 +12,7 @@ import csv
 import re
 import difflib
 import six
+from functools import reduce
 #from z3 import *
 #from z3.z3util import get_vars
 
@@ -311,7 +312,7 @@ It returns the start address of the block received.
 
 '''    
 def getKey(block):
-    return block.get_start_address()
+    return str(block.get_start_address())
 
 def toInt(a):
     elem = a.split("_")
@@ -326,7 +327,7 @@ def getLevel(block):
 It returns the id of a rbr_rule.
 '''
 def orderRBR(rbr):
-    return rbr[0].get_Id()
+    return str(rbr[0].get_Id())
 
 
 def delete_dup(l):
@@ -462,9 +463,9 @@ def store_times(oyente_time,ethir_time):
 def get_public_fields(source_file,arr = True):
     with open(source_file,"r") as f:
         lines = f.readlines()
-        good_lines_aux = filter(lambda x: x.find("[]")!=-1 and x.find("public")!=-1,lines)
-        good_lines = map(lambda x: x.split("//")[0],good_lines_aux)
-        fields = map(lambda x: x.split()[-1].strip().strip(";"),good_lines)
+        good_lines_aux = list(filter(lambda x: x.find("[]")!=-1 and x.find("public")!=-1,lines))
+        good_lines = list(map(lambda x: x.split("//")[0],good_lines_aux))
+        fields = list(map(lambda x: x.split()[-1].strip().strip(";"),good_lines))
     f.close()
     return fields
 
@@ -536,10 +537,13 @@ def correct_map_fields1(fields_map,var_fields):
     correct = True
     i = 0
     offset=0
+    fields_map_def = {}
     for e in fields_map:
         val = fields_map[e]
-        del fields_map[e]
-        fields_map[str(e)] = val
+        fields_map_def[str(e)] = val
+
+    del fields_map
+    fields_map = fields_map_def
     
     while(i<len(var_fields) and correct):
         field = var_fields[i]
@@ -572,8 +576,8 @@ def search_greatter_compacts(pos,fields_map):
     
     numbers = fields_map.keys()
     pos_int = str(pos).split("_")[0]
-    numbers_str = filter(lambda x: str(x).startswith(pos_int),numbers)
-    end = filter(lambda x: str(x)>str(pos),numbers_str)
+    numbers_str = list(filter(lambda x: str(x).startswith(pos_int),numbers))
+    end = list(filter(lambda x: str(x)>str(pos),numbers_str))
     if len(end)>0:
         if end[0] == pos_int+"_0":
             fields_map[pos_int+"_0"] = fields_map[pos_int]
@@ -583,12 +587,12 @@ def search_greatter_compacts(pos,fields_map):
 
 def exist_index(potential_index,fields_map):
     numbers = fields_map.keys()
-    numbers_str = filter(lambda x: str(x).startswith(str(potential_index)), numbers)
+    numbers_str = list(filter(lambda x: str(x).startswith(str(potential_index)), numbers))
     
     if len(numbers_str)== 0:
         return potential_index
     else:
-        numbers_str = map(lambda x: str(x), numbers_str)
+        numbers_str = list(map(lambda x: str(x), numbers_str))
         numbers_str.sort()
         return numbers_str[0]
 
@@ -598,7 +602,7 @@ def search_for_index(field,field_map):
         if field == field_map[e]:
             possible_values.append(e)
 
-    vals = map(lambda x: str(x), possible_values)
+    vals = list(map(lambda x: str(x), possible_values))
     vals.sort()
     if len(vals)!=0:
         return vals[0]
@@ -649,8 +653,8 @@ def get_idx_from_address(address):
 # For checking if they are same stack, we just focus on
 # tuples that contains a block address
 def check_if_same_stack(stack1, stack2, blocks_info):
-    s1_aux = filter(lambda x: isinstance(x,tuple) and (x[0] in blocks_info) and x[0]!=0,stack1)
-    s2_aux = filter(lambda x: isinstance(x,tuple) and (x[0] in blocks_info) and x[0]!=0,stack2)
+    s1_aux = list(filter(lambda x: isinstance(x,tuple) and (x[0] in blocks_info) and x[0]!=0,stack1))
+    s2_aux = list(filter(lambda x: isinstance(x,tuple) and (x[0] in blocks_info) and x[0]!=0,stack2))
     # print "S1"
     # print s1_aux
     # print "S2"
@@ -660,20 +664,20 @@ def check_if_same_stack(stack1, stack2, blocks_info):
 def show_graph(blocks_input):
     for address in blocks_input:
         print("Bloque: ")
-        print address
+        print (address)
         print("Comes from: ")
-        print blocks_input[address].get_comes_from()
+        print (blocks_input[address].get_comes_from())
         print("List jump: ")
-        print blocks_input[address].get_list_jumps()
+        print (blocks_input[address].get_list_jumps())
         print("Jump target: ")
-        print blocks_input[address].get_jump_target()
+        print (blocks_input[address].get_jump_target())
         print("Falls to: ")
-        print blocks_input[address].get_falls_to()
+        print (blocks_input[address].get_falls_to())
         print("Filtered Stack: ")
         for stack in blocks_input[address].get_stacks():
-            print filter(lambda x: isinstance(x,tuple) and (x[0] in blocks_input) and x[0]!=0, stack)
+            print (list(filter(lambda x: isinstance(x,tuple) and (x[0] in blocks_input) and x[0]!=0, stack)))
         print("Real stack:")
-        print blocks_input[address].get_stacks()
+        print (blocks_input[address].get_stacks())
         
 
 ''' Given a node and where it comes from, checks all relevant info is consistent'''
@@ -799,6 +803,7 @@ def check_graph_consistency(blocks_dict, initial_address = 0):
          # print("initial Node: terminal node")
 
     # Check all visited nodes are the same in the dictionary
+
     conds.append(visited_nodes.sort() == blocks_dict.keys().sort())
 
     # print(conds)
