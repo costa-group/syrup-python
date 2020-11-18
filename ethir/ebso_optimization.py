@@ -84,13 +84,13 @@ def init_globals():
     
 def filter_opcodes(rule):
     instructions = rule.get_instructions()
-    rbr_ins_aux = filter(lambda x: x.find("nop(")==-1, instructions)
-    rbr_ins = filter(lambda x: x!="" and x.find("skip")==-1, rbr_ins_aux)
+    rbr_ins_aux = list(filter(lambda x: x.find("nop(")==-1, instructions))
+    rbr_ins = list(filter(lambda x: x!="" and x.find("skip")==-1, rbr_ins_aux))
     return rbr_ins
 
 def get_opcodes(rule):
     instructions = rule.get_instructions()
-    instrs = filter(lambda x: x.startswith("nop("),instructions)
+    instrs = list(filter(lambda x: x.startswith("nop("),instructions))
     # inst_filtered = filter(lambda x: (x.find("nop(JUMPDEST)")==-1) and (x.find("nop(JUMP)")==-1) and (x.find("nop(JUMPI)")==-1), instrs)
     return instrs
 
@@ -157,7 +157,7 @@ def generate_target_stack_idx(input_elems,list_opcodes):
         init_val = init_val-vals[1]+vals[2]
 
     seq = range(0,input_elems+init_val)
-    target_vars = map(lambda x: "s("+str(x)+")",seq)
+    target_vars = list(map(lambda x: "s("+str(x)+")",seq))
     return target_vars
     
 def generate_vars_target_stack(guard_instrs, call,opcodes):
@@ -169,7 +169,7 @@ def generate_vars_target_stack(guard_instrs, call,opcodes):
     else:
         num_target_stack = len(stack_rule)
     seq = range(0,num_target_stack)
-    target_vars = map(lambda x: "s("+str(x)+")",seq)
+    target_vars = list(map(lambda x: "s("+str(x)+")",seq))
     return target_vars
 
 def contained_in_source_stack(v,instructions,source_stack):
@@ -1652,7 +1652,7 @@ def times_used_userdef_instructions(user_def,tstack,all_input_values):
     all_vars = tstack+all_input_values
     for instr in user_def:
         [output] = instr["outpt_sk"]
-        used = filter(lambda x : str(x).strip() == output.strip(),all_vars)
+        used = list(filter(lambda x : str(x).strip() == output.strip(),all_vars))
         instr["times_used"] = len(used)
 
 def process_opcode(result):
@@ -1749,8 +1749,8 @@ def get_max_stackindex_set(instructions):
     return max_idx
 
 def is_optimizable(opcode_instructions,instructions):
-    ins_aux = map(lambda x: x.strip()[4:-1], opcode_instructions)
-    ins = filter(lambda x: x in split_block or x in terminate_block, ins_aux)
+    ins_aux = list(map(lambda x: x.strip()[4:-1], opcode_instructions))
+    ins = list(filter(lambda x: x in split_block or x in terminate_block, ins_aux))
     print ("OPTIMIZAR")
     print (instructions)
     print (opcode_instructions)
@@ -1792,23 +1792,23 @@ def translate_block(rule,instructions,opcodes,isolated=False):
     max_instr_size = compute_max_program_len(opcodes, num_guard)
 
     if not isolated:
-        pops = filter(lambda x: x.find("nop(POP)")!=-1,opcodes)
+        pops = list(filter(lambda x: x.find("nop(POP)")!=-1,opcodes))
         num_pops = len(pops)
-        x = filter(lambda x: (x.find("POP")==-1) and (x.find("JUMPDEST")==-1) and (x.find("JUMP")==-1)and(x.find("JUMPI")==-1),opcodes)
+        x = list(filter(lambda x: (x.find("POP")==-1) and (x.find("JUMPDEST")==-1) and (x.find("JUMP")==-1)and(x.find("JUMPI")==-1),opcodes))
 
         if x == [] and num_pops >0:
             print ("ESTOY AQUII")
 
             t_vars_idx = source_stack_idx-num_pops
             seq = range(0,t_vars_idx)
-            t_vars = map(lambda x: "s("+str(x)+")",seq)[::-1]
+            t_vars = list(map(lambda x: "s("+str(x)+")",seq))[::-1]
             
         else:
             t_vars = generate_vars_target_stack(num_guard,instructions[-1],opcodes)[::-1]
     else:
         t_vars = generate_target_stack_idx(source_stack_idx,opcodes)[::-1]
 
-    pops = filter(lambda x: x.find("nop(POP)")!=-1,opcodes)
+    pops = list(filter(lambda x: x.find("nop(POP)")!=-1,opcodes))
     num_pops = len(pops)
     
     print ("************")
@@ -1886,7 +1886,7 @@ def generate_subblocks(rule,list_subblocks,isolated = False):
         ts_idx = compute_target_stack_subblock(last_instr,nop_instr)
 
         seq = range(ts_idx,-1,-1)
-        target_stack = map(lambda x: "s("+str(x)+")",seq)
+        target_stack = list(map(lambda x: "s("+str(x)+")",seq))
 
         print (target_stack)
         #translate block
@@ -1902,7 +1902,7 @@ def generate_subblocks(rule,list_subblocks,isolated = False):
             list_subblocks[i+1] = new_block
             source_stack_idx = new_idxstack
             seq = range(source_stack_idx-1,-1,-1)
-            source_stack = map(lambda x: "s("+str(x)+")",seq)
+            source_stack = list(map(lambda x: "s("+str(x)+")",seq))
             print (block)
             print (new_block)
 
@@ -1937,14 +1937,14 @@ def translate_subblock(rule,instrs,sstack,tstack,sstack_idx,idx,next_block):
     else:
         instructions = instrs[2:-2]
             
-    rbr_ins_aux = filter(lambda x: x.find("nop(")==-1, instructions)
-    instr = filter(lambda x: x!="" and x.find("skip")==-1, rbr_ins_aux)
+    rbr_ins_aux = list(filter(lambda x: x.find("nop(")==-1, instructions))
+    instr = list(filter(lambda x: x!="" and x.find("skip")==-1, rbr_ins_aux))
     
-    opcodes = filter(lambda x: x.find("nop(")!=-1,instructions)
+    opcodes = list(filter(lambda x: x.find("nop(")!=-1,instructions))
     max_instr_size = compute_max_program_len(opcodes, 0)
 
     
-    pops = filter(lambda x: x.find("nop(POP)")!=-1,opcodes)
+    pops = list(filter(lambda x: x.find("nop(POP)")!=-1,opcodes))
     num_pops = len(pops)
 
     if instr!=[]:
@@ -1985,7 +1985,7 @@ def optimize_splitpop_block(tstack,source_stack,next_block,opcodes):
     
     i = 0
     target_stack = compute_target_stack(tstack)
-    opcodes_next_total = filter(lambda x: x.find("nop(")!=-1,next_block)
+    opcodes_next_total = list(filter(lambda x: x.find("nop(")!=-1,next_block))
     split_opcode = opcodes_next_total[0]
     opcodes_next = opcodes_next_total[1:]
     stop = False
@@ -2091,16 +2091,16 @@ def translate_last_subblock(rule,block,sstack,sstack_idx,idx,isolated):
         num_guard = 0
         guards_op = []
         
-    rbr_ins_aux = filter(lambda x: x.find("nop(")==-1, block)
-    instructions = filter(lambda x: x!="" and x.find("skip")==-1, rbr_ins_aux)
+    rbr_ins_aux = list(filter(lambda x: x.find("nop(")==-1, block))
+    instructions = list(filter(lambda x: x!="" and x.find("skip")==-1, rbr_ins_aux))
 
     #max_stack_size = max_idx_used(instructions)
     
-    opcodes = filter(lambda x: x.find("nop(")!=-1,block)
+    opcodes = list(filter(lambda x: x.find("nop(")!=-1,block))
     max_instr_size = compute_max_program_len(opcodes, num_guard)
     if opcodes != []:
 
-        pops = filter(lambda x: x.find("nop(POP)")!=-1,opcodes)
+        pops = list(filter(lambda x: x.find("nop(POP)")!=-1,opcodes))
         num_pops = len(pops)
 
         print ("OPCODES: "+rule.get_rule_name())
@@ -2108,7 +2108,7 @@ def translate_last_subblock(rule,block,sstack,sstack_idx,idx,isolated):
         
         if not isolated:
 
-            x = filter(lambda x: (x.find("POP")==-1) and (x.find("JUMPDEST")==-1) and (x.find("JUMP")==-1)and(x.find("JUMPI")==-1),opcodes)
+            x = list(filter(lambda x: (x.find("POP")==-1) and (x.find("JUMPDEST")==-1) and (x.find("JUMP")==-1)and(x.find("JUMPI")==-1),opcodes))
 
             if x == [] and num_pops >0:
                 print ("ESTOY AQUII")
@@ -2116,7 +2116,7 @@ def translate_last_subblock(rule,block,sstack,sstack_idx,idx,isolated):
                 print (num_pops)
                 t_vars_idx = sstack_idx-num_pops+1
                 seq = range(0,t_vars_idx)
-                tstack = map(lambda x: "s("+str(x)+")",seq)[::-1]
+                tstack = list(map(lambda x: "s("+str(x)+")",seq))[::-1]
             else:
             
                 tstack = generate_vars_target_stack(num_guard,instructions[-1],opcodes)[::-1]
@@ -2151,7 +2151,7 @@ def get_new_source_stack(instr,nop_instr,idx):
         var = ins.split("=")[0].strip()
         var_idx = int(var[2:-1])
         seq = range(var_idx,-1,-1)
-        return (map(lambda x: "s("+str(x)+")",seq),var_idx)
+        return (list(map(lambda x: "s("+str(x)+")",seq)),var_idx)
 
     else:
 
@@ -2161,7 +2161,7 @@ def get_new_source_stack(instr,nop_instr,idx):
 
         new_idx = idx-delta
         seq = range(new_idx,-1,-1)
-        return (map(lambda x: "s("+str(x)+")",seq),new_idx)
+        return (list(map(lambda x: "s("+str(x)+")",seq)),new_idx)
         
 def compute_target_stack_subblock(instr, nop):
     bytecode = nop.strip()[4:-1]
@@ -2186,14 +2186,14 @@ def compute_target_stack_subblock(instr, nop):
         #pos_close_br = instr_aux[::-1].find(")")
 
         variables = instr_aux[pos_open_br+1:-1].split(",")
-        vars_aux = map(lambda x: int(x[2:-1]), variables)
+        vars_aux = list(map(lambda x: int(x[2:-1]), variables))
         idx_tstack = max(vars_aux)
 
     return idx_tstack
 
 
 def get_block_cost(opcodes_list,opcodes_guard):
-    real_opcodes_aux = map(lambda x: x.strip()[4:-1],opcodes_list)
+    real_opcodes_aux = list(map(lambda x: x.strip()[4:-1],opcodes_list))
    
     if "JUMPDEST" in real_opcodes_aux:
         real_opcodes_aux.pop(0)
@@ -2216,7 +2216,7 @@ def get_block_cost(opcodes_list,opcodes_guard):
     return val
 
 def get_cost(opcodes_list):
-    real_opcodes_aux = map(lambda x: x.strip()[4:-1],opcodes_list)
+    real_opcodes_aux = list(map(lambda x: x.strip()[4:-1],opcodes_list))
 
     real_opcodes = real_opcodes_aux
     val = 0
@@ -2272,7 +2272,7 @@ def generate_terminal_subblocks(rule,list_subblocks):
         ts_idx = compute_target_stack_subblock(last_instr,nop_instr)
         
         seq = range(ts_idx,-1,-1)
-        target_stack = map(lambda x: "s("+str(x)+")",seq)
+        target_stack = list(map(lambda x: "s("+str(x)+")",seq))
         
         print (target_stack)
         #translate block
@@ -2288,7 +2288,7 @@ def generate_terminal_subblocks(rule,list_subblocks):
             list_subblocks[i+1] = new_block
             source_stack_idx = new_idxstack
             seq = range(source_stack_idx-1,-1,-1)
-            source_stack = map(lambda x: "s("+str(x)+")",seq)
+            source_stack = list(map(lambda x: "s("+str(x)+")",seq))
 
         i+=1
     if compute_gast:
@@ -2322,7 +2322,7 @@ def write_instruction_block(rule_name,opcodes,subblock = None):
     else:
         block_nm = rule_name
 
-    op = map(lambda x: x[4:-1],opcodes)
+    op = list(map(lambda x: x[4:-1],opcodes))
     
     if "disasms" not in os.listdir(costabs_path):
         os.mkdir(costabs_path+"/disasms")
@@ -2361,17 +2361,17 @@ def max_idx_used(instructions,tstack):
         return 0
     
     if instructions[-1].find("call(")!=-1:
-        idxs_call = map(lambda x: int(x[2:-1]),tstack)
+        idxs_call = list(map(lambda x: int(x[2:-1]),tstack))
     else:
         idxs_call = [0]
 
         
-    insts = filter(lambda x: x.find("=")!=-1,instructions)
+    insts = list(filter(lambda x: x.find("=")!=-1,instructions))
     print (insts)
-    variables = map(lambda x: x.split("=")[0].strip(),insts)
+    variables = list(map(lambda x: x.split("=")[0].strip(),insts))
 
-    real_variables = filter(lambda x: x.find("s(")!=-1,variables)
-    idxs = map(lambda x: int(x[2:-1]),real_variables)
+    real_variables = list(filter(lambda x: x.find("s(")!=-1,variables))
+    idxs = list(map(lambda x: int(x[2:-1]),real_variables))
 
     if idxs == []:
         idxs = [0]
@@ -2457,7 +2457,7 @@ def smt_translate(rules,sname):
                         break
                     opcodes = get_opcodes(rule)
 
-                    info = "INFO DEPLOY "+costabs_path+"ethir_OK_"+source_name+"_blocks_"+rule.get_rule_name()+" LENGTH="+str(len(opcodes))+" PUSH="+str(len(filter(lambda x: x.find("nop(PUSH")!=-1,opcodes)))
+                    info = "INFO DEPLOY "+costabs_path+"ethir_OK_"+source_name+"_blocks_"+rule.get_rule_name()+" LENGTH="+str(len(opcodes))+" PUSH="+str(len(list(filter(lambda x: x.find("nop(PUSH")!=-1,opcodes))))
                     info_deploy.append(info)
 
                     original_opcodes = opcodes
@@ -2471,7 +2471,7 @@ def smt_translate(rules,sname):
                         
                                       
                     else: #we need to split the blocks into subblocks
-                        if  len(filter(lambda x: x.find("nop(SSTORE)")!=-1,opcodes))>=2:
+                        if  len(list(filter(lambda x: x.find("nop(SSTORE)")!=-1,opcodes)))>=2:
                             r, new_instructions = opt_sstore_sstore(rule)
                             #r= False
                             #new_instructions = []
@@ -2489,7 +2489,7 @@ def smt_translate(rules,sname):
             elif rule.get_type() == "block" and rule.get_isTerminal():
                 if not is_visited(rule):
 
-                    info = "INFO DEPLOY "+costabs_path+"ethir_OK_"+source_name+"_blocks_"+rule.get_rule_name()+" LENGTH="+str(len(opcodes))+" PUSH="+str(len(filter(lambda x: x.find("nop(PUSH")!=-1,opcodes)))
+                    info = "INFO DEPLOY "+costabs_path+"ethir_OK_"+source_name+"_blocks_"+rule.get_rule_name()+" LENGTH="+str(len(opcodes))+" PUSH="+str(len(list(filter(lambda x: x.find("nop(PUSH")!=-1,opcodes))))
                     info_deploy.append(info)
 
                     init_globals()
@@ -2533,7 +2533,7 @@ def smt_translate_isolate(rule,name):
     opcodes = get_opcodes(rule)
 
 
-    info = "INFO DEPLOY "+costabs_path+"ethir_OK_"+source_name+"_blocks_"+rule.get_rule_name()+" LENGTH="+str(len(opcodes))+" PUSH="+str(len(filter(lambda x: x.find("nop(PUSH")!=-1,opcodes)))
+    info = "INFO DEPLOY "+costabs_path+"ethir_OK_"+source_name+"_blocks_"+rule.get_rule_name()+" LENGTH="+str(len(opcodes))+" PUSH="+str(len(list(filter(lambda x: x.find("nop(PUSH")!=-1,opcodes))))
     info_deploy.append(info)
     
     if "nop(SLOAD)" in opcodes and "nop(SSTORE)" in opcodes:
@@ -2550,7 +2550,7 @@ def smt_translate_isolate(rule,name):
         translate_block(rule,instructions,opcodes,True)
 
     else: #we need to split the blocks into subblocks
-        if  len(filter(lambda x: x.find("nop(SSTORE)")!=-1,opcodes))>=2:
+        if  len(list(filter(lambda x: x.find("nop(SSTORE)")!=-1,opcodes)))>=2:
             r, new_instructions = opt_sstore_sstore(rule)
         else:
             r = False
@@ -2861,7 +2861,7 @@ def apply_cond_transformation(instr,user_def_instrs,tstack):
     if opcode == "GT" or opcode == "SGT":
         if 0 == instr["inpt_sk"][1]:
             out_var = instr["outpt_sk"][0]
-            is_zero = filter(lambda x: out_var in x["inpt_sk"] and x["disasm"] == "ISZERO",user_def_instrs)
+            is_zero = list(filter(lambda x: out_var in x["inpt_sk"] and x["disasm"] == "ISZERO",user_def_instrs))
             if len(is_zero) == 1:
                 index = user_def_instrs.index(is_zero[0])
                 zero_instr = user_def_instrs[index]
@@ -2891,10 +2891,10 @@ def apply_cond_transformation(instr,user_def_instrs,tstack):
 
         else:
             out_var = instr["outpt_sk"][0]
-            is_zero = filter(lambda x: out_var in x["inpt_sk"] and x["disasm"] == "ISZERO",user_def_instrs)
+            is_zero = list(filter(lambda x: out_var in x["inpt_sk"] and x["disasm"] == "ISZERO",user_def_instrs))
             if len(is_zero)==1:
                 zero = is_zero[0]
-                zero2 = filter(lambda x: zero["outpt_sk"][0] in x["inpt_sk"] and x["disasm"] == "ISZERO",user_def_instrs)
+                zero2 = list(filter(lambda x: zero["outpt_sk"][0] in x["inpt_sk"] and x["disasm"] == "ISZERO",user_def_instrs))
                 if len(zero2) == 1 and zero["outpt_sk"][0] not in tstack:
                     instr["outpt_sk"] = zero2[0]["outpt_sk"]
                     discount_op+=2
@@ -2912,13 +2912,13 @@ def apply_cond_transformation(instr,user_def_instrs,tstack):
     elif opcode == "ISZERO":
     
         out_var = instr["outpt_sk"][0]
-        is_zero = filter(lambda x: out_var in x["inpt_sk"] and x["disasm"] == "ISZERO",user_def_instrs)
+        is_zero = list(filter(lambda x: out_var in x["inpt_sk"] and x["disasm"] == "ISZERO",user_def_instrs))
      
         if len(is_zero)==1:
          
             zero = is_zero[0]
   
-            zero2 = filter(lambda x: zero["outpt_sk"][0] in x["inpt_sk"] and x["disasm"] == "ISZERO",user_def_instrs)
+            zero2 = list(filter(lambda x: zero["outpt_sk"][0] in x["inpt_sk"] and x["disasm"] == "ISZERO",user_def_instrs))
             if len(zero2) == 1 and zero["outpt_sk"][0] not in tstack:
              
                 instr["outpt_sk"] = zero2[0]["outpt_sk"]
@@ -2937,7 +2937,7 @@ def apply_cond_transformation(instr,user_def_instrs,tstack):
     elif opcode == "LT" or opcode == "SLT":
          if 0 == instr["inpt_sk"][0]:
             out_var = instr["outpt_sk"][0]
-            is_zero = filter(lambda x: out_var in x["inpt_sk"] and x["disasm"] == "ISZERO",user_def_instrs)
+            is_zero = list(filter(lambda x: out_var in x["inpt_sk"] and x["disasm"] == "ISZERO",user_def_instrs))
             if len(is_zero) == 1:
                 index = user_def_instrs.index(is_zero[0])
                 zero_instr = user_def_instrs[index]
@@ -2967,10 +2967,10 @@ def apply_cond_transformation(instr,user_def_instrs,tstack):
         
          else:
             out_var = instr["outpt_sk"][0]
-            is_zero = filter(lambda x: out_var in x["inpt_sk"] and x["disasm"] == "ISZERO",user_def_instrs)
+            is_zero = list(filter(lambda x: out_var in x["inpt_sk"] and x["disasm"] == "ISZERO",user_def_instrs))
             if len(is_zero)==1:
                 zero = is_zero[0]
-                zero2 = filter(lambda x: zero["outpt_sk"][0] in x["inpt_sk"] and x["disasm"] == "ISZERO",user_def_instrs)
+                zero2 = list(filter(lambda x: zero["outpt_sk"][0] in x["inpt_sk"] and x["disasm"] == "ISZERO",user_def_instrs))
                 if len(zero2) == 1 and zero["outpt_sk"][0] not in tstack:
                     instr["outpt_sk"] = zero2[0]["outpt_sk"]
                     discount_op+=2
@@ -3005,7 +3005,7 @@ def apply_cond_transformation(instr,user_def_instrs,tstack):
     
     elif opcode == "AND":
         out_pt = instr["outpt_sk"][0]
-        and_op = filter(lambda x: out_pt in x["inpt_sk"] and x["disasm"] == "AND", user_def_instrs)
+        and_op = list(filter(lambda x: out_pt in x["inpt_sk"] and x["disasm"] == "AND", user_def_instrs))
         if len(and_op)==1:
             and_instr = and_op[0]
             if and_instr["inpt_sk"][1] == instr["inpt_sk"][1]:
@@ -3023,7 +3023,7 @@ def apply_cond_transformation(instr,user_def_instrs,tstack):
         
     elif opcode == "OR":
         out_pt = instr["outpt_sk"][0]
-        or_op = filter(lambda x: out_pt in x["inpt_sk"] and x["disasm"] == "OR", user_def_instrs)
+        or_op = list(filter(lambda x: out_pt in x["inpt_sk"] and x["disasm"] == "OR", user_def_instrs))
         if len(or_op)==1:
             or_instr = or_op[0]
             if or_instr["inpt_sk"][1] == instr["inpt_sk"][1]:
@@ -3161,14 +3161,14 @@ def opt_sstore_sstore(rule):
     print (variables)
     print (source_stack)
 
-    sstore_instr = filter(lambda x: x.find("sstore(")!=-1,instructions)
+    sstore_instr = list(filter(lambda x: x.find("sstore(")!=-1,instructions))
 
     sstore1_idx = int(sstore_instr[0].split(",")[0][9:-1])
     sstore2_idx = int(sstore_instr[1].split(",")[0][9:-1])
 
     
-    tstack1 = map(lambda x: "s("+str(x)+")",range(sstore1_idx,-1,-1))
-    tstack2 = map(lambda x: "s("+str(x)+")",range(sstore2_idx,-1,-1))
+    tstack1 = list(map(lambda x: "s("+str(x)+")",range(sstore1_idx,-1,-1)))
+    tstack2 = list(map(lambda x: "s("+str(x)+")",range(sstore2_idx,-1,-1)))
 
     instr1 = []
     i = 0

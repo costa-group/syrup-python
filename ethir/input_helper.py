@@ -231,7 +231,7 @@ class InputHelper:
         contracts = [contract for contract in contracts if contract[1]]
         if not contracts:
             logging.critical("Solidity compilation failed")
-            print self.source
+            print (self.source)
             if global_params.WEB:
                 six.print_({"error": "Solidity compilation failed"})
             exit(1)
@@ -369,7 +369,8 @@ class InputHelper:
     def _get_solidity_version(self):
         f = open(self.source,"r")
         lines = f.readlines()
-        pragma = filter(lambda x: x.find("pragma solidity")!=-1, lines)
+        pragma = list(filter(lambda x: x.find("pragma solidity")!=-1, lines))
+
         if pragma == []:
             return "v7" #Put here the highest version
 
@@ -393,10 +394,10 @@ class InputHelper:
         return self.solc_version
 
     def _get_suitable_version(self,pragmas):
-        v4 = len(filter(lambda x: x.find("0.4")!=-1,pragmas))
-        v5 = len(filter(lambda x: x.find("0.5")!=-1,pragmas))
-        v6 = len(filter(lambda x: x.find("0.6")!=-1,pragmas))
-        v7 = len(filter(lambda x: x.find("0.7")!=-1,pragmas))
+        v4 = len(list(filter(lambda x: x.find("0.4")!=-1,pragmas)))
+        v5 = len(list(filter(lambda x: x.find("0.5")!=-1,pragmas)))
+        v6 = len(list(filter(lambda x: x.find("0.6")!=-1,pragmas)))
+        v7 = len(list(filter(lambda x: x.find("0.7")!=-1,pragmas)))
         m = max([v4,v5,v6,v7])
 
         if m == v4:

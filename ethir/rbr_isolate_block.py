@@ -1592,7 +1592,7 @@ def evm2rbr_compiler(contract_name = None, ebso = None,block = None):
     try:
         instructions = block["instructions"]
         input_stack = int(block["input"])
-        print input_stack
+        print (input_stack)
         rule = compile_block(instructions,input_stack)
 
             

@@ -15,7 +15,6 @@ import logging
 import six
 from collections import namedtuple
 from z3 import *
-import gasol
 import errno
 
 from vargenerator import *
@@ -632,17 +631,17 @@ def check_div_invalid_bytecode(instr):
     return r
                     
 def is_getter_function(path):
-    blocks = map(lambda x: x[0],path)
-    is_getter_function = filter(lambda x: x in blocks,getter_blocks)
+    blocks = list(map(lambda x: x[0],path))
+    is_getter_function = list(filter(lambda x: x in blocks,getter_blocks))
     return len(is_getter_function)>0
 
 def annotate_invalid(path):
     global has_invalid
     
-    blocks = map(lambda x: x[0], path)
+    blocks = list(map(lambda x: x[0], path))
     functions_blocks = function_block_map.values()
-    bs = map(lambda x: x[0], functions_blocks)
-    annotate_invalids = filter(lambda x: x in bs,blocks)
+    bs = list(map(lambda x: x[0], functions_blocks))
+    annotate_invalids = list(filter(lambda x: x in bs,blocks))
 
     if len(annotate_invalids)>0 and (annotate_invalids[0] not in has_invalid):
         has_invalid.append(annotate_invalids[0])
@@ -650,7 +649,7 @@ def annotate_invalid(path):
 def remove_getters_has_invalid():
     global has_invalid
 
-    has_invalid = filter(lambda x: x not in getter_blocks,has_invalid)
+    has_invalid = list(filter(lambda x: x not in getter_blocks,has_invalid))
         
 def construct_static_edges():
     add_falls_to()  # these edges are static
@@ -867,7 +866,7 @@ def sym_exec_block(params, block, pre_block, depth, func_call,level,path):
 
     update_stack_heigh(block,len(stack),0)
     Edge = namedtuple("Edge", ["v1", "v2"]) # Factory Function for tuples is used as dictionary key
-    if block < 0:
+    if int(block) < 0:
         log.debug("UNKNOWN JUMP ADDRESS. TERMINATING THIS PATH")
         return ["ERROR"]
 
@@ -1105,7 +1104,7 @@ def get_all_blocks_with_same_stack(successor, stack):
     global vertices
 
     # We just search for those nodes that share initial name with our successor
-    all_successor_copies = filter(lambda x: get_initial_block_address(x) == get_initial_block_address(successor), vertices)
+    all_successor_copies = list(filter(lambda x: get_initial_block_address(x) == get_initial_block_address(successor), vertices))
     same_stack_successors = []
     
     for found_successor in all_successor_copies:
@@ -1113,7 +1112,7 @@ def get_all_blocks_with_same_stack(successor, stack):
 
         # If there's no stack in the node, we must check if our stack is empty, or doesn't contain jump values info.
         if list_stacks == [[]]:
-            if filter(lambda x: isinstance(x,tuple) and (x[0] in vertices) and x[0]!=0,stack) == []:
+            if list(filter(lambda x: isinstance(x,tuple) and (x[0] in vertices) and x[0]!=0,stack)) == []:
                 same_stack_successors.append(found_successor)
         else:
             # Otherwise, we check every path to see if they're esentially the same
@@ -1136,7 +1135,7 @@ def update_matching_successor(successor, matching_successor, block, t):
     else:
         vertices[block].set_jump_target(matching_successor, True)
         
-    old_edges = filter(lambda x: x!= successor, edges[block])
+    old_edges = list(filter(lambda x: x!= successor, edges[block]))
     old_edges.append(matching_successor)
     edges[block] = old_edges
     
@@ -1178,7 +1177,7 @@ def copy_already_visited_node(successor, new_params, block, depth, func_call,cur
 
     # Edges must be initialized to None, as it doesn't share the same list as the original node
     edges[new_successor_address] = []
-    old_edges = filter(lambda x: x!= successor, edges[block])
+    old_edges = list(filter(lambda x: x!= successor, edges[block]))
     old_edges.append(new_successor_address)
     edges[block] = old_edges
     
@@ -1300,9 +1299,9 @@ def sym_exec_ins(params, block, instr, func_call,stack_first,instr_index):
                 second = BitVecVal(second, 256)
 
             if isReal(first):
-                first = long(first)
+                first = int(first)
             if isReal(second):
-                second = long(second)
+                second = int(second)
             computed = first * second & UNSIGNED_BOUND_NUMBER
             #computed = simplify(computed) if is_expr(computed) else computed
             stack.insert(0, computed)
@@ -1735,9 +1734,9 @@ def sym_exec_ins(params, block, instr, func_call,stack_first,instr_index):
             second_aux = get_push_value(second)
 
             if isReal(first_aux):
-                first_aux = long(first_aux)
+                first_aux = int(first_aux)
             if isReal(second_aux):
-                second_aux = long(second_aux)
+                second_aux = int(second_aux)
 
             
             
@@ -1820,8 +1819,8 @@ def sym_exec_ins(params, block, instr, func_call,stack_first,instr_index):
             
             if isAllReal(first, second):
                 
-                first = long(first)
-                second = long(second)
+                first = int(first)
+                second = int(second)
 
 
                 if first >= 32 or first < 0 or byte_index < 0:
@@ -1926,6 +1925,7 @@ def sym_exec_ins(params, block, instr, func_call,stack_first,instr_index):
             position = get_push_value(position)
 
             if g_src_map:
+                
                 source_code = g_src_map.get_source_code(global_state['pc'] - 1)
                 if source_code.startswith("function") and isReal(position):
                     # Delete commment blocks
@@ -1967,9 +1967,9 @@ def sym_exec_ins(params, block, instr, func_call,stack_first,instr_index):
                         params_list_aux = []
                         for param in params_list:
                             comments = param.split("\n")
-                            params_list_aux+= filter(lambda x: (not x.strip().startswith("//")) and x != "",comments)
+                            params_list_aux+= list(filter(lambda x: (not x.strip().startswith("//")) and x != "",comments))
 
-                        params_list_aux = filter(lambda x: x.strip() != "",params_list_aux)
+                        params_list_aux = list(filter(lambda x: x.strip() != "",params_list_aux))
                         # print("Params list aux")
                         # print params_list_aux
                     
@@ -1978,7 +1978,11 @@ def sym_exec_ins(params, block, instr, func_call,stack_first,instr_index):
                         params_type = [param.split("//")[0].rstrip().rstrip("\n").split(" ")[0] for param in params_list_aux]
 
                         replicated_params_list = []
-                        for param_name, param_type in zip(params_list,params_type):
+                       
+                        zip_list = list(zip(params_list,params_type))
+                       
+                        for param_name, param_type in zip_list:
+
                             # Means current param is an array
                             if param_type.find("[") != -1:
                                 number_init = param_type.find("[") + 1
@@ -2012,6 +2016,7 @@ def sym_exec_ins(params, block, instr, func_call,stack_first,instr_index):
                         g_src_map.var_names.append(new_var_name)
                         param_abs = (block,new_var_name)
                 else:
+                    
                     if param_abs[1] != "":
                         new_var_name = param_abs[1]
                     else:
@@ -2071,7 +2076,7 @@ def sym_exec_ins(params, block, instr, func_call,stack_first,instr_index):
 
             if isAllReal(mem_location, current_miu_i, code_from, no_bytes):
                 if six.PY2:
-                    temp = long(math.ceil((mem_location + no_bytes) / float(32)))
+                    temp = int(math.ceil((mem_location + no_bytes) / float(32)))
                 else:
                     temp = int(math.ceil((mem_location + no_bytes) / float(32)))
 
@@ -2167,7 +2172,7 @@ def sym_exec_ins(params, block, instr, func_call,stack_first,instr_index):
 
             if isAllReal(address, mem_location, current_miu_i, code_from, no_bytes) and USE_GLOBAL_BLOCKCHAIN:
                 if six.PY2:
-                    temp = long(math.ceil((mem_location + no_bytes) / float(32)))
+                    temp = int(math.ceil((mem_location + no_bytes) / float(32)))
                 else:
                     temp = int(math.ceil((mem_location + no_bytes) / float(32)))
                 if temp > current_miu_i:
@@ -2254,7 +2259,7 @@ def sym_exec_ins(params, block, instr, func_call,stack_first,instr_index):
             current_miu_i = global_state["miu_i"]
             if isAllReal(address, current_miu_i) and address in mem:
                 if six.PY2:
-                    temp = long(math.ceil((address + 32) / float(32)))
+                    temp = int(math.ceil((address + 32) / float(32)))
                 else:
                     temp = int(math.ceil((address + 32) / float(32)))
                 if temp > current_miu_i:
@@ -2317,7 +2322,7 @@ def sym_exec_ins(params, block, instr, func_call,stack_first,instr_index):
                         value /= 256
             if isAllReal(stored_address, current_miu_i):
                 if six.PY2:
-                    temp = long(math.ceil((stored_address + 32) / float(32)))
+                    temp = int(math.ceil((stored_address + 32) / float(32)))
                 else:
                     temp = int(math.ceil((stored_address + 32) / float(32)))
                 if temp > current_miu_i:
@@ -2355,7 +2360,7 @@ def sym_exec_ins(params, block, instr, func_call,stack_first,instr_index):
             current_miu_i = global_state["miu_i"]
             if isAllReal(stored_address, current_miu_i):
                 if six.PY2:
-                    temp = long(math.ceil((stored_address + 1) / float(32)))
+                    temp = int(math.ceil((stored_address + 1) / float(32)))
                 else:
                     temp = int(math.ceil((stored_address + 1) / float(32)))
                 if temp > current_miu_i:
@@ -3132,7 +3137,7 @@ def update_scc_unary(scc_unary,blocks):
     new_scc_unary = []
     for e in scc_unary:
         if e not in blocks_ids:
-            l = filter(lambda x: str(x).startswith(str(e)),blocks)
+            l = list(filter(lambda x: str(x).startswith(str(e)),blocks))
             new_scc_unary +=l
         else:
             new_scc_unary.append(e)
@@ -3228,9 +3233,11 @@ def generate_saco_config_file(cname):
         name = costabs_path+"config_block.config"
     else:
         name = costabs_path+cname+".config"
-
+    
     with open(name,"w") as f:
-        elems = map(lambda (x,y): "("+process_argument_function(x)+";"+str(y[0])+";"+str(y[1])+")", function_block_map.items())
+        function_block_map.items()
+        
+        elems = list(map(lambda x: "("+process_argument_function(x[0])+";"+str(x[1][0])+";"+str(x[1][1])+")", function_block_map.items()))
         elems2write = "\n".join(elems)
         f.write(elems2write)
     f.close()
@@ -3300,13 +3307,13 @@ def check_cfg_option(cfg,cname,execution, cloned = False, blocks_to_clone = None
 def get_scc(edges):
     g = Graph_SCC(edges)
     scc_multiple = g.getSCCs()
-    scc_multiple = filter(lambda x: len(x)>1,scc_multiple)
+    scc_multiple = list(filter(lambda x: len(x)>1,scc_multiple))
     scc_multiple = get_entry_all(scc_multiple,vertices)
 
     if scc_multiple == {}:
         return scc_multiple
     else:
-        new_edges = filter_nested_scc(edges,scc_multiple)
+        new_edges = list(filter_nested_scc(edges,scc_multiple))
         scc = get_scc(new_edges)
         scc_multiple.update(scc)
         return scc_multiple
@@ -3426,7 +3433,7 @@ def run(disasm_file=None,disasm_file_init=None, source_map=None,source_map_init 
 
     if function_block_map != {}:
         val = function_block_map.values()
-        f2blocks = map(lambda x: x[0],val)
+        f2blocks = list(map(lambda x: x[0],val))
     else:
         f2blocks = []
 
@@ -3437,13 +3444,6 @@ def run(disasm_file=None,disasm_file_init=None, source_map=None,source_map_init 
 
         rbr_rules = rbr.evm2rbr_compiler(blocks_input = vertices,stack_info = stack_h, block_unbuild = blocks_to_create,saco_rbr = saco,c_rbr = cfile, exe = execution, contract_name = cname, component = component_of_blocks, oyente_time = oyente_t,scc = scc,svc_labels = svc,gotos = go,fbm = f2blocks, source_info = source_info,ebso = ebso_opt,sname = s_name)
 
-        if opt!= None:
-        # fields = ["field1","field2"]
-        # block = 70
-            # print function_block_map
-            f = opt['block']
-            #block = function_block_map[f]
-            gasol.optimize_solidity(int(opt["block"]),source_map,opt["fields"],opt["c_source"],rbr_rules,component_of_blocks)
 
     except Exception as e:
         traceback.print_exc()
@@ -3506,7 +3506,7 @@ def remove_unnecesary_opcodes(idx, instructions):
     # print instructions
     if idx < len(instructions):
 
-        new_ins = map(lambda x: x.strip(), instructions[idx+1:])
+        new_ins = list(map(lambda x: x.strip(), instructions[idx+1:]))
         
         if "JUMP" in new_ins:
             j = "jump"

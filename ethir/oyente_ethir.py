@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import os
 import re
@@ -41,7 +41,7 @@ def has_dependencies_installed():
         import z3
         import z3.z3util
         z3_version =  z3.get_version_string()
-        tested_z3_version = '4.5.1'
+        tested_z3_version = '4.8.9'
         if compare_versions(z3_version, tested_z3_version) > 0:
             logging.warning("You are using an untested version of z3. %s is the officially tested version" % tested_z3_version)
     except:
