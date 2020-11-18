@@ -33,9 +33,13 @@ def parse_data(json_path):
 
 
 
-def execute_syrup_backend(args):
+def execute_syrup_backend(args_i):
+
+    args['json_path'] = args_i.source
+
     json_path = args['json_path']
     path = args['out']
+
 
     initialize_dir_and_streams(path)
 
