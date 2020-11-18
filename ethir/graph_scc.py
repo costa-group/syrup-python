@@ -94,7 +94,7 @@ class Graph_SCC:
 
     def printSCCs(self):
         sccs = self.getSCCs()
-        print sccs
+        print (sccs)
     
 def get_entry_scc(scc,blocks):
     entry = ""

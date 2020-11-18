@@ -660,20 +660,20 @@ def check_if_same_stack(stack1, stack2, blocks_info):
 def show_graph(blocks_input):
     for address in blocks_input:
         print("Bloque: ")
-        print address
+        print (address)
         print("Comes from: ")
-        print blocks_input[address].get_comes_from()
+        print (blocks_input[address].get_comes_from())
         print("List jump: ")
-        print blocks_input[address].get_list_jumps()
+        print (blocks_input[address].get_list_jumps())
         print("Jump target: ")
-        print blocks_input[address].get_jump_target()
+        print (blocks_input[address].get_jump_target())
         print("Falls to: ")
-        print blocks_input[address].get_falls_to()
+        print (blocks_input[address].get_falls_to())
         print("Filtered Stack: ")
         for stack in blocks_input[address].get_stacks():
-            print filter(lambda x: isinstance(x,tuple) and (x[0] in blocks_input) and x[0]!=0, stack)
+            print (filter(lambda x: isinstance(x,tuple) and (x[0] in blocks_input) and x[0]!=0, stack))
         print("Real stack:")
-        print blocks_input[address].get_stacks()
+        print (blocks_input[address].get_stacks())
         
 
 ''' Given a node and where it comes from, checks all relevant info is consistent'''

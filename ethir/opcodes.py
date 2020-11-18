@@ -226,8 +226,8 @@ def get_ins_cost(opcode,params=None):
     elif opcode == "SSTORE":
         return 5000
     else:
-        print "NO ESTAA: "+str(opcode)
-        print opcode
+        print ("NO ESTAA: "+str(opcode))
+        print (opcode)
         return 0
     return 0
 
