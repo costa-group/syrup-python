@@ -4,10 +4,10 @@ import os
 import re
 import logging
 import json
-import global_params
+import ethir.global_params as global_params
 import six
-from source_map import SourceMap
-from utils import run_command, get_solc_executable
+from ethir.source_map import SourceMap
+from ethir.utils import run_command, get_solc_executable
 
 class InputHelper:
     BYTECODE = 0

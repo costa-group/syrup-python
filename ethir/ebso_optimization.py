@@ -1,7 +1,7 @@
-from rbr_rule import RBRRule
+from ethir.rbr_rule import RBRRule
 import json
-from utils import is_integer,all_integers
-import opcodes
+from ethir.utils import is_integer,all_integers
+import ethir.opcodes as opcodes
 import os
 from timeit import default_timer as dtimer
 

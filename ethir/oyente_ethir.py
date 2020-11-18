@@ -4,16 +4,16 @@ import os
 import re
 import six
 import json
-import symExec
-import rbr_isolate_block
+import ethir.symExec as symExec
+import ethir.rbr_isolate_block as rbr_isolate_block
 import logging
 #import requests
 import argparse
 import subprocess
-import global_params
+import ethir.global_params as global_params
 from timeit import default_timer as dtimer
-from utils import run_command, process_hashes, process_isolate_block
-from input_helper import InputHelper
+from ethir.utils import run_command, process_hashes, process_isolate_block
+from ethir.input_helper import InputHelper
 import traceback
 
 ebso_path = "/tmp/costabs/jsons/"
@@ -246,7 +246,7 @@ def run_solidity_analysis(inputs,hashes):
                 result, return_code = symExec.run(disasm_file=inp['disasm_file'], disasm_file_init = inp['disasm_file_init'], source_map=inp['source_map'], source_file=inp['source'],cfg = args.control_flow_graph,saco = args.saco,execution = i,cname = inp["c_name"],hashes = function_names,debug = args.debug,evm_version = evm_version_modifications,cfile = args.cfile,svc=svc_options,go = args.goto, ebso = args.ebso)
                 
             except Exception as e:
-                #traceback.print_exc()
+                traceback.print_exc()
                 if len(e.args)>1:
                     return_code = e.args[1]
                 else:

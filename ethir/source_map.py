@@ -2,10 +2,10 @@ import re
 import ast
 import json
 
-import global_params
+import ethir.global_params as global_params
 
-from utils import run_command
-from ast_helper import AstHelper
+from ethir.utils import run_command
+from ethir.ast_helper import AstHelper
 
 class Source:
     def __init__(self, filename):
