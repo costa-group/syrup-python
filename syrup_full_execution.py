@@ -3,7 +3,7 @@
 import os
 import sys
 sys.path.append(os.path.dirname(os.path.realpath(__file__))+"/ethir")
-
+sys.path.append(os.path.dirname(os.path.realpath(__file__))+"/backend")
 import glob
 import shlex
 import subprocess
@@ -19,21 +19,29 @@ def init():
     ethir_syrup = project_path + "/ethir"
 
     global syrup_bend_path
-    syrup_bend_path = project_path + "/python-syrup-backend/python-syrup.py"
+    syrup_bend_path = project_path + "/backend/python-syrup.py"
 
-    
+    global z3_exec
     z3_exec = project_path + "/bin/z3"
+    global bclt_exec
     bclt_exec = project_path + "/bin/barcelogic"
+    global oms_exec
     oms_exec = project_path + "/bin/optimathsat"
 
-
+    global disasm_generation_file
     disasm_generation_file = project_path + "/scripts/disasm_generation.py"
+    global tmp_costabs
     tmp_costabs = "/tmp/costabs/"
+    global json_dir
     json_dir = tmp_costabs + "jsons/"
+    global sol_dir
     sol_dir = tmp_costabs + "sols/"
-    
+
+    global encoding_file
     encoding_file = tmp_costabs + "encoding_Z3.smt2"
+    global result_file
     result_file = tmp_costabs + "solution.txt"
+    global instruction_file
     instruction_file = tmp_costabs + "optimized_block_instructions.disasm_opt"
 
     
