@@ -1,25 +1,33 @@
 #!/usr/bin/python3
 
-import glob
 import os
+import sys
+sys.path.append(os.path.dirname(os.path.realpath(__file__))+"/ethir")
+
+import glob
 import shlex
 import subprocess
 import argparse
-from ethir.oyente_ethir import clean_dir, analyze_disasm_bytecode, analyze_bytecode, analyze_solidity, analyze_isolate_block, has_dependencies_installed
+from oyente_ethir import clean_dir, analyze_disasm_bytecode, analyze_bytecode, analyze_solidity, analyze_isolate_block, has_dependencies_installed
+
 
 def init():
-
+    global project_path
     project_path =  os.path.dirname(os.path.realpath(__file__))
 
-    ethir_syrup = project_path + "ethir-syrup/"
-    syrup_bend_path = project_path + "python-syrup-backend/python-syrup.py"
+    global ethir_syrup
+    ethir_syrup = project_path + "/ethir"
+
+    global syrup_bend_path
+    syrup_bend_path = project_path + "/python-syrup-backend/python-syrup.py"
+
     
-    z3_exec = project_path + "bin/z3"
-    bclt_exec = project_path + "bin/barcelogic"
-    oms_exec = project_path + "bin/optimathsat"
+    z3_exec = project_path + "/bin/z3"
+    bclt_exec = project_path + "/bin/barcelogic"
+    oms_exec = project_path + "/bin/optimathsat"
 
 
-    disasm_generation_file = project_path + "scripts/disasm_generation.py"
+    disasm_generation_file = project_path + "/scripts/disasm_generation.py"
     tmp_costabs = "/tmp/costabs/"
     json_dir = tmp_costabs + "jsons/"
     sol_dir = tmp_costabs + "sols/"
@@ -76,9 +84,8 @@ def main():
     if not has_dependencies_installed():
         return
 
-    
-    init()
 
+    init()    
     clean_dir()
 
 
