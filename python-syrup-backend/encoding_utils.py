@@ -119,65 +119,72 @@ def generate_disjoint_sets_from_cost(ordered_costs):
     return OrderedDict(sorted(disjoint_set.items(), key=lambda t: t[0]))
 
 
-def generate_recursive_dependence(elem, user_instr, initial_stack, ):
+# Given a instruction, a dict that links each instruction to a lower bound to the number of instructions
+# # needed to obtain the output from that dict, and another dict
+# that links each instruction to the previous instructions needed to execute that instruction,
+# updates both dicts for that instruction and returns the corresponding values associated to the instruction.
+def generate_instr_dependencies(instr, number_of_instructions_to_execute, previous_values, dependency_theta_graph):
 
-    # Case base: if an element is already at initial_stack, then we
-    # don't need to perform additional instructions to get its value.
-    # This could include int values, so it is fundamental that this
-    # condition comes before the next one
-    if elem in initial_stack:
-        return 0
+    # Base case: it has been already analyzed, so we return the values associated.
+    if instr in previous_values:
+        return number_of_instructions_to_execute[instr], previous_values[instr]
 
-    # Case base: if an element is a number, then it returns 1, as we
-    # need to push that element.
-    if type(elem) == int:
-        return 1
+    # Base case: if the instruction is a push, it doesn't have any previous instruction, so
+    # it needs 0 instructions and doesn't have any dependency.
+    if instr == 'PUSH':
+        return 0, set()
 
-    # Case base: we have already analyzed that value, so there's no
-    # change.
+    number_of_instructions_needed = 0
+    instructions_dependency = set()
 
-    # We search for instruction that contains elem as output
-    instruction = list(filter(lambda instr: elem in instr['outpt_sk'], user_instr))[0]
-    precedence = 0
-    ids = []
-    for antecedent in instruction['inpt_sk']:
-        generate_recursive_dependence(antecedent, user_instr, initial_stack)
+    # Recursive case: we obtain the output for each previous instruction and update the values
+    for previous_instr, aj in dependency_theta_graph[instr]:
 
+        previous_instr_number_of_instr_needed, previous_instr_instructions_dependency = \
+            generate_instr_dependencies(previous_instr, number_of_instructions_to_execute,
+                                        previous_values, dependency_theta_graph)
+        # We need the number of instructions needed for previous instruction plus one (executing that instruction)
+        number_of_instructions_needed += previous_instr_number_of_instr_needed + 1
 
-# Generates a list containing graphs that represent the dependencies between
-# inputs and outputs from different instructions
-def generate_instr_dependencies(user_instr, initial_stack, final_stack, theta):
-    evolving = {}
+        # See detailed explanation for more information to understand this step
+        repeated_instructions = instructions_dependency.intersection(previous_instr_instructions_dependency)
+        for repeated_instr in repeated_instructions:
 
-    # Dict that contains theta value of an instruction and the theta value from the
-    # instructions before
+            # If it is the maximal representative, then the necessary number of previous instructions is 0
+            # (as it could have been duplicated)
+            if previous_values[repeated_instr].intersection(repeated_instructions) == set():
+                number_of_instructions_needed -= number_of_instructions_to_execute[repeated_instr]
 
-    theta_before = {}
-    # Elements in initial stack are leafs in our graph, and they have
-    # no restrictions in appearing from first instruction
-    for elem in initial_stack:
-        elem += 1
+        # We update instructions_dependency
+        instructions_dependency = instructions_dependency.union(previous_instr_instructions_dependency)
 
-    for elem in final_stack:
+    number_of_instructions_to_execute[instr] = number_of_instructions_needed
+    previous_values[instr] = instructions_dependency
 
-        # We are only interested in those variables that have been generated
-        # from an uninterpreted function.
-        if type(elem) == str and elem not in initial_stack:
-            pass
+    return number_of_instructions_to_execute, instructions_dependency
 
 
-# We generate a dict that given the theta value of an instruction, returns the
-# theta values of instructions that must be executed to obtain its input
-def generate_dependency_theta_graph(user_instr, theta):
+# Given the dict containing the dependency among different instructions, we generate
+# another dict that links each instruction to the number of instructions that must be
+# executed previously to be able to execute that instruction.
+def generate_number_of_previous_instr_dict(dependency_theta_graph):
+    previous_values = {}
+    number_of_instructions_to_execute = {}
+    for instr in dependency_theta_graph:
+        generate_instr_dependencies(instr, number_of_instructions_to_execute, previous_values, dependency_theta_graph)
+
+    return number_of_instructions_to_execute
+
+
+# We generate a dict that given the id of an instruction, returns the
+# the id of instructions that must be executed to obtain its input and the corresponding
+# aj. Note that aj must be only assigned when push, in other cases we just set aj value to -1.
+def generate_dependency_graph(user_instr):
     dependency_theta_graph = {}
     for instr in user_instr:
-        theta_id_act = theta[instr['id']]
-        dependency_theta_graph[theta_id_act]= set()
+        instr_id = instr['id']
+        dependency_theta_graph[instr_id] = set()
         for stack_elem in instr['inpt_sk']:
-
-            # We don't consider ints, as we will explicitely state that
-            # all values in instr['inpt_sk] must be eventually pushed
-
             # We search for another instruction that generates the
             # stack elem as an output and add it to the set
             if type(stack_elem) == str:
@@ -185,7 +192,11 @@ def generate_dependency_theta_graph(user_instr, theta):
 
                 # It might be in the initial stack, so the list can be empty
                 if previous_instr:
-                    dependency_theta_graph[theta_id_act].add(previous_instr[0])
+                    # We add previous instr id
+                    dependency_theta_graph[instr['id']].add((previous_instr[0]['id'], -1))
+            # If we have an int, then we must perform a PUSHx to obtain that value
+            else:
+                dependency_theta_graph[instr_id].add(('PUSH', stack_elem))
 
     return dependency_theta_graph
 
