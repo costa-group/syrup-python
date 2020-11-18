@@ -16,7 +16,7 @@ from functools import reduce
 #from z3 import *
 #from z3.z3util import get_vars
 
-from ethir.dot_tree import Tree, build_tree
+from dot_tree import Tree, build_tree
 
 costabs_path = "/tmp/costabs/"
 tmp_path = "/tmp/"

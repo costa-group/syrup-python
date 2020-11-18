@@ -17,19 +17,19 @@ from collections import namedtuple
 from z3 import *
 import errno
 
-from ethir.vargenerator import *
-from ethir.basicblock import BasicBlock
+from vargenerator import *
+from basicblock import BasicBlock
 
 # from test_evm.global_test_params import (TIME_OUT, UNKNOWN_INSTRUCTION,
 #                                          EXCEPTION, PICKLE_PATH)
 # from vulnerability import CallStack, TimeDependency, MoneyConcurrency, Reentrancy, AssertionFailure, ParityMultisigBug2
-import ethir.global_params as global_params
+import global_params
 
-import ethir.rbr as rbr
-from ethir.utils import *#cfg_dot, write_cfg, update_map, get_public_fields, getLevel, update_sstore_map,correct_map_fields1, get_push_value, get_initial_block_address, check_graph_consistency, find_first_closing_parentheses, check_if_same_stack
-from ethir.opcodes import get_opcode
-from ethir.graph_scc import Graph_SCC, get_entry_all,filter_nested_scc
-from ethir.pattern import look_for_string_pattern,check_sload_fragment_pattern,sstore_fragment
+import rbr
+from utils import *#cfg_dot, write_cfg, update_map, get_public_fields, getLevel, update_sstore_map,correct_map_fields1, get_push_value, get_initial_block_address, check_graph_consistency, find_first_closing_parentheses, check_if_same_stack
+from opcodes import get_opcode
+from graph_scc import Graph_SCC, get_entry_all,filter_nested_scc
+from pattern import look_for_string_pattern,check_sload_fragment_pattern,sstore_fragment
 
 log = logging.getLogger(__name__)
 

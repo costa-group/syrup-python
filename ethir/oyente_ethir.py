@@ -4,16 +4,16 @@ import os
 import re
 import six
 import json
-import ethir.symExec as symExec
-import ethir.rbr_isolate_block as rbr_isolate_block
+import symExec
+import rbr_isolate_block
 import logging
 #import requests
 import argparse
 import subprocess
-import ethir.global_params as global_params
+import global_params
 from timeit import default_timer as dtimer
-from ethir.utils import run_command, process_hashes, process_isolate_block
-from ethir.input_helper import InputHelper
+from utils import run_command, process_hashes, process_isolate_block
+from input_helper import InputHelper
 import traceback
 
 ebso_path = "/tmp/costabs/jsons/"

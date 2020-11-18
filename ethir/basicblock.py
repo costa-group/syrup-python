@@ -1,6 +1,6 @@
 import six
-from ethir.dot_tree import Tree
-from ethir.opcodes import get_ins_cost
+from dot_tree import Tree
+from opcodes import get_ins_cost
 
 class BasicBlock:
     def __init__(self, start_address, end_address):

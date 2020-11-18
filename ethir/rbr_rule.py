@@ -1,6 +1,6 @@
 #Pablo Gordillo
 
-from ethir.utils import toInt
+from utils import toInt
 '''
 RBRRule class. It represents the rules of the transaction system.
 Each rule contains:

@@ -1,18 +1,18 @@
 #Pablo Gordillo
 
-from ethir.rbr_rule import RBRRule
-import ethir.opcodes as opcodes
-from ethir.basicblock import Tree
-from ethir.utils import getKey, orderRBR, getLevel, store_times
+from rbr_rule import RBRRule
+import opcodes as opcodes
+from basicblock import Tree
+from utils import getKey, orderRBR, getLevel, store_times
 import os
 # import ethir.saco
 # import c_translation
 # import c_utranslation
 from timeit import default_timer as dtimer
-from ethir.graph_scc import get_entry_scc
+from graph_scc import get_entry_scc
 import traceback
 
-from ethir.ebso_optimization import smt_translate
+from ebso_optimization import smt_translate
 
 costabs_path = "/tmp/costabs/" 
 tmp_path = "/tmp/"
