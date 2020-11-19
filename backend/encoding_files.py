@@ -4,14 +4,22 @@ import json
 
 
 
-costabs_path = "/tmp/costabs/"
+def init():
+    global costabs_path
+    costabs_path = "/tmp/costabs/"
 
-encoding_name = "encoding_Z3.smt2"
+    global encoding_name
+    encoding_name = "encoding_Z3.smt2"
 
-instr_map_file = "instruction.json"
-opcode_map_file = "opcode.json"
+    global instr_map_file
+    instr_map_file = "instruction.json"
 
-encoding_stream = sys.stdout
+    global opcode_map_file
+    opcode_map_file = "opcode.json"
+
+    global encoding_stream
+    encoding_stream = sys.stdout
+
 
 def initialize_dir_and_streams(path_to_store,solver,source_name = None):
     global encoding_stream
@@ -19,6 +27,8 @@ def initialize_dir_and_streams(path_to_store,solver,source_name = None):
     global encoding_name
     global instr_map_file
     global opcode_map_file
+
+    init()
     
     # Files will be stored in costabs path, so we create it just in case
     # it doesn't exist.
@@ -26,7 +36,7 @@ def initialize_dir_and_streams(path_to_store,solver,source_name = None):
         path_to_store += "/"
 
     if source_name:
-        name = source.name.split("/")[-1].rstrip(".json")
+        name = source_name.split("/")[-1].rstrip(".json")
         encoding_name = name+"_"+solver+".smt2"
         instr_map_file = name+"_"+instr_map_file
         opcode_map_file = name+"_"+opcode_map_file

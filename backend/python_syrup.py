@@ -1,8 +1,8 @@
-#!/usr/bin/python3
-from typing import TextIO
+#!/usr/bin/env python3
 
+from typing import TextIO
 from superoptimization_enconding import generate_smtlib_encoding
-from utils import  add_bars_to_string
+from utils_bckend import add_bars_to_string
 import json
 import argparse
 from encoding_files import initialize_dir_and_streams
@@ -32,19 +32,21 @@ def parse_data(json_path):
 
 
 
+#Executes the smt encoding generator from the main script
+def execute_syrup_backend(args_i,json_file = None):
+    
+    if json_file:
+        json_path = json_file
+    else:
+        json_path = args_i.json
+        
+    path = costabs_path
+    solver = args_i.solver
 
-def execute_syrup_backend(args_i):
-
-    args['json_path'] = args_i.source
-
-    json_path = args['json_path']
-    path = args['out']
-    solver = args['solver']
-
-    initialize_dir_and_streams(path,json_path)
+    initialize_dir_and_streams(path,solver,json_path)
 
     b0, bs, user_instr, variables, initial_stack, final_stack = parse_data(json_path)
-    flags = {'at-most': args['at_most'], 'pushed-at-least' : args['pushed_once']}
+    flags = {'at-most': args_i.at_most, 'pushed-at-least' : args_i.pushed_once}
 
     generate_smtlib_encoding(b0, bs, user_instr, variables, initial_stack, final_stack, flags)
 
