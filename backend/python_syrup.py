@@ -38,18 +38,19 @@ def execute_syrup_backend(args_i,json_file = None):
     if json_file:
         json_path = json_file
     else:
-        json_path = args_i.json
-        
+        json_path = args_i.source
+
     path = costabs_path
     solver = args_i.solver
 
-    initialize_dir_and_streams(path,solver,json_path)
+    es = initialize_dir_and_streams(path,solver,json_path)
 
     b0, bs, user_instr, variables, initial_stack, final_stack = parse_data(json_path)
     flags = {'at-most': args_i.at_most, 'pushed-at-least' : args_i.pushed_once}
 
     generate_smtlib_encoding(b0, bs, user_instr, variables, initial_stack, final_stack, flags)
 
+    es.close()
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser(description='Backend of syrup tool')

@@ -45,10 +45,13 @@ def initialize_dir_and_streams(path_to_store,solver,source_name = None):
     pathlib.Path(costabs_path).mkdir(parents=True, exist_ok=True)
     encoding_stream = open(costabs_path + encoding_name, 'w')
 
+    return encoding_stream
     
 def write_encoding(string):
     print(string, file=encoding_stream)
 
+def close_encoding():
+    sys.stdout.close()
 
 def write_instruction_map(theta_instr):
     with open(costabs_path + instr_map_file, 'w') as f:
@@ -58,3 +61,4 @@ def write_instruction_map(theta_instr):
 def write_opcode_map(instr_opcodes):
     with open(costabs_path + opcode_map_file, 'w') as f:
         f.write(json.dumps(instr_opcodes))
+
