@@ -4,12 +4,14 @@ import os
 import sys
 sys.path.append(os.path.dirname(os.path.realpath(__file__))+"/ethir")
 sys.path.append(os.path.dirname(os.path.realpath(__file__))+"/backend")
+sys.path.append(os.path.dirname(os.path.realpath(__file__))+"/scripts")
 import glob
 import shlex
 import subprocess
 import argparse
 from oyente_ethir import clean_dir, analyze_disasm_bytecode, analyze_bytecode, analyze_solidity, analyze_isolate_block, has_dependencies_installed
 from python_syrup import execute_syrup_backend
+from disasm_generation import generate_disasm_sol
 
 def init():
     global project_path
@@ -34,14 +36,16 @@ def init():
     global sol_dir
     sol_dir = tmp_costabs + "sols/"
 
+    global encoding_path
+    encoding_path = tmp_costabs+"smt_encoding/"
+    
     global encoding_file
     encoding_file = tmp_costabs + "encoding_Z3.smt2"
     global result_file
     result_file = tmp_costabs + "solution.txt"
     global instruction_file
     instruction_file = tmp_costabs + "optimized_block_instructions.disasm_opt"
-
-    print (sys.path)
+    
     
 def run_command(cmd):
     FNULL = open(os.devnull, 'w')
@@ -59,9 +63,37 @@ def get_solver_to_execute(smt_file):
         return oms_exec
 
 
-def main():
-
+def execute_ethir():
     global args
+
+    if args.isolate_block:
+        analyze_isolate_block(args_i = args)
+        
+    elif args.bytecode:
+        analyze_bytecode(args_i = args)
+
+    else:
+        analyze_solidity(args_i = args)
+
+def generate_solution(block_name):
+    #encoding_file = encoding_path+"encoding_Z3.smt2"
+    encoding_file = encoding_path+block_name+"_"+args.solver+".smt2"
+    
+    exec_command = get_solver_to_execute(encoding_file)
+
+    print("Executing "+args.solver+" for file "+block_name)
+    solution = run_command(exec_command)
+                    
+    with open(result_file, 'w') as f:
+        f.write(solution)
+    generate_disasm_sol(block_name)
+    #run_command("mv " + instruction_file + " " + sol_dir + f.split('/')[-1].split('.')[0] + "_instructions.disasm-opt")
+    
+    
+def main():
+    global args
+    global encoding_file
+    
     parser = argparse.ArgumentParser()
     group = parser.add_mutually_exclusive_group(required=True)
 
@@ -81,7 +113,7 @@ def main():
     parser.add_argument("-isb", "--isolate_block", help="Generate the RBR for an isolate block", action = "store_true")
     parser.add_argument( "-hashes", "--hashes",             help="Generate a file that contains the functions of the solidity file", action="store_true")
     parser.add_argument("-solver", "--solver",             help="Choose the solver", choices = ["z3","barcelogic","oms"])
-    parser.add_argument("-json", "--json",             help="The input file is a json that contains the SFS of the block to be analyzed", choices = ["z3","barcelogic","oms"])
+    parser.add_argument("-json", "--json",             help="The input file is a json that contains the SFS of the block to be analyzed", action="store_true")
     parser.add_argument('-write-only', help="print smt constraint in SMT-LIB format,a mapping to instructions, and objectives", action='store_true')
     parser.add_argument('-at-most', help='add a constraint for each uninterpreted function so that they are used at most once',
                     action='store_true', dest='at_most')
@@ -98,36 +130,31 @@ def main():
     init()    
     clean_dir()
 
+    os.mkdir(tmp_costabs+"solutions")
 
     if not args.json:
     
-        if args.isolate_block:
-            analyze_isolate_block(args_i = args)
-
-        elif args.bytecode:
-            analyze_bytecode(args_i = args)
-
-        else:
-            analyze_solidity(args_i = args)
-
+        execute_ethir()
 
         if args.solver:
+
+            
             for f in glob.glob(json_dir + "/*.json"):
-
-                print (f)
+                #run_command(syrup_bend_path + " " + f)
                 execute_syrup_backend(args,f)
-
-                if not args.write_only:
-                    exec_command = get_solver_to_execute(encoding_file)
                 
-                    solution = run_command(exec_command)
-                    with open(result_file, 'w') as f:
-                        f.write(solution)
-                    run_command(disasm_generation_file)
-                    run_command("mv " + instruction_file + " " + sol_dir + file.split('/')[-1].split('.')[0] + "_instructions.disasm-opt")
+                if not args.write_only:
+                    
+                    block_name = f.split("/")[-1].rstrip(".json")
+
+                    generate_solution(block_name)
+
     else:
-        pass
-        #byP: Add to analyze only the sfs provided
+        execute_syrup_backend(args)
+        if not args.write_only:
+
+            block_name = args.source.split("/")[-1].rstrip(".json")
+            generate_solution(block_name)
 
 if __name__=="__main__":
     main()
