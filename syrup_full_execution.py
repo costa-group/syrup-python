@@ -9,7 +9,7 @@ import shlex
 import subprocess
 import argparse
 from oyente_ethir import clean_dir, analyze_disasm_bytecode, analyze_bytecode, analyze_solidity, analyze_isolate_block, has_dependencies_installed
-from backend import python_syrup
+from python_syrup import execute_syrup_backend
 
 def init():
     global project_path
@@ -17,9 +17,6 @@ def init():
 
     global ethir_syrup
     ethir_syrup = project_path + "/ethir"
-
-    global syrup_bend_path
-    syrup_bend_path = project_path + "/backend/python-syrup.py"
 
     global z3_exec
     z3_exec = project_path + "/bin/z3"
@@ -44,6 +41,7 @@ def init():
     global instruction_file
     instruction_file = tmp_costabs + "optimized_block_instructions.disasm_opt"
 
+    print (sys.path)
     
 def run_command(cmd):
     FNULL = open(os.devnull, 'w')
@@ -85,6 +83,10 @@ def main():
     parser.add_argument("-solver", "--solver",             help="Choose the solver", choices = ["z3","barcelogic","oms"])
     parser.add_argument("-json", "--json",             help="The input file is a json that contains the SFS of the block to be analyzed", choices = ["z3","barcelogic","oms"])
     parser.add_argument('-write-only', help="print smt constraint in SMT-LIB format,a mapping to instructions, and objectives", action='store_true')
+    parser.add_argument('-at-most', help='add a constraint for each uninterpreted function so that they are used at most once',
+                    action='store_true', dest='at_most')
+    parser.add_argument('-pushed-once', help='add a constraint to indicate that each pushed value is pushed at least once',
+                    action='store_true', dest='pushed_once')
 
 
     args = parser.parse_args()
@@ -110,16 +112,19 @@ def main():
 
 
         if args.solver:
-            for file in glob.glob(json_dir + "/*.json"):
-                run_command(syrup_bend_path + " " + file)
+            for f in glob.glob(json_dir + "/*.json"):
 
-                exec_command = get_solver_to_execute(encoding_file)
+                print (f)
+                execute_syrup_backend(args,f)
+
+                if not args.write_only:
+                    exec_command = get_solver_to_execute(encoding_file)
                 
-                solution = run_command(exec_command)
-                with open(result_file, 'w') as f:
-                    f.write(solution)
-                run_command(disasm_generation_file)
-                run_command("mv " + instruction_file + " " + sol_dir + file.split('/')[-1].split('.')[0] + "_instructions.disasm-opt")
+                    solution = run_command(exec_command)
+                    with open(result_file, 'w') as f:
+                        f.write(solution)
+                    run_command(disasm_generation_file)
+                    run_command("mv " + instruction_file + " " + sol_dir + file.split('/')[-1].split('.')[0] + "_instructions.disasm-opt")
     else:
         pass
         #byP: Add to analyze only the sfs provided
