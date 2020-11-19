@@ -2,6 +2,8 @@ import sys
 import pathlib
 import json
 
+
+
 costabs_path = "/tmp/costabs/"
 
 encoding_name = "encoding_Z3.smt2"
@@ -14,7 +16,10 @@ encoding_stream = sys.stdout
 def initialize_dir_and_streams(path_to_store,solver,source_name = None):
     global encoding_stream
     global costabs_path
-
+    global encoding_name
+    global instr_map_file
+    global opcode_map_file
+    
     # Files will be stored in costabs path, so we create it just in case
     # it doesn't exist.
     if path_to_store[-1] != "/":
