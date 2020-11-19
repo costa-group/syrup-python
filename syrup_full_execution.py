@@ -9,7 +9,7 @@ import shlex
 import subprocess
 import argparse
 from oyente_ethir import clean_dir, analyze_disasm_bytecode, analyze_bytecode, analyze_solidity, analyze_isolate_block, has_dependencies_installed
-
+from backend import python_syrup
 
 def init():
     global project_path
