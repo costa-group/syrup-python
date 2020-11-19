@@ -14,10 +14,10 @@ tmp_costabs = "/tmp/costabs/"
 
 def init():
     global instruction_json
-    instruction_json = tmp_costabs + "instruction.json"
+    instruction_json = tmp_costabs + "smt_encoding/instruction.json"
 
     global opcodes_json
-    opcodes_json = tmp_costabs + "opcode.json"
+    opcodes_json = tmp_costabs + "smt_encoding/opcode.json"
 
     global solution_file
     solution_file = tmp_costabs + "solution.txt"
@@ -124,6 +124,9 @@ def generate_disasm_sol(block_name):
 
 
 if __name__ == "__main__":
+
+    init()
+    
     with open(opcodes_json, 'r') as path:
         opcodes_theta_dict = json.load(path)
     with open(instruction_json, 'r') as path:

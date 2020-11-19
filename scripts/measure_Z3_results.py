@@ -1,33 +1,65 @@
 #!/usr/bin/python3
-
-import glob
 import os
+import glob
 import pathlib
 import shlex
 import subprocess
 import re
 import json
 import pandas as pd
+import sys
+sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))+"/scripts")
 
-project_path = "/home/alejandro/repos/syrup-python/"
-tmp_costabs = "/tmp/costabs/"
 
-z3_path = project_path + "bin/z3"
-syrup_path = project_path + "python-syrup-backend/python-syrup.py"
-syrup_flags = " "
-json_dir = project_path + "jsons/"
-sol_dir = project_path + "sols/"
-disasm_generation_file = project_path + "scripts/disasm_generation.py"
-# Timeout in seconds
-tout = 180
-z3_flags = " -st -T:" + str(tout)
+def init():
+    global project_path
+    project_path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 
-z3_result_file = tmp_costabs + "solution.txt"
-solution_log = tmp_costabs + "times.log"
-times_json = tmp_costabs + "times.json"
-encoding_file = tmp_costabs + "encoding_Z3.smt2"
-instruction_final_solution = tmp_costabs + "optimized_block_instructions.disasm_opt"
-csv_path = tmp_costabs + "results_Z3.csv"
+    global tmp_costabs
+    tmp_costabs = "/tmp/costabs"
+
+    global z3_path
+    z3_path = project_path + "/bin/z3"
+
+    global syrup_path
+    syrup_path = project_path + "/backend/python_syrup.py"
+
+    global syrup_flags
+    syrup_flags = " "
+
+    global json_dir
+    json_dir = project_path + "/jsons/"
+
+    global sol_dir
+    sol_dir = project_path + "/sols/"
+
+    global disasm_generation_file
+    disasm_generation_file = project_path + "/scripts/disasm_generation.py"
+    # Timeout in seconds
+
+    global tout
+    tout = 180
+
+    global z3_flags
+    z3_flags = " -st -T:" + str(tout)
+
+    global z3_result_file
+    z3_result_file = tmp_costabs + "/solution.txt"
+
+    global solution_log
+    solution_log = tmp_costabs + "/times.log"
+
+    global times_json
+    times_json = tmp_costabs + "/times.json"
+
+    global encoding_file
+    encoding_file = tmp_costabs + "/smt_encoding/encoding_Z3.smt2"
+
+    global instruction_final_solution
+    instruction_final_solution = tmp_costabs + "/optimized_block_instructions.disasm_opt"
+
+    global csv_path
+    csv_path = tmp_costabs + "/results_Z3.csv"
 
 
 def run_command(cmd):
@@ -43,6 +75,7 @@ def submatch(string):
         return int(submatch.group(2))
     return -1
 
+
 def analyze_file(solution):
     pattern = re.compile("\(gas (.*)\)")
     for match in re.finditer(pattern, solution):
@@ -54,9 +87,9 @@ def analyze_file(solution):
 
 
 if __name__=="__main__":
+    init()
     rows_list = []
     pathlib.Path(tmp_costabs).mkdir(parents=True, exist_ok=True)
-
     for file in glob.glob(json_dir + "/*.json"):
         file_results = {}
         block_id = file.split('/')[-1]
