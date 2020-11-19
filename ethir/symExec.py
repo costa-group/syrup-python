@@ -865,7 +865,8 @@ def sym_exec_block(params, block, pre_block, depth, func_call,level,path):
 
     update_stack_heigh(block,len(stack),0)
     Edge = namedtuple("Edge", ["v1", "v2"]) # Factory Function for tuples is used as dictionary key
-    if int(block) < 0:
+    
+    if str(block).find("_")==-1 and block < 0:
         log.debug("UNKNOWN JUMP ADDRESS. TERMINATING THIS PATH")
         return ["ERROR"]
 
