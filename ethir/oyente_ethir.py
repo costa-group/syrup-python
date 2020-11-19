@@ -92,6 +92,12 @@ def clean_dir():
                 os.remove(costabs_path+"/disasms/"+e)
             os.rmdir(costabs_path+"/disasms")
 
+        if "smt_encoding" in os.listdir(costabs_path):
+            for e in os.listdir(costabs_path+"/smt_encoding"):
+                os.remove(costabs_path+"/smt_encoding/"+e)
+            os.rmdir(costabs_path+"/smt_encoding")
+            
+            
 '''
 The flag -i has to be used with the flag -v
 '''            
