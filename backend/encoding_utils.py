@@ -140,28 +140,40 @@ def generate_instr_dependencies(instr, number_of_instructions_to_execute, previo
     # Recursive case: we obtain the output for each previous instruction and update the values
     for previous_instr, aj in dependency_theta_graph[instr]:
 
-        previous_instr_number_of_instr_needed, previous_instr_instructions_dependency = \
+        previous_number_of_instr_needed, previous_instructions_dependency = \
             generate_instr_dependencies(previous_instr, number_of_instructions_to_execute,
                                         previous_values, dependency_theta_graph)
         # We need the number of instructions needed for previous instruction plus one (executing that instruction)
-        number_of_instructions_needed += previous_instr_number_of_instr_needed + 1
+        number_of_instructions_needed += previous_number_of_instr_needed + 1
+
+        # We ignore push instructions from this point, as they don't add any info
+        if previous_instr == 'PUSH':
+            continue
+
+        # We need to add previous instruction to its associated values, as it wasn't added yet
+        previous_instructions = previous_instructions_dependency | {previous_instr}
 
         # See detailed explanation for more information to understand this step
-        repeated_instructions = instructions_dependency.intersection(previous_instr_instructions_dependency)
-        for repeated_instr in repeated_instructions:
+        repeated_instructions = instructions_dependency.intersection(previous_instructions)
+
+        # Maximal elements are those that don't appear as a previous instruction for any of the repeated instructions
+        maximal_elements = repeated_instructions.difference(set().union(*[previous_values[repeated_instr]
+                                                                          for repeated_instr in repeated_instructions]))
+        for repeated_instr in maximal_elements:
 
             # If it is the maximal representative, then the necessary number of previous instructions is 0
             # (as it could have been duplicated)
-            if previous_values[repeated_instr].intersection(repeated_instructions) == set():
-                number_of_instructions_needed -= number_of_instructions_to_execute[repeated_instr]
+            number_of_instructions_needed -= number_of_instructions_to_execute[repeated_instr]
 
         # We update instructions_dependency
-        instructions_dependency = instructions_dependency.union(previous_instr_instructions_dependency)
+        instructions_dependency = instructions_dependency.union(previous_instructions)
 
     number_of_instructions_to_execute[instr] = number_of_instructions_needed
     previous_values[instr] = instructions_dependency
 
-    return number_of_instructions_to_execute, instructions_dependency
+    # print(instr, ":", previous_values)
+
+    return number_of_instructions_needed, instructions_dependency
 
 
 # Given the dict containing the dependency among different instructions, we generate
@@ -183,7 +195,7 @@ def generate_dependency_graph(user_instr):
     dependency_theta_graph = {}
     for instr in user_instr:
         instr_id = instr['id']
-        dependency_theta_graph[instr_id] = set()
+        dependency_theta_graph[instr_id] = list()
         for stack_elem in instr['inpt_sk']:
             # We search for another instruction that generates the
             # stack elem as an output and add it to the set
@@ -193,10 +205,10 @@ def generate_dependency_graph(user_instr):
                 # It might be in the initial stack, so the list can be empty
                 if previous_instr:
                     # We add previous instr id
-                    dependency_theta_graph[instr['id']].add((previous_instr[0]['id'], -1))
+                    dependency_theta_graph[instr['id']].append((previous_instr[0]['id'], -1))
             # If we have an int, then we must perform a PUSHx to obtain that value
             else:
-                dependency_theta_graph[instr_id].add(('PUSH', stack_elem))
+                dependency_theta_graph[instr_id].append(('PUSH', stack_elem))
 
     return dependency_theta_graph
 
@@ -247,6 +259,7 @@ def generate_disasm_map(user_instr, theta_instr):
         instr_opcodes[theta] = opcode
 
     return instr_opcodes
+
 
 # Generate a dict that contains the theta associated to a instruction
 # as keys and its corresponding EVM opcode as values. Note that it is similar
