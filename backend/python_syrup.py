@@ -39,9 +39,9 @@ def execute_syrup_backend(args_i):
 
     json_path = args['json_path']
     path = args['out']
+    solver = args['solver']
 
-
-    initialize_dir_and_streams(path)
+    initialize_dir_and_streams(path,json_path)
 
     b0, bs, user_instr, variables, initial_stack, final_stack = parse_data(json_path)
     flags = {'at-most': args['at_most'], 'pushed-at-least' : args['pushed_once']}
@@ -61,13 +61,15 @@ if __name__ == "__main__":
                     action='store_true', dest='at_most')
     ap.add_argument('-pushed-once', help='add a constraint to indicate that each pushed value is pushed at least once',
                     action='store_true', dest='pushed_once')
+    ap.add_argument("-solver", "--solver", help="Choose the solver", choices = ["z3","barcelogic","oms"])
 
     args = vars(ap.parse_args())
     json_path = args['json_path']
     path = args['out']
-
+    solver = args['solver']
+    
     flags = {'at-most': args['at_most'], 'pushed-at-least' : args['pushed_once']}
-    initialize_dir_and_streams(path)
+    initialize_dir_and_streams(path,solver)
 
     b0, bs, user_instr, variables, initial_stack, final_stack = parse_data(json_path)
     generate_smtlib_encoding(b0, bs, user_instr, variables, initial_stack, final_stack, flags)
