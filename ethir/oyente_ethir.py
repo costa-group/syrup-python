@@ -96,6 +96,11 @@ def clean_dir():
             for e in os.listdir(costabs_path+"/smt_encoding"):
                 os.remove(costabs_path+"/smt_encoding/"+e)
             os.rmdir(costabs_path+"/smt_encoding")
+
+        if "solutions" in os.listdir(costabs_path):
+            for e in os.listdir(costabs_path+"/solutions"):
+                os.remove(costabs_path+"/solutions/"+e)
+            os.rmdir(costabs_path+"/solutions")
             
             
 '''
