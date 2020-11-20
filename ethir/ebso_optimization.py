@@ -81,6 +81,20 @@ def init_globals():
 
     global already_considered
     already_considered = []
+
+    global sstore_seq
+    sstore_seq = []
+
+    #it stores when the sloads are executed
+    global sload_relative_pos
+    sload_relative_pos = {}
+
+    global mstore_seq
+    sstore_seq = []
+
+    #it stores when the sloads are executed
+    global mload_relative_pos
+    sload_relative_pos = {}
     
 def filter_opcodes(rule):
     instructions = rule.get_instructions()
