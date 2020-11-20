@@ -286,6 +286,8 @@ def search_for_value_aux(var, instructions,source_stack,level):
         exp_join = rebuild_expression(new_vars,funct,values,level)
         r = exp_join[0]
         exp = (exp_join[1],exp_join[2])
+
+        
         
         if r:
             s_dict[var] = exp[0]
@@ -450,6 +452,17 @@ def get_involved_vars(instr,var):
 
         funct = "sstore"
 
+    elif instr.find("mstore(")!=-1:
+        instr_new = instr.strip("\n")
+        pos = instr_new.find("mstore(")
+        arg01 = instr[pos+7:-1]
+        var01 = arg01.split(",")
+        var0 = var01[0].strip()
+        var1 = var01[1].strip()
+        var_list.append(var0)
+        var_list.append(var1)
+
+        funct = "mstore"
         
     elif instr.find("timestamp")!=-1:
         var_list.append("timestamp")
