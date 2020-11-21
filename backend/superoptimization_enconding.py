@@ -10,8 +10,8 @@ from encoding_instructions import instructions_constraints
 from encoding_redundant import *
 from encoding_files import write_encoding, write_opcode_map, write_instruction_map
 
-# Method to generate redundant constraints according to flags (at least once is included by default)
 
+# Method to generate redundant constraints according to flags (at least once is included by default)
 def generate_redundant_constraints(flags, b0, user_instr, theta_stack, theta_comm, theta_non_comm, final_stack):
     pushed_values = generate_phi_dict(user_instr, final_stack)
     if flags['at-most']:
@@ -20,10 +20,16 @@ def generate_redundant_constraints(flags, b0, user_instr, theta_stack, theta_com
         push_each_element_at_least_once(b0, theta_stack['PUSH'], pushed_values)
 
 
-# Method to generate complete representation
+# Method to generate optional asserts according to additional info
+def generate_asserts_from_additional_info(additional_info):
+    if additional_info['tout'] is not None:
+        write_encoding(set_timeout(additional_info['tout']))
 
-def generate_smtlib_encoding(b0, bs, usr_instr, variables, initial_stack, final_stack, flags):
+
+# Method to generate complete representation
+def generate_smtlib_encoding(b0, bs, usr_instr, variables, initial_stack, final_stack, flags, additional_info):
     write_encoding(set_logic('QF_LIA'))
+    generate_asserts_from_additional_info(additional_info)
     initialize_variables(variables, bs, b0)
     variables_assignment_constraint(variables)
     theta_stack = generate_stack_theta(bs)

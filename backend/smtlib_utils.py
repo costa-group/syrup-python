@@ -73,7 +73,7 @@ def add_assert_soft(statement, weight, id=None):
     if id is None:
         return "(assert-soft " + statement + " :weight " + str(weight) + ")"
     else:
-        return "(assert-soft " + statement + " :weight " + str(weight) +  " :id "+ str(id) + ")"
+        return "(assert-soft " + statement + " :weight " + str(weight) + " :id " + str(id) + ")"
 
 
 # Methods to generate auxiliary statements for
@@ -99,4 +99,5 @@ def get_value(variable):
     return "(get-value (" + str(variable) + "))"
 
 
-
+def set_timeout(time_in_ms):
+    return "(set-option :timeout " + str(time_in_ms) + ")"
