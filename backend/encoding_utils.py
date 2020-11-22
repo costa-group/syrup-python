@@ -181,7 +181,7 @@ def generate_instr_dependencies(instr, number_of_instructions_to_execute, previo
 # executed previously to be able to execute that instruction.
 def generate_number_of_previous_instr_dict(dependency_theta_graph):
     previous_values = {}
-    number_of_instructions_to_execute = {}
+    number_of_instructions_to_execute = {'PUSH': 0}
     for instr in dependency_theta_graph:
         generate_instr_dependencies(instr, number_of_instructions_to_execute, previous_values, dependency_theta_graph)
 

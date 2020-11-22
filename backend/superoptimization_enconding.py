@@ -13,11 +13,16 @@ from encoding_files import write_encoding, write_opcode_map, write_instruction_m
 
 # Method to generate redundant constraints according to flags (at least once is included by default)
 def generate_redundant_constraints(flags, b0, user_instr, theta_stack, theta_comm, theta_non_comm, final_stack):
-    pushed_values = generate_phi_dict(user_instr, final_stack)
     if flags['at-most']:
         each_function_is_used_at_most_once(b0, len(theta_stack), len(theta_stack) + len(theta_comm) + len(theta_non_comm))
     if flags['pushed-at-least']:
+        pushed_values = generate_phi_dict(user_instr, final_stack)
         push_each_element_at_least_once(b0, theta_stack['PUSH'], pushed_values)
+    if flags['instruction-order']:
+        theta_dict = dict(theta_stack, **theta_comm, **theta_non_comm)
+        dependency_graph = generate_dependency_graph(user_instr)
+        instructions_position = generate_number_of_previous_instr_dict(dependency_graph)
+        restrain_instruction_order(b0, dependency_graph, instructions_position, theta_dict)
 
 
 # Method to generate optional asserts according to additional info

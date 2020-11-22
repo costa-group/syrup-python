@@ -46,7 +46,7 @@ def execute_syrup_backend(args_i,json_file = None):
     es = initialize_dir_and_streams(path,solver,json_path)
 
     b0, bs, user_instr, variables, initial_stack, final_stack = parse_data(json_path)
-    flags = {'at-most': args_i.at_most, 'pushed-at-least' : args_i.pushed_once}
+    flags = {'at-most': args_i.at_most, 'pushed-at-least': args_i.pushed_once, 'instruction-order': False}
     additional_info = {'tout': None}
 
     generate_smtlib_encoding(b0, bs, user_instr, variables, initial_stack, final_stack, flags, additional_info)
@@ -66,6 +66,8 @@ if __name__ == "__main__":
     ap.add_argument('-pushed-once', help='add a constraint to indicate that each pushed value is pushed at least once',
                     action='store_true', dest='pushed_once')
     ap.add_argument("-solver", "--solver", help="Choose the solver", choices = ["z3","barcelogic","oms"])
+    ap.add_argument("-instruction-order", help='add a constraint representing the order among instructions',
+                    action='store_true', dest='instruction_order')
     ap.add_argument("-tout", metavar='timeout', action='store', type=int, help="Timeout in ms. Works only for z3 (so far)")
 
     args = vars(ap.parse_args())
@@ -74,7 +76,9 @@ if __name__ == "__main__":
     solver = args['solver']
     timeout = args['tout']
 
-    flags = {'at-most': args['at_most'], 'pushed-at-least': args['pushed_once']}
+    flags = {'at-most': args['at_most'], 'pushed-at-least': args['pushed_once'],
+             'instruction-order': args['instruction_order']}
+
     additional_info = {'tout': args['tout']}
     initialize_dir_and_streams(path,solver)
 
