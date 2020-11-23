@@ -18,12 +18,9 @@ def init():
     global tmp_costabs
     tmp_costabs = "/tmp/costabs"
 
-    # Timeout in ms
+    # Timeout in s
     global tout
-    tout = 10000
-
-    global z3_path
-    z3_path = project_path + "/bin/z3"
+    tout = 30
 
     global oms_path
     oms_path = project_path + "/bin/optimathsat"
@@ -32,7 +29,7 @@ def init():
     syrup_path = project_path + "/backend/python_syrup.py"
 
     global syrup_flags
-    syrup_flags = "-tout " + str(tout)
+    syrup_flags = "-tout " + str(tout) + " -solver oms"
 
     global contracts_dir_path
     contracts_dir_path = project_path + "/examples/most_called"
@@ -42,22 +39,13 @@ def init():
 
     global disasm_generation_file
     disasm_generation_file = project_path + "/scripts/disasm_generation.py"
-    # Timeout in seconds
-
-    global z3_flags
-    z3_flags = "-st"
+    # Timeout in seconds"
 
     global oms_flags
     oms_flags = "-stats"
 
     global solver_output_file
     solver_output_file = tmp_costabs + "/solution.txt"
-
-    global solution_log
-    solution_log = tmp_costabs + "/times.log"
-
-    global times_json
-    times_json = tmp_costabs + "/times.json"
 
     global encoding_file
     encoding_file = tmp_costabs + "/smt_encoding/encoding.smt2"
@@ -66,7 +54,7 @@ def init():
     instruction_final_solution = tmp_costabs + "/optimized_block_instructions.disasm_opt"
 
     global results_dir
-    results_dir = project_path + "/results/"
+    results_dir = project_path + "/results/prueba/"
 
 
 def run_command(cmd):
@@ -76,26 +64,20 @@ def run_command(cmd):
     return solc_p.communicate()[0].decode()
 
 
-def submatch(string):
-    subpattern = re.compile("\(interval (.*) (.*)\)")
-    for submatch in re.finditer(subpattern, string):
-        return int(submatch.group(2))
-    return -1
-
-
 def analyze_file(solution):
     pattern = re.compile("\(gas (.*)\)")
     for match in re.finditer(pattern, solution):
-        number = submatch(match.group(1))
-        if number == -1:
-            return int(match.group(1)), True
-        else:
+        number = int(match.group(1))
+        pattern2 = re.compile("range")
+        if re.search(pattern2, solution):
             return number, False
-
+        return number, True
+    print(solution)
 
 if __name__=="__main__":
     init()
     pathlib.Path(tmp_costabs).mkdir(parents=True, exist_ok=True)
+    pathlib.Path(results_dir).mkdir(parents=True, exist_ok=True)
     for contract_path in [f.path for f in os.scandir(contracts_dir_path) if f.is_dir()]:
         rows_list = []
         for file in glob.glob(contract_path + "/*.json"):
@@ -107,17 +89,17 @@ if __name__=="__main__":
                 source_gas_cost = data['current_cost']
                 file_results['source_gas_cost'] = int(source_gas_cost)
             run_command(syrup_path + " " + file + " " + syrup_flags)
-            solution = run_command(z3_path + " -smt2 " + encoding_file + " " + z3_flags)
-            tout_pattern = re.search(re.compile("model is not"), solution)
+            solution = run_command(oms_path + " " + encoding_file + " " + oms_flags)
+            tout_pattern = re.search(re.compile("not enabled"), solution)
 
             if tout_pattern:
                 file_results['no_model_found'] = True
                 file_results['shown_optimal'] = False
-                file_results['solver_time_in_sec'] = tout / 1000
+                file_results['solver_time_in_sec'] = tout
             else:
 
                 file_results['no_model_found'] = False
-                time_match = re.search(re.compile(":total-time\s*(\d+(\.\d*)?)"), solution)
+                time_match = re.search(re.compile(":time-seconds\s*(\d+(\.\d*)?)"), solution)
                 if time_match:
                     executed_time = float(time_match.group(1))
                     file_results['solver_time_in_sec'] = executed_time
@@ -140,5 +122,5 @@ if __name__=="__main__":
 
         df = pd.DataFrame(rows_list, columns=['block_id', 'target_gas_cost', 'shown_optimal', 'no_model_found',
                                           'source_gas_cost', 'saved_gas', 'solver_time_in_sec', 'target_disasm'])
-        csv_file = results_dir + contract_path.split('/')[-1] + "_results_z3.csv"
+        csv_file = results_dir + contract_path.split('/')[-1] + "_results_oms.csv"
         df.to_csv(csv_file)
