@@ -13,9 +13,9 @@ project_path = "/home/alejandro/repos/syrup-python/"
 tmp_costabs = "/tmp/costabs/"
 
 z3_path = project_path + "bin/z3"
-syrup_path = project_path + "python-syrup-backend/python-syrup.py"
+syrup_path = project_path + "backend/python_syrup.py"
 syrup_flags = " "
-json_dir = project_path + "jsons/"
+json_dir = project_path + "json/"
 sol_dir = project_path + "sols/"
 # Timeout in seconds
 tout = 180
@@ -23,7 +23,7 @@ z3_flags = " -st -T:" + str(tout)
 
 solution_log = tmp_costabs + "times.log"
 times_json = tmp_costabs + "times.json"
-encoding_file = tmp_costabs + "encoding_Z3.smt2"
+encoding_file = tmp_costabs + "encoding.smt2"
 
 def run_command(cmd):
     FNULL = open(os.devnull, 'w')

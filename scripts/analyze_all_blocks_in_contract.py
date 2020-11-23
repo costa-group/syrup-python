@@ -25,6 +25,9 @@ def init():
     global z3_path
     z3_path = project_path + "/bin/z3"
 
+    global oms_path
+    oms_path = project_path + "/bin/optimathsat"
+
     global syrup_path
     syrup_path = project_path + "/backend/python_syrup.py"
 
@@ -44,8 +47,11 @@ def init():
     global z3_flags
     z3_flags = "-st"
 
-    global z3_result_file
-    z3_result_file = tmp_costabs + "/solution.txt"
+    global oms_flags
+    oms_flags = "-stats"
+
+    global solver_output_file
+    solver_output_file = tmp_costabs + "/solution.txt"
 
     global solution_log
     solution_log = tmp_costabs + "/times.log"
@@ -54,7 +60,7 @@ def init():
     times_json = tmp_costabs + "/times.json"
 
     global encoding_file
-    encoding_file = tmp_costabs + "/smt_encoding/encoding_Z3.smt2"
+    encoding_file = tmp_costabs + "/smt_encoding/encoding.smt2"
 
     global instruction_final_solution
     instruction_final_solution = tmp_costabs + "/optimized_block_instructions.disasm_opt"
@@ -89,9 +95,9 @@ def analyze_file(solution):
 
 if __name__=="__main__":
     init()
-    rows_list = []
     pathlib.Path(tmp_costabs).mkdir(parents=True, exist_ok=True)
     for contract_path in [f.path for f in os.scandir(contracts_dir_path) if f.is_dir()]:
+        rows_list = []
         for file in glob.glob(contract_path + "/*.json"):
             file_results = {}
             block_id = file.split('/')[-1]
@@ -122,7 +128,7 @@ if __name__=="__main__":
                 file_results['shown_optimal'] = shown_optimal
                 file_results['saved_gas'] = file_results['source_gas_cost'] - file_results['target_gas_cost']
 
-                with open(z3_result_file, 'w') as f:
+                with open(solver_output_file, 'w') as f:
                     f.write(solution)
 
                 run_command(disasm_generation_file)

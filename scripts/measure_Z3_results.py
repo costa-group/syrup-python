@@ -53,7 +53,7 @@ def init():
     times_json = tmp_costabs + "/times.json"
 
     global encoding_file
-    encoding_file = tmp_costabs + "/smt_encoding/encoding_Z3.smt2"
+    encoding_file = tmp_costabs + "/smt_encoding/encoding.smt2"
 
     global instruction_final_solution
     instruction_final_solution = tmp_costabs + "/optimized_block_instructions.disasm_opt"
