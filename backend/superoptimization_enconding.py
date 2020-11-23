@@ -5,7 +5,7 @@
 from encoding_utils import *
 from encoding_initialize import initialize_variables, variables_assignment_constraint, \
     initial_stack_encoding, final_stack_encoding
-from encoding_cost import paper_soft_constraints
+from encoding_cost import paper_soft_constraints, label_name
 from encoding_instructions import instructions_constraints
 from encoding_redundant import *
 from encoding_files import write_encoding, write_opcode_map, write_instruction_map
@@ -25,15 +25,40 @@ def generate_redundant_constraints(flags, b0, user_instr, theta_stack, theta_com
         restrain_instruction_order(b0, dependency_graph, instructions_position, theta_dict)
 
 
-# Method to generate optional asserts according to additional info
+# Method to generate optional asserts according to additional info. It includes that info that relies on the
+# specific solver
 def generate_asserts_from_additional_info(additional_info):
     if additional_info['tout'] is not None:
-        write_encoding(set_timeout(additional_info['tout']))
+        if additional_info['solver'] == "z3":
+            write_encoding(set_timeout(1000 * additional_info['tout']))
+        elif additional_info['solver'] == "oms":
+            write_encoding(set_timeout(float(additional_info['tout'])))
+
+
+def generate_soft_constraints(solver_name, b0, bs, usr_instr, theta_stack, theta_comm, theta_non_comm):
+    if solver_name == "z3" or solver_name == "oms":
+        paper_soft_constraints(b0, bs, usr_instr, theta_stack, theta_comm, theta_non_comm)
+    else:
+        pass
+
+
+def generate_cost_functions(solver_name):
+    if solver_name == "oms":
+        write_encoding(set_minimize_function(label_name))
+    else:
+        pass
+
+
+def generate_configuration_statements(solver_name):
+    if solver_name == "oms":
+        write_encoding(set_model_true())
 
 
 # Method to generate complete representation
 def generate_smtlib_encoding(b0, bs, usr_instr, variables, initial_stack, final_stack, flags, additional_info):
+    solver_name = additional_info['solver']
     write_encoding(set_logic('QF_LIA'))
+    generate_configuration_statements(solver_name)
     generate_asserts_from_additional_info(additional_info)
     initialize_variables(variables, bs, b0)
     variables_assignment_constraint(variables)
@@ -45,7 +70,8 @@ def generate_smtlib_encoding(b0, bs, usr_instr, variables, initial_stack, final_
     final_stack_encoding(final_stack, bs, b0)
     each_function_is_used_at_least_once(b0, len(theta_stack), len(theta_stack) + len(theta_comm) + len(theta_non_comm))
     generate_redundant_constraints(flags, b0, usr_instr, theta_stack, theta_comm, theta_non_comm, final_stack)
-    paper_soft_constraints(b0, bs, usr_instr, theta_stack, theta_comm, theta_non_comm)
+    generate_soft_constraints(solver_name, b0, bs, usr_instr, theta_stack, theta_comm, theta_non_comm)
+    generate_cost_functions(solver_name)
     write_encoding(check_sat())
     write_encoding(get_objectives())
     # get_model()

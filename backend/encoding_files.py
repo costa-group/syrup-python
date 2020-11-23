@@ -9,7 +9,7 @@ def init():
     costabs_path = "/tmp/costabs/"
 
     global encoding_name
-    encoding_name = "encoding_Z3.smt2"
+    encoding_name = "encoding.smt2"
 
     global instr_map_file
     instr_map_file = "instruction.json"
@@ -41,7 +41,7 @@ def initialize_dir_and_streams(path_to_store,solver,source_name = None):
         instr_map_file = name+"_"+instr_map_file
         opcode_map_file = name+"_"+opcode_map_file
         
-    costabs_path = path_to_store+"/smt_encoding/"
+    costabs_path = path_to_store+"smt_encoding/"
     pathlib.Path(costabs_path).mkdir(parents=True, exist_ok=True)
     encoding_stream = open(costabs_path + encoding_name, 'w')
 

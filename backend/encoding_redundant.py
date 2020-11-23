@@ -97,7 +97,7 @@ def each_function_is_used_at_least_one_with_position(b0, user_instr, first_time_
         # For each position in which the instruction cannot appear, we add an explicit statement
         for j in range(first_possible_ocurrence):
             write_encoding(add_assert(add_not(add_eq(t(j), theta_instr))))
-        
+
         # We add a statement with the remaining positions to state that the instruction must appear
         # at least one
         or_variables = []

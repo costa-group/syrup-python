@@ -101,3 +101,13 @@ def get_value(variable):
 
 def set_timeout(time_in_ms):
     return "(set-option :timeout " + str(time_in_ms) + ")"
+
+
+# For OMS: flag to allow to generate a model
+def set_model_true():
+    return "(set-option :produce-models true)"
+
+
+# Extension in OMS and Z3 to minimize a certain term
+def set_minimize_function(id):
+    return "(minimize " + id + ")"

@@ -47,7 +47,7 @@ def execute_syrup_backend(args_i,json_file = None):
 
     b0, bs, user_instr, variables, initial_stack, final_stack = parse_data(json_path)
     flags = {'at-most': args_i.at_most, 'pushed-at-least': args_i.pushed_once, 'instruction-order': False}
-    additional_info = {'tout': None}
+    additional_info = {'tout': None, 'solver': args_i.solver}
 
     generate_smtlib_encoding(b0, bs, user_instr, variables, initial_stack, final_stack, flags, additional_info)
 
@@ -65,10 +65,11 @@ if __name__ == "__main__":
                     action='store_true', dest='at_most')
     ap.add_argument('-pushed-once', help='add a constraint to indicate that each pushed value is pushed at least once',
                     action='store_true', dest='pushed_once')
-    ap.add_argument("-solver", "--solver", help="Choose the solver", choices = ["z3","barcelogic","oms"])
+    ap.add_argument("-solver", "--solver", help="Choose the solver", choices = ["z3","barcelogic","oms"], default="z3")
     ap.add_argument("-instruction-order", help='add a constraint representing the order among instructions',
                     action='store_true', dest='instruction_order')
-    ap.add_argument("-tout", metavar='timeout', action='store', type=int, help="Timeout in ms. Works only for z3 (so far)")
+    ap.add_argument("-tout", metavar='timeout', action='store', type=int, help="Timeout in seconds. "
+                                                                               "Works only for z3 and oms (so far)")
 
     args = vars(ap.parse_args())
     json_path = args['json_path']
@@ -79,8 +80,10 @@ if __name__ == "__main__":
     flags = {'at-most': args['at_most'], 'pushed-at-least': args['pushed_once'],
              'instruction-order': args['instruction_order']}
 
-    additional_info = {'tout': args['tout']}
-    initialize_dir_and_streams(path,solver)
+    additional_info = {'tout': args['tout'], 'solver': solver}
+    es = initialize_dir_and_streams(path,solver)
 
     b0, bs, user_instr, variables, initial_stack, final_stack = parse_data(json_path)
     generate_smtlib_encoding(b0, bs, user_instr, variables, initial_stack, final_stack, flags, additional_info)
+
+    es.close()
