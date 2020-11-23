@@ -129,6 +129,9 @@ def main():
 
     init()    
     clean_dir()
+    
+    if "costabs" not in os.listdir("/tmp/"):
+        os.mkdir(tmp_costabs)
 
     os.mkdir(tmp_costabs+"solutions")
 
