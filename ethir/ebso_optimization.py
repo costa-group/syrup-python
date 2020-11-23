@@ -15,7 +15,7 @@ visited = []
 
 terminate_block = ["ASSERTFAIL","RETURN","REVERT","SUICIDE","STOP"]
 
-split_block = ["LOG0","LOG1","LOG2","LOG3","LOG4","MSTORE","SSTORE","CALLDATACOPY","CODECOPY","EXTCODECOPY","RETURNDATACOPY","MSTORE8"]
+split_block = ["LOG0","LOG1","LOG2","LOG3","LOG4","MSTORE","CALLDATACOPY","CODECOPY","EXTCODECOPY","RETURNDATACOPY","MSTORE8"]
 
 pre_defined_functions = ["PUSH","POP","SWAP","DUP"]
 
@@ -90,7 +90,7 @@ def init_globals():
     sload_relative_pos = {}
 
     global mstore_seq
-    sstore_seq = []
+    mstore_seq = []
 
     #it stores when the sloads are executed
     global mload_relative_pos
@@ -293,7 +293,7 @@ def search_for_value_aux(var, instructions,source_stack,level):
             s_dict[var] = exp[0]
 
         else:
-            
+
             new_u, defined = is_already_defined(exp)
             if defined:
                 u_var = new_u
@@ -304,6 +304,24 @@ def search_for_value_aux(var, instructions,source_stack,level):
         
             s_dict[var] = u_var
 
+
+def generate_sstore_mstore(store_ins,instructions,source_stack):
+    level = 0
+    new_vars, funct = get_involved_vars(store_ins,"")
+
+    values = {}
+    for v in new_vars:
+
+        search_for_value_aux(v,instructions,source_stack,level)
+    
+        values[v] = s_dict[v]
+
+    exp_join = rebuild_expression(new_vars,funct,values,level)
+
+    print("LLEGO AQUI SSTORE")
+    print(exp_join)
+
+    return exp_join[1],exp_join[2]
 
 def is_already_defined(elem):
     for u_var in u_dict.keys():
@@ -1132,6 +1150,8 @@ def generate_encoding(instructions,variables,source_stack):
     global s_dict
     global u_dict
     global variable_content
+    global sstore_seq
+    global mstore_seq
     
     instructions_reverse = instructions[::-1]
     u_dict = {}
@@ -1145,6 +1165,18 @@ def generate_encoding(instructions,variables,source_stack):
     print (variable_content)
     print (u_dict)
     print ("///////////////////////")
+
+    
+    for x in range(len(instructions)-1,-1,-1):
+        s_dict = {}
+        if instructions[x].find("sstore")!=-1:
+            exp = generate_sstore_mstore(instructions[x],instructions[x-1::-1],source_stack)
+            print("ESTO GUARDO")
+            print(exp)
+            sstore_seq.insert(0,exp)
+        elif instructions[x].find("mstore")!=-1:
+            pass
+    
 def generate_source_stack_variables(idx):
     ss_list = []
     
@@ -1857,6 +1889,7 @@ def translate_block(rule,instructions,opcodes,isolated=False):
     source_stack = generate_source_stack_variables(source_stack_idx)
     get_s_counter(source_stack,t_vars)
     print ("GENERATING ENCONDING")
+    
     generate_encoding(instructions,t_vars,source_stack)
     
     build_userdef_instructions()
@@ -1977,6 +2010,7 @@ def translate_subblock(rule,instrs,sstack,tstack,sstack_idx,idx,next_block):
     if instr!=[]:
 #        max_stack_size = max_idx_used(instr)
         get_s_counter(sstack,tstack)
+        
         generate_encoding(instr,tstack,sstack)
         build_userdef_instructions()
         print (user_defins)
