@@ -40,7 +40,7 @@ def init():
     encoding_path = tmp_costabs+"smt_encoding/"
     
     global encoding_file
-    encoding_file = tmp_costabs + "encoding_Z3.smt2"
+    encoding_file = tmp_costabs + "encoding.smt2"
     global result_file
     result_file = tmp_costabs + "solution.txt"
     global instruction_file
