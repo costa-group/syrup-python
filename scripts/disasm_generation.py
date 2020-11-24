@@ -79,11 +79,10 @@ def generate_disasm_sol(block_name):
     opcode_sol = {}
     pushed_values_decimal = {}
 
-    pattern1 = re.compile("\(\(t_([0-9]*) (.*)\)\)")
-    pattern2 = re.compile("\(\(a_([0-9]*) (.*)\)\)")
+    pattern1 = re.compile("\(t_([0-9]*) ([0-9]*)\)")
+    pattern2 = re.compile("\(a_([0-9]*) ([0-9]*)\)")
 
     with open(solution_file, 'r') as sol_file:
-
         for line in sol_file:
             for match in re.finditer(pattern1, line):
                 instruction_position = int(match.group(1))
@@ -100,8 +99,8 @@ def generate_disasm_sol(block_name):
                 pushed_values_decimal[instruction_position] = pushed_value
 
     # We need to change PUSH instructions and opcode to the corresponding PUSHx version
-    instr_sol = dict(map(lambda pair: change_instr_push_type(pair[0], pair[1], pushed_values_decimal[pair[0]]), instr_sol.items()))
-    opcode_sol = dict(map(lambda pair: change_opcode_push_type(pair[0], pair[1], pushed_values_decimal[pair[0]]), opcode_sol.items()))
+    instr_sol = dict(map(lambda pair: change_instr_push_type(pair[0], pair[1], pushed_values_decimal.get(pair[0], 0)), instr_sol.items()))
+    opcode_sol = dict(map(lambda pair: change_opcode_push_type(pair[0], pair[1], pushed_values_decimal.get(pair[0], 0)), opcode_sol.items()))
 
     # We order by position in the sequence in order to write them in the adequate order
     instr_sol = collections.OrderedDict(sorted(instr_sol.items(), key=lambda kv: kv[0]))
@@ -136,11 +135,10 @@ if __name__ == "__main__":
     opcode_sol = {}
     pushed_values_decimal = {}
 
-    pattern1 = re.compile("\(\(t_([0-9]*) (.*)\)\)")
-    pattern2 = re.compile("\(\(a_([0-9]*) (.*)\)\)")
+    pattern1 = re.compile("\(t_([0-9]*) ([0-9]*)\)")
+    pattern2 = re.compile("\(a_([0-9]*) ([0-9]*)\)")
 
     with open(solution_file, 'r') as sol_file:
-
         for line in sol_file:
             for match in re.finditer(pattern1, line):
                 instruction_position = int(match.group(1))
@@ -157,8 +155,9 @@ if __name__ == "__main__":
                 pushed_values_decimal[instruction_position] = pushed_value
 
     # We need to change PUSH instructions and opcode to the corresponding PUSHx version
-    instr_sol = dict(map(lambda pair: change_instr_push_type(pair[0], pair[1], pushed_values_decimal[pair[0]]), instr_sol.items()))
-    opcode_sol = dict(map(lambda pair: change_opcode_push_type(pair[0], pair[1], pushed_values_decimal[pair[0]]), opcode_sol.items()))
+    print(instr_sol, opcode_sol, pushed_values_decimal)
+    instr_sol = dict(map(lambda pair: change_instr_push_type(pair[0], pair[1], pushed_values_decimal.get(pair[0], 0)), instr_sol.items()))
+    opcode_sol = dict(map(lambda pair: change_opcode_push_type(pair[0], pair[1], pushed_values_decimal.get(pair[0], 0)), opcode_sol.items()))
 
     # We order by position in the sequence in order to write them in the adequate order
     instr_sol = collections.OrderedDict(sorted(instr_sol.items(), key=lambda kv: kv[0]))
