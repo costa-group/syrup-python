@@ -85,12 +85,24 @@ def init_globals():
     global sstore_seq
     sstore_seq = []
 
+    global sstore_vars
+    sstore_vars = {}
+
+    global sstore_v_counter
+    sstore_v_counter = 0
+
     #it stores when the sloads are executed
     global sload_relative_pos
     sload_relative_pos = {}
 
     global mstore_seq
     mstore_seq = []
+
+    global mstore_vars
+    mstore_vars = {}
+
+    global mstore_v_counter
+    mstore_v_counter = 0
 
     #it stores when the sloads are executed
     global mload_relative_pos
@@ -223,7 +235,7 @@ def search_for_value_aux(var, instructions,source_stack,level):
     global s_dict
     global u_counter
     global u_dict
-
+    
     i = 0
     found = False
     vars_instr = " "
@@ -288,7 +300,6 @@ def search_for_value_aux(var, instructions,source_stack,level):
         exp = (exp_join[1],exp_join[2])
 
         
-        
         if r:
             s_dict[var] = exp[0]
 
@@ -304,7 +315,22 @@ def search_for_value_aux(var, instructions,source_stack,level):
         
             s_dict[var] = u_var
 
+#We need to store the order in which the load instructions are
+#executed in order to stablish an order with the storage instructions.
+def relative_pos_load(funct,exp,u_var):
+    global sload_relative_pos
+    global mload_relative_pos
 
+    if funct == "sload":
+        pos = len(sload_relative_pos.keys())
+        sload_relative_pos[pos] = u_var
+
+    if funct == "mload":
+        pos = len(mload_relative_pos.keys())
+        mload_relative_pos[pos] = u_var
+
+
+            
 def generate_sstore_mstore(store_ins,instructions,source_stack):
     level = 0
     new_vars, funct = get_involved_vars(store_ins,"")
@@ -329,6 +355,21 @@ def is_already_defined(elem):
             return u_var, True
 
     return -1, False
+
+def is_already_defined_storage(elem,location):
+
+    if location == "storage":
+        for var in sstore_vars.keys():
+            if elem == sstore_vars[var]:
+                return var, True
+
+    elif location == "memory":
+        for var in mstore_vars.keys():
+            if elem == mstore_vars[var]:
+                return var, True
+
+    return -1, False
+
 
 def compute_len(number):
     bin_number = bin(number)
@@ -429,9 +470,11 @@ def update_unary_func(func,var,val):
             new_uvar, defined = is_already_defined(elem)
             if defined:
                 s_dict[var] = new_uvar
+                relative_pos_load(func,elem,new_uvar)
             else:
                 u_dict[u_var] = elem
                 s_dict[var] = u_var
+                relative_pos_load(func,elem,u_var)
     else:
         s_dict[var] = val
 
@@ -1138,6 +1181,24 @@ def create_new_uvar():
 
     return var
 
+def create_new_sstorevar():
+    global sstore_v_counter
+
+    var =  "sto"+str(sstore_v_counter)
+    sstore_v_counter+=1
+
+    return var
+
+def create_new_mstorevar():
+    global mstore_v_counter
+
+    var =  "mem"+str(mstore_v_counter)
+    mstore_v_counter+=1
+
+    return var
+
+
+
 def create_new_svar():
     global s_counter
     
@@ -1152,6 +1213,8 @@ def generate_encoding(instructions,variables,source_stack):
     global variable_content
     global sstore_seq
     global mstore_seq
+    global sstore_vars
+    global mmstore_vars
     
     instructions_reverse = instructions[::-1]
     u_dict = {}
@@ -1167,15 +1230,18 @@ def generate_encoding(instructions,variables,source_stack):
     print ("///////////////////////")
 
     
-    for x in range(len(instructions)-1,-1,-1):
+    for x in range(0,len(instructions)):
         s_dict = {}
         if instructions[x].find("sstore")!=-1:
             exp = generate_sstore_mstore(instructions[x],instructions[x-1::-1],source_stack)
-            print("ESTO GUARDO")
+            print("ESTO GUARDO EN SSTORE")
             print(exp)
-            sstore_seq.insert(0,exp)
+            sstore_seq.append(exp)
         elif instructions[x].find("mstore")!=-1:
-            pass
+            exp = generate_sstore_mstore(instructions[x],instructions[x-1::-1],source_stack)
+            print("ESTO GUARDO EN MSTORE")
+            print(exp)
+            mstore_seq.append(exp)
     
 def generate_source_stack_variables(idx):
     ss_list = []
