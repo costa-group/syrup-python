@@ -72,7 +72,6 @@ def analyze_file(solution):
         if re.search(pattern2, solution):
             return number, False
         return number, True
-    print(solution)
 
 if __name__=="__main__":
     init()
