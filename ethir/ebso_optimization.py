@@ -93,7 +93,7 @@ def init_globals():
 
     #it stores when the sloads are executed
     global sload_relative_pos
-    sload_relative_pos = {}
+    sload_relative_pos = []
 
     global mstore_seq
     mstore_seq = []
@@ -106,7 +106,7 @@ def init_globals():
 
     #it stores when the sloads are executed
     global mload_relative_pos
-    sload_relative_pos = {}
+    sload_relative_pos = []
     
 def filter_opcodes(rule):
     instructions = rule.get_instructions()
@@ -322,12 +322,12 @@ def relative_pos_load(funct,exp,u_var):
     global mload_relative_pos
 
     if funct == "sload":
-        pos = len(sload_relative_pos.keys())
-        sload_relative_pos[pos] = u_var
+        pos = len(sload_relative_pos)
+        sload_relative_pos.insert(0,u_var)
 
     if funct == "mload":
-        pos = len(mload_relative_pos.keys())
-        mload_relative_pos[pos] = u_var
+        pos = len(mload_relative_pos)
+        mload_relative_pos.insert(0,u_var)
 
 
             
