@@ -102,7 +102,7 @@ if __name__=="__main__":
             if tout_pattern:
                 file_results['no_model_found'] = True
                 file_results['shown_optimal'] = False
-                file_results['solver_time_in_sec'] = tout / 1000
+                file_results['solver_time_in_sec'] = tout
             else:
 
                 file_results['no_model_found'] = False
