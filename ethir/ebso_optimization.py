@@ -93,7 +93,7 @@ def init_globals():
 
     #it stores when the sloads are executed
     global sload_relative_pos
-    sload_relative_pos = []
+    sload_relative_pos = {}
 
     global mstore_seq
     mstore_seq = []
@@ -106,7 +106,7 @@ def init_globals():
 
     #it stores when the sloads are executed
     global mload_relative_pos
-    sload_relative_pos = []
+    mload_relative_pos = {}
     
 def filter_opcodes(rule):
     instructions = rule.get_instructions()
@@ -349,6 +349,39 @@ def generate_sstore_mstore(store_ins,instructions,source_stack):
 
     return exp_join[1],exp_join[2]
 
+def generate_sload_mload(load_ins,instructions,source_stack):
+
+    level = 0
+    new_vars, funct = get_involved_vars(load_ins,"")
+    
+        
+    in_sourcestack = contained_in_source_stack(new_vars[0],instructions,source_stack)
+    
+    if in_sourcestack or is_integer(new_vars[0])!=-1:
+        if is_integer(new_vars[0])!=-1:
+            val = int(new_vars[0])
+        else:
+            val = new_vars[0]
+            #update_unary_func(funct,var,new_vars[0])
+
+        elem = ((new_vars[0],func),1)
+        new_uvar, defined = is_already_defined(elem)
+        return new_uvar
+            
+    else:
+        if new_vars[0] not in zero_ary:
+            search_for_value_aux(new_vars[0],instructions,source_stack,level)
+            val = s_dict[new_vars[0]]
+        else:
+            val = new_vars[0]
+        #update_unary_func(funct,var,val)
+
+        elem = ((val,funct),1)
+        new_uvar, defined = is_already_defined(elem)
+        return new_uvar
+
+
+
 def is_already_defined(elem):
     for u_var in u_dict.keys():
         if elem == u_dict[u_var]:
@@ -439,8 +472,7 @@ def compute_len(number):
 def update_unary_func(func,var,val):
     global s_dict
     global u_dict
-    global gas_saved_op
-
+    global gas_saved_op    
     
     if func != "":
 
@@ -470,11 +502,11 @@ def update_unary_func(func,var,val):
             new_uvar, defined = is_already_defined(elem)
             if defined:
                 s_dict[var] = new_uvar
-                relative_pos_load(func,elem,new_uvar)
+                #relative_pos_load(func,elem,new_uvar)
             else:
                 u_dict[u_var] = elem
                 s_dict[var] = u_var
-                relative_pos_load(func,elem,u_var)
+                #relative_pos_load(func,elem,u_var)
     else:
         s_dict[var] = val
 
@@ -1215,7 +1247,8 @@ def generate_encoding(instructions,variables,source_stack):
     global mstore_seq
     global sstore_vars
     global mmstore_vars
-    
+    global sload_relative_pos
+    global mload_relative_pos
     instructions_reverse = instructions[::-1]
     u_dict = {}
     variable_content = {}
@@ -1229,19 +1262,61 @@ def generate_encoding(instructions,variables,source_stack):
     print (u_dict)
     print ("///////////////////////")
 
-    
+
+    # sloads_aux = sload_relative_pos
+    # sload_relative_pos = {}
+
+    print("SLOADS")
+    print(sload_relative_pos)
+
     for x in range(0,len(instructions)):
         s_dict = {}
+
         if instructions[x].find("sstore")!=-1:
             exp = generate_sstore_mstore(instructions[x],instructions[x-1::-1],source_stack)
             print("ESTO GUARDO EN SSTORE")
             print(exp)
             sstore_seq.append(exp)
+                
+        # elif instructions[x].find("sload")!=-1:
+        #     last_sload = sloads_aux[0]
+        #     sloads_aux = sloads_aux[1::]
+            
         elif instructions[x].find("mstore")!=-1:
             exp = generate_sstore_mstore(instructions[x],instructions[x-1::-1],source_stack)
             print("ESTO GUARDO EN MSTORE")
             print(exp)
             mstore_seq.append(exp)
+
+    last_sload = ""
+    sstores = list(sstore_seq)
+    last_mload = ""
+    mstores = list(mstore_seq)
+    
+    for x in range(0,len(instructions)):
+        if instructions[x].find("sload")!=-1:
+            exp = generate_sload_mload(instructions[x],instructions[x-1::-1],source_stack)
+            last_sload = exp
+            print("MIRA UN SLOAD")
+            print(exp)
+
+        elif instructions[x].find("sstore")!=-1 and last_sload != "" and sload_relative_pos.get(last_sload,[])==[]:
+            sload_relative_pos[last_sload]=sstores.pop(0)
+            
+        elif instructions[x].find("mload")!=-1:
+            exp = generate_sload_mload(instructions[x],instructions[x-1::-1],source_stack)
+            last_mload = exp
+            print("MIRA UN MLOAD")
+            print(exp)
+
+        elif instructions[x].find("mstore")!=-1 and last_mload != "" and mload_relative_pos.get(last_mload,[])==[]:
+            mload_relative_pos[last_mload]=mstores.pop(0)
+
+            
+    print("FINAL SSTORE:")
+    print(sstore_seq)
+    print("FINAL SLOAD:")
+    print(sload_relative_pos)
     
 def generate_source_stack_variables(idx):
     ss_list = []
@@ -1334,6 +1409,63 @@ def compute_max_idx(max_ss,ss):
 
     return idx_top
 
+
+def generate_sstore_info(sstore_elem):
+    global user_def_counter
+    global sstore_v_counter
+
+    obj = {}
+    idx  = user_def_counter.get("SSTORE",0)
+
+    instr_name = "SSTORE"
+    name = "SSTORE"+"_"+str(idx)
+
+    
+    
+    obj["id"] = name
+    obj["opcode"] = process_opcode(str(opcodes.get_opcode(instr_name)[0]))
+    obj["disasm"] = instr_name
+    obj["inpt_sk"] = [sstore_elem[0][0],sstore_elem[0][1]]
+    obj["sto_state"] = ["sto"+str(sstore_v_counter-1)] if sstore_v_counter != 0 else []
+
+    out_var = create_new_sstorevar()
+    obj["out_sto"] = [out_var]
+    
+    obj["gas"] = opcodes.get_ins_cost(instr_name)
+    obj["commutative"] = False
+    user_def_counter["SSTORE"]=idx+1
+
+    return obj
+
+def generate_sstore_info(sstore_elem):
+    global user_def_counter
+    global mstore_v_counter
+
+    obj = {}
+    idx  = user_def_counter.get("MSTORE",0)
+
+    instr_name = "MSTORE"
+    name = "MSTORE"+"_"+str(idx)
+
+    
+    
+    obj["id"] = name
+    obj["opcode"] = process_opcode(str(opcodes.get_opcode(instr_name)[0]))
+    obj["disasm"] = instr_name
+    obj["inpt_sk"] = [sstore_elem[0][0],sstore_elem[0][1]]
+    obj["mem_state"] = ["mem"+str(mstore_v_counter-1)] if mstore_v_counter != 0 else []
+
+    out_var = create_new_mstorevar()
+    obj["out_mem"] = [out_var]
+    
+    obj["gas"] = opcodes.get_ins_cost(instr_name)
+    obj["commutative"] = False
+    user_def_counter["MSTORE"]=idx+1
+
+    return obj
+
+
+    
     
 def generate_json(block_name,ss,ts,max_ss_idx1,gas,subblock = None):
     global max_instr_size
@@ -1425,6 +1557,22 @@ def generate_json(block_name,ss,ts,max_ss_idx1,gas,subblock = None):
 
     print ("DISCOUNT")
     print (discount_op)
+
+
+    #Adding sstore seq
+    sto_objs = []
+    for sto in sstore_seq:
+        # print("opopopopopopopoppppo")
+        # print(sto)
+        x = generate_sstore_info(sto)
+        sto_objs.append(x)
+        # print("STO")
+        # print(x)
+
+    mem_objs = []
+    for mem in mstore_seq:
+        x = generate_mstore_info(sto)
+        mem_objs.append(x)
         
     #json_dict["init_progr_len"] = max_instr_size-(num_pops-len(not_used))-discount_op
     #json_dict["max_progr_len"] = max_instr_size-discount_op
@@ -2659,13 +2807,12 @@ def smt_translate_isolate(rule,name):
     
     opcodes = get_opcodes(rule)
 
-
     info = "INFO DEPLOY "+costabs_path+"ethir_OK_"+source_name+"_blocks_"+rule.get_rule_name()+" LENGTH="+str(len(opcodes))+" PUSH="+str(len(list(filter(lambda x: x.find("nop(PUSH")!=-1,opcodes))))
     info_deploy.append(info)
     
     if "nop(SLOAD)" in opcodes and "nop(SSTORE)" in opcodes:
-        x = opt_sload_sstore(rule,instructions,opcodes)
-
+        # x = opt_sload_sstore(rule,instructions,opcodes)
+        x = (False,"")
     else:
         x = (False,"")
         
