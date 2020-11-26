@@ -74,6 +74,9 @@ def generate_smtlib_encoding(b0, bs, usr_instr, variables, initial_stack, final_
     generate_cost_functions(solver_name)
     write_encoding(check_sat())
     write_encoding(get_objectives())
+    # If solver is OMS, we allow to generate the model for non-optimal solutions
+    if solver_name == "oms":
+        write_encoding(load_objective_model())
     # get_model()
     for j in range(b0):
         write_encoding(get_value(t(j)))
