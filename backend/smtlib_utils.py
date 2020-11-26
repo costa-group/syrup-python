@@ -111,3 +111,9 @@ def set_model_true():
 # Extension in OMS and Z3 to minimize a certain term
 def set_minimize_function(id):
     return "(minimize " + id + ")"
+
+
+# Allows to generate model when the optimal solution hasn't been
+# found in OptiMathSat
+def load_objective_model():
+    return "(load-objective-model -1)"
