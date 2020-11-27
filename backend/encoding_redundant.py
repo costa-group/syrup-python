@@ -64,6 +64,11 @@ def restrain_instruction_order(b0, depencency_graph, first_time_instruction_appe
     write_encoding("; Constraints that reflect the order among instructions")
     for instr, previous_instrs in depencency_graph.items():
 
+        # We only consider instructions that have a dependency with at least other instruction
+        # (could be push)
+        if not previous_instrs:
+            continue
+
         # Previous values stores possible values previous instructions may have, represented
         # as tj = theta_instr. It will be a dict where keys are the instruction id and values are a list
         # of equalities of the form tj= theta_instr
