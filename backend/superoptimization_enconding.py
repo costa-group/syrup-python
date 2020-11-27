@@ -22,7 +22,13 @@ def generate_redundant_constraints(flags, b0, user_instr, theta_stack, theta_com
         theta_dict = dict(theta_stack, **theta_comm, **theta_non_comm)
         dependency_graph = generate_dependency_graph(user_instr)
         instructions_position = generate_number_of_previous_instr_dict(dependency_graph)
+        print(dependency_graph)
         restrain_instruction_order(b0, dependency_graph, instructions_position, theta_dict)
+        each_function_is_used_at_least_one_with_position(b0, user_instr, instructions_position, theta_dict)
+    # If flag isn't set, then we use by default the generation for each function used at least once in each position
+    else:
+        each_function_is_used_at_least_once(b0, len(theta_stack),
+                                            len(theta_stack) + len(theta_comm) + len(theta_non_comm))
 
 
 # Method to generate optional asserts according to additional info. It includes that info that relies on the
@@ -68,7 +74,6 @@ def generate_smtlib_encoding(b0, bs, usr_instr, variables, initial_stack, final_
     instructions_constraints(b0, bs, comm_instr, non_comm_instr, theta_stack, theta_comm, theta_non_comm)
     initial_stack_encoding(initial_stack, bs)
     final_stack_encoding(final_stack, bs, b0)
-    each_function_is_used_at_least_once(b0, len(theta_stack), len(theta_stack) + len(theta_comm) + len(theta_non_comm))
     generate_redundant_constraints(flags, b0, usr_instr, theta_stack, theta_comm, theta_non_comm, final_stack)
     generate_soft_constraints(solver_name, b0, bs, usr_instr, theta_stack, theta_comm, theta_non_comm)
     generate_cost_functions(solver_name)

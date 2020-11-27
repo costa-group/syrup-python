@@ -63,27 +63,43 @@ def push_each_element_at_least_once(b0, theta_push, pushed_elements):
 def restrain_instruction_order(b0, depencency_graph, first_time_instruction_appears, theta):
     write_encoding("; Constraints that reflect the order among instructions")
     for instr, previous_instrs in depencency_graph.items():
-        previous_values = []
+
+        # Previous values stores possible values previous instructions may have, represented
+        # as tj = theta_instr. It will be a dict where keys are the instruction id and values are a list
+        # of equalities of the form tj= theta_instr
+        previous_values = {}
         for previous_instr_name, aj in previous_instrs:
+
+            # If previous instruction doesn't appear in previous_values, we initialize to empty list
+            if previous_instr_name not in previous_values:
+                previous_values[previous_instr_name] = []
+
             # We add a clause for each possible position in which previous equation may appear
             for previous_position in range(first_time_instruction_appears[previous_instr_name],
                                            first_time_instruction_appears[instr]):
                 # If aj == -1, then we don't need to consider to assign aj
                 if aj == -1:
-                    previous_values.append(add_eq(t(previous_position), theta[previous_instr_name]))
+                    previous_values[previous_instr_name].append(add_eq(t(previous_position), theta[previous_instr_name]))
                 else:
-                    previous_values.append(add_and(add_eq(t(previous_position), theta[previous_instr_name]),
+                    previous_values[previous_instr_name].append(add_and(add_eq(t(previous_position), theta[previous_instr_name]),
                                                    add_eq(a(previous_position), aj)))
+
         for position in range(first_time_instruction_appears[instr], b0):
-            write_encoding(add_assert(add_implies(add_eq(t(position), theta[instr]), add_or(*previous_values))))
+
+            # If current instruction is chosen for position j, then previous instructions must be places in previous
+            # positions. This means that (tj = theta) => and_{instr in prev_instr}
+            # (or_{i in possible_positions}(ti = instr))
+            or_instr = [add_or(*possible_equalities) for possible_equalities in previous_values.values()]
+            write_encoding(add_assert(add_implies(add_eq(t(position), theta[instr]), add_and(*or_instr))))
+
             # We update previous values list to add the possibility that previous instructions could be
             # executed in current position
             for previous_instr_name, aj in previous_instrs:
                 # If aj == -1, then we don't need to consider to assign aj
                 if aj == -1:
-                    previous_values.append(add_eq(t(position), theta[previous_instr_name]))
+                    previous_values[previous_instr_name].append(add_eq(t(position), theta[previous_instr_name]))
                 else:
-                    previous_values.append(add_and(add_eq(t(position), theta[previous_instr_name]),
+                    previous_values[previous_instr_name].append(add_and(add_eq(t(position), theta[previous_instr_name]),
                                                    add_eq(a(position), aj)))
 
 
