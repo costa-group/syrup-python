@@ -22,7 +22,6 @@ def generate_redundant_constraints(flags, b0, user_instr, theta_stack, theta_com
         theta_dict = dict(theta_stack, **theta_comm, **theta_non_comm)
         dependency_graph = generate_dependency_graph(user_instr)
         instructions_position = generate_number_of_previous_instr_dict(dependency_graph)
-        print(dependency_graph)
         restrain_instruction_order(b0, dependency_graph, instructions_position, theta_dict)
         each_function_is_used_at_least_one_with_position(b0, user_instr, instructions_position, theta_dict)
     # If flag isn't set, then we use by default the generation for each function used at least once in each position
