@@ -887,3 +887,16 @@ def get_solc_executable(version):
         return "solcv6"
     elif version == "v7":
         return "solcv7"
+
+
+def distinct_ebso(a,b):
+    try:
+        int_a = int(a)
+        int_b = int(b)
+        return int_a != int_b
+
+    except:
+        if a.find(b)!=-1 or b.find(a)!=-1:
+            return True
+        else:
+            return False
