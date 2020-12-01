@@ -138,6 +138,12 @@ def init_globals():
     global ebso_flag
     ebso_flag = False
 
+    global mem_flow_info
+    mem_flow_info = {}
+
+    global sto_flow_info
+    sto_flow_info = {}
+    
 '''
 Given a block it returns a list containingn the height of its
 stack when arriving and leaving the block.
@@ -685,6 +691,8 @@ updated. It also updated the corresponding global variables.
 def translateOpcodes50(opcode, value, index_variables,block,state_names):
     global new_fid
     global pc_cont
+    global mem_flow_info
+    global sto_flow_info
     # global unknown_mstore
     
     if opcode == "POP":        
@@ -695,6 +703,16 @@ def translateOpcodes50(opcode, value, index_variables,block,state_names):
         v1, updated_variables = get_new_variable(updated_variables)
         if ebso_flag:
             instr = v1+" = mload("+v1+")"
+
+            try:
+                l_idx = get_local_variable(value)
+            except ValueError:
+                value = "unknown"
+                
+            info = mem_flow_info.get(block,[])
+            info.append(("mload",value))
+            mem_flow_info[block] = info
+            
         else:
             try:
                 l_idx = get_local_variable(value)
@@ -710,6 +728,17 @@ def translateOpcodes50(opcode, value, index_variables,block,state_names):
 
         if ebso_flag:
             instr = "mstore("+v0+","+v1+")"
+
+            try:
+                l_idx = get_local_variable(value)
+            except ValueError:
+                value = "unknown"
+                
+            info = mem_flow_info.get(block,[])
+            info.append(("mstore",value))
+            mem_flow_info[block] = info
+
+
         else:
             try:
                 l_idx = get_local_variable(value)
@@ -739,6 +768,22 @@ def translateOpcodes50(opcode, value, index_variables,block,state_names):
         v1, updated_variables = get_new_variable(updated_variables)
         if ebso_flag:
             instr = v1+" = sload("+v1+")"
+
+            try:
+                val = value.split("_")
+                if len(val)==1:
+                    int(value)
+                    idx = value
+                else:
+                    idx = int(value[0])
+                
+            except ValueError:
+                idx = "unknown"
+
+            info = sto_flow_info.get(block,[])
+            info.append(("sload",idx))
+            sto_flow_info[block] = info
+                
         else:
             try:
                 val = value.split("_")
@@ -758,6 +803,23 @@ def translateOpcodes50(opcode, value, index_variables,block,state_names):
         v1 , updated_variables = get_consume_variable(updated_variables)
         if ebso_flag:
             instr = "sstore("+v0+","+v1+")"
+
+            try:
+                val = value.split("_")
+                if len(val)==1:
+                    int(value)
+                    idx = value
+                else:
+                    idx = int(value[0])
+                
+            except ValueError:
+                idx = "unknown"
+
+            info = sto_flow_info.get(block,[])
+            info.append(("sstore",idx))
+            sto_flow_info[block] = info
+            
+            
         else:
 
             try:
