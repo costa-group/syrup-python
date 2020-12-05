@@ -8,7 +8,7 @@ from encoding_initialize import initialize_variables, variables_assignment_const
 from encoding_cost import paper_soft_constraints, label_name
 from encoding_instructions import instructions_constraints
 from encoding_redundant import *
-from encoding_files import write_encoding, write_opcode_map, write_instruction_map
+from encoding_files import write_encoding, write_opcode_map, write_instruction_map, write_gas_map
 
 
 # Method to generate redundant constraints according to flags (at least once is included by default)
@@ -95,3 +95,4 @@ def generate_smtlib_encoding(b0, bs, usr_instr, variables, initial_stack, final_
 
     write_instruction_map(generate_instr_map(usr_instr, theta_stack, theta_comm, theta_non_comm))
     write_opcode_map(generate_disasm_map(usr_instr, theta_dict))
+    write_gas_map(generate_costs_ordered_dict(bs, usr_instr, theta_stack, theta_comm, theta_non_comm))
