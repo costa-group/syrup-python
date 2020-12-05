@@ -18,6 +18,8 @@ def generate_redundant_constraints(flags, b0, user_instr, theta_stack, theta_com
     if flags['pushed-at-least']:
         pushed_values = generate_phi_dict(user_instr, final_stack)
         push_each_element_at_least_once(b0, theta_stack['PUSH'], pushed_values)
+    if flags['no-output-before-pop']:
+        no_output_before_pop(b0, theta_stack)
     if flags['instruction-order']:
         theta_dict = dict(theta_stack, **theta_comm, **theta_non_comm)
         dependency_graph = generate_dependency_graph(user_instr)

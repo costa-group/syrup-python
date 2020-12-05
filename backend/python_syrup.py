@@ -68,6 +68,9 @@ if __name__ == "__main__":
     ap.add_argument("-solver", "--solver", help="Choose the solver", choices = ["z3","barcelogic","oms"], default="z3")
     ap.add_argument("-instruction-order", help='add a constraint representing the order among instructions',
                     action='store_true', dest='instruction_order')
+    ap.add_argument("-no-output-before-pop", help='add a constraint representing the fact that the previous instruction'
+                                                  'of a pop can only be a instruction that does not generate an output',
+                    action='store_true', dest='no_output_before_pop')
     ap.add_argument("-tout", metavar='timeout', action='store', type=int, help="Timeout in seconds. "
                                                                                "Works only for z3 and oms (so far)")
 
@@ -78,7 +81,7 @@ if __name__ == "__main__":
     timeout = args['tout']
 
     flags = {'at-most': args['at_most'], 'pushed-at-least': args['pushed_once'],
-             'instruction-order': args['instruction_order']}
+             'instruction-order': args['instruction_order'], 'no-output-before-pop': args['no_output_before_pop']}
 
     additional_info = {'tout': args['tout'], 'solver': solver}
     es = initialize_dir_and_streams(path,solver)
