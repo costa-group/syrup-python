@@ -53,6 +53,9 @@ def init():
     global instruction_final_solution
     instruction_final_solution = tmp_costabs + "/optimized_block_instructions.disasm_opt"
 
+    global gas_final_solution
+    gas_final_solution = tmp_costabs + "/gas.txt"
+
     global results_dir
     results_dir = project_path + "/results/prueba/"
 
@@ -116,10 +119,13 @@ if __name__=="__main__":
 
                 with open(instruction_final_solution, 'r') as f:
                     file_results['target_disasm'] = f.read()
+                with open(gas_final_solution, 'r') as f:
+                    file_results['real_gas'] = f.read()
 
             rows_list.append(file_results)
 
-        df = pd.DataFrame(rows_list, columns=['block_id', 'target_gas_cost', 'shown_optimal', 'no_model_found',
+        df = pd.DataFrame(rows_list, columns=['block_id', 'target_gas_cost', 'real_gas',
+                                              'shown_optimal', 'no_model_found',
                                           'source_gas_cost', 'saved_gas', 'solver_time_in_sec', 'target_disasm'])
         csv_file = results_dir + contract_path.split('/')[-1] + "_results_oms.csv"
         df.to_csv(csv_file)

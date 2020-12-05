@@ -19,6 +19,9 @@ def init():
     global opcodes_json
     opcodes_json = tmp_costabs + "smt_encoding/opcode.json"
 
+    global gas_json
+    gas_json = tmp_costabs + "smt_encoding/gas.json"
+
     global solution_file
     solution_file = tmp_costabs + "solution.txt"
 
@@ -27,6 +30,9 @@ def init():
 
     global opcodes_final_solution
     opcodes_final_solution = tmp_costabs + "optimized_block_opcodes.evm"
+
+    global gas_final_solution
+    gas_final_solution = tmp_costabs + "gas.txt"
 
 # Push is determined by the number of bytes of pushed value
 def decide_push_type(elem):
@@ -55,14 +61,18 @@ def change_opcode_push_type(position, opcode, pushed_value):
 def generate_file_names(block_name):
     global instruction_json
     global opcodes_json
+    global gas_json
     global instruction_final_solution
     global opcodes_final_solution
+    global gas_final_solution
 
     instruction_json = tmp_costabs+"smt_encoding/"+block_name+"_instruction.json"
     opcodes_json = tmp_costabs+"smt_encoding/"+block_name+"_opcode.json"
+    gas_json = tmp_costabs+"smt_encoding/"+block_name+"_gas.json"
 
     instruction_final_solution = tmp_costabs+"solutions/"+block_name+"_optimized.disasm_opt"
     opcodes_final_solution = tmp_costabs+"solutions/"+block_name+"_optimized.evm"
+    gas_final_solution = tmp_costabs + "solutions/" + block_name + "_real_gas.txt"
 
 def generate_disasm_sol(block_name):
     
@@ -74,6 +84,8 @@ def generate_disasm_sol(block_name):
         opcodes_theta_dict = json.load(path)
     with open(instruction_json, 'r') as path:
         instruction_theta_dict = json.load(path)
+    with open(gas_json, 'r') as path:
+        gas_theta_dict = json.load(path)
 
     instr_sol = {}
     opcode_sol = {}
@@ -81,6 +93,8 @@ def generate_disasm_sol(block_name):
 
     pattern1 = re.compile("\(t_([0-9]*) ([0-9]*)\)")
     pattern2 = re.compile("\(a_([0-9]*) ([0-9]*)\)")
+
+    total_gas = 0
 
     with open(solution_file, 'r') as sol_file:
         for line in sol_file:
@@ -92,6 +106,7 @@ def generate_disasm_sol(block_name):
                     break
                 instr_sol[instruction_position] = instruction_theta_dict[instruction_theta]
                 opcode_sol[instruction_position] = opcodes_theta_dict[instruction_theta]
+                total_gas += gas_theta_dict[instruction_theta]
 
             for match in re.finditer(pattern2, line):
                 instruction_position = int(match.group(1))
@@ -119,6 +134,9 @@ def generate_disasm_sol(block_name):
                 instruction_file.write(instr + " " + pushed_values_decimal[position] + " ")
             else:
                 instruction_file.write(instr + " ")
+
+    with open(gas_final_solution, 'w') as gas_file:
+        gas_file.write(str(total_gas))
 
 
 
@@ -130,6 +148,8 @@ if __name__ == "__main__":
         opcodes_theta_dict = json.load(path)
     with open(instruction_json, 'r') as path:
         instruction_theta_dict = json.load(path)
+    with open(gas_json, 'r') as path:
+        gas_theta_dict = json.load(path)
 
     instr_sol = {}
     opcode_sol = {}
@@ -137,6 +157,8 @@ if __name__ == "__main__":
 
     pattern1 = re.compile("\(t_([0-9]*) ([0-9]*)\)")
     pattern2 = re.compile("\(a_([0-9]*) ([0-9]*)\)")
+
+    total_gas = 0
 
     with open(solution_file, 'r') as sol_file:
         for line in sol_file:
@@ -148,6 +170,7 @@ if __name__ == "__main__":
                     break
                 instr_sol[instruction_position] = instruction_theta_dict[instruction_theta]
                 opcode_sol[instruction_position] = opcodes_theta_dict[instruction_theta]
+                total_gas += gas_theta_dict[instruction_theta]
 
             for match in re.finditer(pattern2, line):
                 instruction_position = int(match.group(1))
@@ -175,5 +198,5 @@ if __name__ == "__main__":
                 instruction_file.write(instr + " " + pushed_values_decimal[position] + " ")
             else:
                 instruction_file.write(instr + " ")
-
-
+    with open(gas_final_solution, 'w') as gas_file:
+        gas_file.write(str(total_gas))
