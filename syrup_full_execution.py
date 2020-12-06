@@ -60,7 +60,7 @@ def get_solver_to_execute(smt_file):
     elif args.solver == "barcelogic":
         return bclt_exec
     else:
-        return oms_exec
+        return oms_exec + " " + smt_file
 
 
 def execute_ethir():
