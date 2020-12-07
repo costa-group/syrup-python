@@ -188,6 +188,35 @@ def generate_number_of_previous_instr_dict(dependency_theta_graph):
     return number_of_instructions_to_execute
 
 
+# First time an instruction cannot appear is b0-h, where h is the tree height. We recursively obtain this value,
+# taking into account that we may have different trees and the final value is the min for all possible ones
+def update_with_tree_level(b0, dependency_theta_graph, current_idx, instr, first_position_instr_cannot_appear):
+    # We don't consider push instructions
+    if instr == 'PUSH':
+        return
+    first_position_instr_cannot_appear[instr] = min(current_idx, first_position_instr_cannot_appear.get(instr, b0))
+    for prev_instr, _ in dependency_theta_graph[instr]:
+        update_with_tree_level(b0, dependency_theta_graph, current_idx-1, prev_instr, first_position_instr_cannot_appear)
+
+
+# Generates a dict that given b0, returns the first position in which a instruction cannot appear
+# due to dependencies with other instructions.
+def generate_first_position_instr_cannot_appear(b0, final_stack_instr, dependency_graph):
+    first_position_instr_cannot_appear = {}
+
+    # We consider instructions in the final stack, as they determine which position is the last possible one (following
+    # the dependencies to reach it). We are assuming each other instruction is related to these instructions. Otherwise,
+    # it would mean that there exists some intermediate instructions that do not affect the final results and thus,
+    # they must be omitted.
+    b0_aux = b0
+    for final_instr in final_stack_instr:
+        update_with_tree_level(b0, dependency_graph, b0_aux, final_instr, first_position_instr_cannot_appear)
+
+        # If it isn't top of the stack, another instruction must go before it (SWAP or DUP). Only works once
+        b0_aux = b0 - 1
+    return first_position_instr_cannot_appear
+
+
 # We generate a dict that given the id of an instruction, returns the
 # the id of instructions that must be executed to obtain its input and the corresponding
 # aj. Note that aj must be only assigned when push, in other cases we just set aj value to -1.
