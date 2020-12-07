@@ -16,22 +16,15 @@ def each_function_is_used_at_least_once(b0, initial_idx, end_idx):
 
 # Each uninterpreted function is used at most once. This means that
 # if we assign a instruction to tj, then we cannot assign the same
-# function for any other ti.
-def each_function_is_used_at_most_once(b0, initial_idx, end_idx):
+# function for any other ti. This restriction holds iff associated_gas >= 0
+def each_function_is_used_at_most_once(b0, valid_theta):
     write_encoding("; All interpreted functions can be used at most once")
     for j in range(b0):
         remaining_pos = set(range(b0))
         remaining_pos.remove(j)
-        for instr in range(initial_idx, end_idx):
+        for instr in valid_theta:
             write_encoding(add_assert(add_implies(add_eq(t(j), instr),
                                          add_and(*list(map(lambda i: add_not(add_eq(t(i), instr)), remaining_pos))))))
-
-
-# We combine both constraints: each instruction is used at least once and at most once.
-def each_function_is_used_exactly_once(b0, initial_idx, end_idx):
-    write_encoding("; All interpreted functions are used exactly once (at most once + at least once)")
-    each_function_is_used_at_least_once(b0, initial_idx, end_idx)
-    each_function_is_used_at_most_once(b0, initial_idx, end_idx)
 
 
 # Only a pop can be performed if no instruction introducing a value in the stack was performed just before.

@@ -14,7 +14,9 @@ from encoding_files import write_encoding, write_opcode_map, write_instruction_m
 # Method to generate redundant constraints according to flags (at least once is included by default)
 def generate_redundant_constraints(flags, b0, user_instr, theta_stack, theta_comm, theta_non_comm, final_stack):
     if flags['at-most']:
-        each_function_is_used_at_most_once(b0, len(theta_stack), len(theta_stack) + len(theta_comm) + len(theta_non_comm))
+        valid_theta = list(map(lambda instr: theta_comm[instr['id']] if instr['commutative'] else theta_non_comm[instr['id']],
+                             filter(lambda instr: instr['gas'] > 2, user_instr)))
+        each_function_is_used_at_most_once(b0, valid_theta)
     if flags['pushed-at-least']:
         pushed_values = generate_phi_dict(user_instr, final_stack)
         push_each_element_at_least_once(b0, theta_stack['PUSH'], pushed_values)
