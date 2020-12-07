@@ -19,6 +19,9 @@ def each_function_is_used_at_least_once(b0, initial_idx, end_idx):
 # function for any other ti. This restriction holds iff associated_gas >= 0
 def each_function_is_used_at_most_once(b0, valid_theta):
     write_encoding("; All interpreted functions can be used at most once")
+    # We need at least two elements to be a valid restriction
+    if b0 <= 1:
+        return
     for j in range(b0):
         remaining_pos = set(range(b0))
         remaining_pos.remove(j)
