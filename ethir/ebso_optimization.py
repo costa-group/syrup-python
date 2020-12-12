@@ -44,6 +44,9 @@ saved_push = 0
 global gas_saved_op
 gas_saved_op = 0
 
+global blocks_json_dict
+blocks_json_dict = {}
+
 def init_globals():
     
     global u_counter
@@ -107,6 +110,8 @@ def init_globals():
     #it stores when the sloads are executed
     global mload_relative_pos
     mload_relative_pos = {}
+
+    
     
 def filter_opcodes(rule):
     instructions = rule.get_instructions()
@@ -1470,7 +1475,7 @@ def generate_sstore_info(sstore_elem):
 def generate_json(block_name,ss,ts,max_ss_idx1,gas,subblock = None):
     global max_instr_size
     global num_pops
-
+    global blocks_json_dict
 
 
     print ("AQUIIIIIIIIIIIIIII")
@@ -1597,6 +1602,8 @@ def generate_json(block_name,ss,ts,max_ss_idx1,gas,subblock = None):
 
     # if block_nm not in os.listdir(ebso_path):
     #     os.mkdir(ebso_path+"/"+block_nm)
+
+    blocks_json_dict[block_nm] = json_dict
     
     with open(ebso_path+"/"+source_name+"_"+block_nm+"_input.json","w") as json_file:
         json.dump(json_dict,json_file)

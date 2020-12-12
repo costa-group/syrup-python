@@ -4,12 +4,14 @@ import os
 import sys
 sys.path.append(os.path.dirname(os.path.realpath(__file__))+"/ethir")
 sys.path.append(os.path.dirname(os.path.realpath(__file__))+"/backend")
+sys.path.append(os.path.dirname(os.path.realpath(__file__))+"/verification")
 sys.path.append(os.path.dirname(os.path.realpath(__file__))+"/scripts")
 import glob
 import shlex
 import subprocess
 import argparse
 from oyente_ethir import clean_dir, analyze_disasm_bytecode, analyze_bytecode, analyze_solidity, analyze_isolate_block, has_dependencies_installed
+import ebso_optimization
 from python_syrup import execute_syrup_backend
 from disasm_generation import generate_disasm_sol
 
@@ -65,7 +67,7 @@ def get_solver_to_execute(smt_file):
 
 def execute_ethir():
     global args
-
+    
     if args.isolate_block:
         analyze_isolate_block(args_i = args)
         
