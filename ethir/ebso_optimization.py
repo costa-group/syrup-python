@@ -3543,4 +3543,5 @@ def get_evm_block(instructions):
         f.write(blocks[b])
         f.close()
         
-
+def get_sfs_dict():
+    return blocks_json_dict

@@ -11,7 +11,7 @@ import shlex
 import subprocess
 import argparse
 from oyente_ethir import clean_dir, analyze_disasm_bytecode, analyze_bytecode, analyze_solidity, analyze_isolate_block, has_dependencies_installed
-import ebso_optimization
+from ebso_optimization import get_sfs_dict
 from python_syrup import execute_syrup_backend
 from disasm_generation import generate_disasm_sol
 
@@ -142,6 +142,8 @@ def main():
     
         execute_ethir()
 
+        sfs_dict = get_sfs_dict()
+        
         if args.solver:
 
             
@@ -163,8 +165,7 @@ def main():
             generate_solution(block_name)
 
             if args.verify:
-                #Run the verification
-                pass
+                verify_sfs(sfs_dict)
 
 if __name__=="__main__":
     main()
