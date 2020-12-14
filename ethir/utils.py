@@ -811,12 +811,21 @@ def check_graph_consistency(blocks_dict, initial_address = 0):
     return reduce(lambda i,j: i and j, conds)
 
 
-def process_isolate_block(contract_name):
+def process_isolate_block(contract_name, in_stack = -1):
     
     f = open(contract_name,"r")
-    input_stack = f.readline().strip("\n")
-    instructions = f.readline()
+    if in_stack == -1:
+        input_stack = f.readline().strip("\n")
+    else:
+        input_stack = in_stack
 
+
+    print(input_stack)
+        
+    instructions = f.readline().strip()
+
+    print(instructions)
+    
     initial = 0
     opcodes = []
 
@@ -832,6 +841,8 @@ def process_isolate_block(contract_name):
             i=i+1
         i+=1
 
+    f.close()
+    
     return opcodes,input_stack
 
 def all_integers(variables):
