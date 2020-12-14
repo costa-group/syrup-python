@@ -14,6 +14,7 @@ from oyente_ethir import clean_dir, analyze_disasm_bytecode, analyze_bytecode, a
 from ebso_optimization import get_sfs_dict
 from python_syrup import execute_syrup_backend
 from disasm_generation import generate_disasm_sol
+from sfs_verify import verify_sfs
 
 def init():
     global project_path
@@ -47,6 +48,9 @@ def init():
     result_file = tmp_costabs + "solution.txt"
     global instruction_file
     instruction_file = tmp_costabs + "optimized_block_instructions.disasm_opt"
+
+    global tout
+    tout = 10
     
     
 def run_command(cmd):
@@ -58,7 +62,7 @@ def run_command(cmd):
 def get_solver_to_execute(smt_file):
 
     if args.solver == "z3":
-        return z3_exec + " -smt2 " + smt_file
+        return z3_exec + " -smt2 " + smt_file + " -T:"+str(tout)
     elif args.solver == "barcelogic":
         return bclt_exec
     else:
@@ -145,7 +149,6 @@ def main():
         sfs_dict = get_sfs_dict()
         
         if args.solver:
-
             
             for f in glob.glob(json_dir + "/*.json"):
                 #run_command(syrup_bend_path + " " + f)
@@ -164,8 +167,9 @@ def main():
             block_name = args.source.split("/")[-1].rstrip(".json")
             generate_solution(block_name)
 
-            if args.verify:
-                verify_sfs(sfs_dict)
+            
+    if args.verify:
+        verify_sfs(args.source, sfs_dict)
 
 if __name__=="__main__":
     main()
