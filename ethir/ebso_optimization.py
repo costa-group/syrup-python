@@ -2037,7 +2037,11 @@ def is_optimizable(opcode_instructions,instructions):
     print (ins_aux)
     print (ins)
 
+    if list(filter(lambda x: x.find("POP")==-1, ins_aux)) == []:
+        return True
+    
     if ins == []:
+        print(instructions[:-1])
         return True if (instructions[:-1]!=[] or len(instructions)==1) else False
     else:
         return False
@@ -2693,10 +2697,14 @@ def smt_translate(rules,sname):
     global original_opcodes
     global int_not0
     global source_name
+    global blocks_json_dict
+
     
     visited = []
     init_globals()
 
+    blocks_json_dict = {}
+    
     gas_t = 0
     begin = dtimer()
 
@@ -2795,10 +2803,13 @@ def smt_translate_isolate(rule,name):
     global max_instr_size
     global int_not0
     global source_name
+    global blocks_json_dict
     
     visited = []
     init_globals()
 
+    blocks_json_dict = {}
+    
     info_deploy = []
 
     source_name =  name
@@ -2825,6 +2836,7 @@ def smt_translate_isolate(rule,name):
         
     print ("-*-*-*-*-*-*-*-*-*-*-*")
 
+    print("ENTRO AQUI PABLO")
     res = is_optimizable(opcodes,instructions)
     if res and not x[0]:
         print ("no")
