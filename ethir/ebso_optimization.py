@@ -3293,8 +3293,27 @@ def apply_cond_transformation(instr,user_def_instrs,tstack):
             saved_push+=1
             
             return True, []
+
         else:
-            return False, []
+
+            out_var = instr["outpt_sk"][0]
+            is_zero = list(filter(lambda x: out_var in x["inpt_sk"] and x["disasm"] == "ISZERO",user_def_instrs))
+            if len(is_zero)==1:
+                zero = is_zero[0]
+                zero2 = list(filter(lambda x: zero["outpt_sk"][0] in x["inpt_sk"] and x["disasm"] == "ISZERO",user_def_instrs))
+                if len(zero2) == 1 and zero["outpt_sk"][0] not in tstack:
+                    instr["outpt_sk"] = zero2[0]["outpt_sk"]
+                    discount_op+=2
+
+                    gas_saved_op+=6
+
+                    return True, [zero,zero2[0]]
+                else:
+                    return False, []
+            else:
+                
+                return False, []
+            
     
     elif opcode == "AND":
         out_pt = instr["outpt_sk"][0]
@@ -3331,9 +3350,39 @@ def apply_cond_transformation(instr,user_def_instrs,tstack):
                 return False, []
         else:
             return False,[]
+
+    elif opcode == "NOT":
+        out_pt = instr["outpt_sk"][0]
+        not_op = list(filter(lambda x: out_pt in x["inpt_sk"] and x["disasm"] == "NOT", user_def_instrs))
+        if len(or_op)==1:
+            not_instr = not_op[0]
+            out_pt2 = not_instr["outpt_sk"][0]
+            real_var = instr["inpt_sk"]
+
+            i = 0
+            while (i<len(tstack)):
+                if tstack[i].find(out_pt2)!=-1:
+                    tstack[i] = real_var
+
+            for elems in user_def_instrs:
+                if out_pt2 in elems["inpt_sk"]:
+                    pos = elems["inpt_sk"].index(out_pt2)
+                    elems["inpt_sk"][pos] = real_var
+                    
+                discount_op+=2
+                gas_saved_op+=6
+                
+                return True, [not_instr,instr]
+            else:
+                return False, []
+        else:
+            return False,[]
+
     else:
         return False, []
 
+
+    
 def apply_all_comparison(user_def_instrs,tstack):
     modified = True
     while(modified):
