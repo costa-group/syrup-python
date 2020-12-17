@@ -13,3 +13,11 @@ def get_block_id(file_name):
 
     print(block_id)
     return block_id
+
+
+def is_integer(num):
+    try:
+        val = int(num)
+        return True
+    except:
+        return False
