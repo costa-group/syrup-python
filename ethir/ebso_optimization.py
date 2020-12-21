@@ -15,6 +15,7 @@ visited = []
 
 terminate_block = ["ASSERTFAIL","RETURN","REVERT","SUICIDE","STOP"]
 
+global split_block
 split_block = ["LOG0","LOG1","LOG2","LOG3","LOG4","MSTORE","CALLDATACOPY","CODECOPY","EXTCODECOPY","RETURNDATACOPY","MSTORE8"]
 
 pre_defined_functions = ["PUSH","POP","SWAP","DUP"]
@@ -46,6 +47,10 @@ gas_saved_op = 0
 
 global blocks_json_dict
 blocks_json_dict = {}
+
+global split_sto
+split_sto = False
+
 
 def init_globals():
     
@@ -112,6 +117,12 @@ def init_globals():
     mload_relative_pos = {}
 
     
+def add_storage2split():
+    global split_block
+    global split_sto
+
+    split_sto = True
+    split_block+=["SSTORE","MSTORE"]
     
 def filter_opcodes(rule):
     instructions = rule.get_instructions()
@@ -1248,12 +1259,7 @@ def generate_encoding(instructions,variables,source_stack):
     global s_dict
     global u_dict
     global variable_content
-    global sstore_seq
-    global mstore_seq
-    global sstore_vars
-    global mmstore_vars
-    global sload_relative_pos
-    global mload_relative_pos
+    
     instructions_reverse = instructions[::-1]
     u_dict = {}
     variable_content = {}
@@ -1271,6 +1277,19 @@ def generate_encoding(instructions,variables,source_stack):
     # sloads_aux = sload_relative_pos
     # sload_relative_pos = {}
 
+    if not split_sto:
+        print("VEAMOS QUE TAL PATA")
+        generate_storage_info(instructions,source_stack)
+    
+
+def generate_storage_info(instructions,source_stack):
+    global sstore_seq
+    global mstore_seq
+    global sstore_vars
+    global mmstore_vars
+    global sload_relative_pos
+    global mload_relative_pos
+    
     print("SLOADS")
     print(sload_relative_pos)
 
@@ -1323,6 +1342,7 @@ def generate_encoding(instructions,variables,source_stack):
     print("FINAL SLOAD:")
     print(sload_relative_pos)
     
+        
 def generate_source_stack_variables(idx):
     ss_list = []
     
@@ -2688,7 +2708,7 @@ def compute_max_program_len(opcodes, num_guard,block = None):
     return len(new_opcodes)
     
 
-def smt_translate(rules,sname):
+def smt_translate(rules,sname,storage):
     global s_counter
     global max_instr_size
     global original_opcodes
@@ -2703,6 +2723,11 @@ def smt_translate(rules,sname):
     visited = []
     init_globals()
 
+    
+    if storage:
+        add_storage2split()
+
+    
     blocks_json_dict = {}
     
     gas_t = 0
@@ -2798,7 +2823,7 @@ def smt_translate(rules,sname):
     print("Blocks Generation EBSO: "+str(end-begin)+"s")
 
 
-def smt_translate_isolate(rule,name):
+def smt_translate_isolate(rule,name,storage):
     global s_counter
     global max_instr_size
     global int_not0
@@ -2808,6 +2833,9 @@ def smt_translate_isolate(rule,name):
     visited = []
     init_globals()
 
+    if storage:
+        add_storage2split()
+    
     blocks_json_dict = {}
     
     info_deploy = []

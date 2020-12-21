@@ -1579,7 +1579,7 @@ Main function that build the rbr representation from the CFG of a solidity file.
 -saco_rbr is True if it has to generate the RBR in SACO syntax.
 -exe refers to the number of smart contracts analyzed.
 '''
-def evm2rbr_compiler(contract_name = None, ebso = None,block = None):
+def evm2rbr_compiler(contract_name = None, ebso = None,block = None, sto = False):
     global rbr_blocks
     global ebso_flag
     
@@ -1604,7 +1604,7 @@ def evm2rbr_compiler(contract_name = None, ebso = None,block = None):
                
 
         if ebso:
-            smt_translate_isolate(rule,contract_name)
+            smt_translate_isolate(rule,contract_name,sto)
                 
             # if saco_rbr:
             #     saco.rbr2saco(rbr,exe,contract_name)

@@ -115,6 +115,7 @@ def main():
     parser.add_argument( "-d", "--debug",                   help="Display the status of the stack after each opcode", action = "store_true")
     parser.add_argument( "-cfg", "--control-flow-graph",    help="Store the CFG", action="store_true")
     parser.add_argument( "-saco", "--saco",                 help="Translate EthIR RBR to SACO RBR", action="store_true")
+    parser.add_argument( "-storage", "--storage",                 help="Split using SSTORE and MSTORE", action="store_true")
     #parser.add_argument("-ebso", "--ebso", help="Generate the info for EBSO in a json file", action = "store_true")
     parser.add_argument("-isb", "--isolate_block", help="Generate the RBR for an isolate block", action = "store_true")
     parser.add_argument( "-hashes", "--hashes",             help="Generate a file that contains the functions of the solidity file", action="store_true")
