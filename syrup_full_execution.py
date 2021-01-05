@@ -4,14 +4,17 @@ import os
 import sys
 sys.path.append(os.path.dirname(os.path.realpath(__file__))+"/ethir")
 sys.path.append(os.path.dirname(os.path.realpath(__file__))+"/backend")
+sys.path.append(os.path.dirname(os.path.realpath(__file__))+"/verification")
 sys.path.append(os.path.dirname(os.path.realpath(__file__))+"/scripts")
 import glob
 import shlex
 import subprocess
 import argparse
 from oyente_ethir import clean_dir, analyze_disasm_bytecode, analyze_bytecode, analyze_solidity, analyze_isolate_block, has_dependencies_installed
+from ebso_optimization import get_sfs_dict
 from python_syrup import execute_syrup_backend
 from disasm_generation import generate_disasm_sol
+from sfs_verify import verify_sfs
 
 def init():
     global project_path
@@ -45,6 +48,9 @@ def init():
     result_file = tmp_costabs + "solution.txt"
     global instruction_file
     instruction_file = tmp_costabs + "optimized_block_instructions.disasm_opt"
+
+    global tout
+    tout = 10
     
     
 def run_command(cmd):
@@ -56,7 +62,7 @@ def run_command(cmd):
 def get_solver_to_execute(smt_file):
 
     if args.solver == "z3":
-        return z3_exec + " -smt2 " + smt_file
+        return z3_exec + " -smt2 " + smt_file + " -T:"+str(tout)
     elif args.solver == "barcelogic":
         return bclt_exec + " -file " + smt_file
     else:
@@ -65,7 +71,7 @@ def get_solver_to_execute(smt_file):
 
 def execute_ethir():
     global args
-
+    
     if args.isolate_block:
         analyze_isolate_block(args_i = args)
         
@@ -109,11 +115,13 @@ def main():
     parser.add_argument( "-d", "--debug",                   help="Display the status of the stack after each opcode", action = "store_true")
     parser.add_argument( "-cfg", "--control-flow-graph",    help="Store the CFG", action="store_true")
     parser.add_argument( "-saco", "--saco",                 help="Translate EthIR RBR to SACO RBR", action="store_true")
+    parser.add_argument( "-storage", "--storage",                 help="Split using SSTORE and MSTORE", action="store_true")
     #parser.add_argument("-ebso", "--ebso", help="Generate the info for EBSO in a json file", action = "store_true")
     parser.add_argument("-isb", "--isolate_block", help="Generate the RBR for an isolate block", action = "store_true")
     parser.add_argument( "-hashes", "--hashes",             help="Generate a file that contains the functions of the solidity file", action="store_true")
     parser.add_argument("-solver", "--solver",             help="Choose the solver", choices = ["z3","barcelogic","oms"])
     parser.add_argument("-json", "--json",             help="The input file is a json that contains the SFS of the block to be analyzed", action="store_true")
+    parser.add_argument("-v", "--verify",             help="Generate a verification report checking if the SFS of the original and the optimized block are the same", action="store_true")
     parser.add_argument('-write-only', help="print smt constraint in SMT-LIB format,a mapping to instructions, and objectives", action='store_true')
     parser.add_argument('-at-most', help='add a constraint for each uninterpreted function so that they are used at most once',
                     action='store_true', dest='at_most')
@@ -139,8 +147,9 @@ def main():
     
         execute_ethir()
 
+        sfs_dict = get_sfs_dict()
+        
         if args.solver:
-
             
             for f in glob.glob(json_dir + "/*.json"):
                 #run_command(syrup_bend_path + " " + f)
@@ -158,6 +167,10 @@ def main():
 
             block_name = args.source.split("/")[-1].rstrip(".json")
             generate_solution(block_name)
+
+            
+    if args.verify:
+        verify_sfs(args.source, sfs_dict)
 
 if __name__=="__main__":
     main()

@@ -15,6 +15,7 @@ visited = []
 
 terminate_block = ["ASSERTFAIL","RETURN","REVERT","SUICIDE","STOP"]
 
+global split_block
 split_block = ["LOG0","LOG1","LOG2","LOG3","LOG4","MSTORE","CALLDATACOPY","CODECOPY","EXTCODECOPY","RETURNDATACOPY","MSTORE8"]
 
 pre_defined_functions = ["PUSH","POP","SWAP","DUP"]
@@ -43,6 +44,13 @@ saved_push = 0
 
 global gas_saved_op
 gas_saved_op = 0
+
+global blocks_json_dict
+blocks_json_dict = {}
+
+global split_sto
+split_sto = False
+
 
 def init_globals():
     
@@ -107,6 +115,14 @@ def init_globals():
     #it stores when the sloads are executed
     global mload_relative_pos
     mload_relative_pos = {}
+
+    
+def add_storage2split():
+    global split_block
+    global split_sto
+
+    split_sto = True
+    split_block+=["SSTORE","MSTORE"]
     
 def filter_opcodes(rule):
     instructions = rule.get_instructions()
@@ -1243,12 +1259,7 @@ def generate_encoding(instructions,variables,source_stack):
     global s_dict
     global u_dict
     global variable_content
-    global sstore_seq
-    global mstore_seq
-    global sstore_vars
-    global mmstore_vars
-    global sload_relative_pos
-    global mload_relative_pos
+    
     instructions_reverse = instructions[::-1]
     u_dict = {}
     variable_content = {}
@@ -1266,6 +1277,19 @@ def generate_encoding(instructions,variables,source_stack):
     # sloads_aux = sload_relative_pos
     # sload_relative_pos = {}
 
+    if not split_sto:
+        print("VEAMOS QUE TAL PATA")
+        generate_storage_info(instructions,source_stack)
+    
+
+def generate_storage_info(instructions,source_stack):
+    global sstore_seq
+    global mstore_seq
+    global sstore_vars
+    global mmstore_vars
+    global sload_relative_pos
+    global mload_relative_pos
+    
     print("SLOADS")
     print(sload_relative_pos)
 
@@ -1318,6 +1342,7 @@ def generate_encoding(instructions,variables,source_stack):
     print("FINAL SLOAD:")
     print(sload_relative_pos)
     
+        
 def generate_source_stack_variables(idx):
     ss_list = []
     
@@ -1470,7 +1495,7 @@ def generate_sstore_info(sstore_elem):
 def generate_json(block_name,ss,ts,max_ss_idx1,gas,subblock = None):
     global max_instr_size
     global num_pops
-
+    global blocks_json_dict
 
 
     print ("AQUIIIIIIIIIIIIIII")
@@ -1597,6 +1622,8 @@ def generate_json(block_name,ss,ts,max_ss_idx1,gas,subblock = None):
 
     # if block_nm not in os.listdir(ebso_path):
     #     os.mkdir(ebso_path+"/"+block_nm)
+
+    blocks_json_dict[block_nm] = json_dict
     
     with open(ebso_path+"/"+source_name+"_"+block_nm+"_input.json","w") as json_file:
         json.dump(json_dict,json_file)
@@ -2030,7 +2057,11 @@ def is_optimizable(opcode_instructions,instructions):
     print (ins_aux)
     print (ins)
 
+    if list(filter(lambda x: x.find("POP")==-1, ins_aux)) == []:
+        return True
+    
     if ins == []:
+        print(instructions[:-1])
         return True if (instructions[:-1]!=[] or len(instructions)==1) else False
     else:
         return False
@@ -2677,7 +2708,7 @@ def compute_max_program_len(opcodes, num_guard,block = None):
     return len(new_opcodes)
     
 
-def smt_translate(rules,sname):
+def smt_translate(rules,sname,storage):
     global s_counter
     global max_instr_size
     global original_opcodes
@@ -2686,10 +2717,19 @@ def smt_translate(rules,sname):
     global original_opcodes
     global int_not0
     global source_name
+    global blocks_json_dict
+
     
     visited = []
     init_globals()
 
+    
+    if storage:
+        add_storage2split()
+
+    
+    blocks_json_dict = {}
+    
     gas_t = 0
     begin = dtimer()
 
@@ -2783,15 +2823,21 @@ def smt_translate(rules,sname):
     print("Blocks Generation EBSO: "+str(end-begin)+"s")
 
 
-def smt_translate_isolate(rule,name):
+def smt_translate_isolate(rule,name,storage):
     global s_counter
     global max_instr_size
     global int_not0
     global source_name
+    global blocks_json_dict
     
     visited = []
     init_globals()
 
+    if storage:
+        add_storage2split()
+    
+    blocks_json_dict = {}
+    
     info_deploy = []
 
     source_name =  name
@@ -2818,6 +2864,7 @@ def smt_translate_isolate(rule,name):
         
     print ("-*-*-*-*-*-*-*-*-*-*-*")
 
+    print("ENTRO AQUI PABLO")
     res = is_optimizable(opcodes,instructions)
     if res and not x[0]:
         print ("no")
@@ -3274,8 +3321,27 @@ def apply_cond_transformation(instr,user_def_instrs,tstack):
             saved_push+=1
             
             return True, []
+
         else:
-            return False, []
+
+            out_var = instr["outpt_sk"][0]
+            is_zero = list(filter(lambda x: out_var in x["inpt_sk"] and x["disasm"] == "ISZERO",user_def_instrs))
+            if len(is_zero)==1:
+                zero = is_zero[0]
+                zero2 = list(filter(lambda x: zero["outpt_sk"][0] in x["inpt_sk"] and x["disasm"] == "ISZERO",user_def_instrs))
+                if len(zero2) == 1 and zero["outpt_sk"][0] not in tstack:
+                    instr["outpt_sk"] = zero2[0]["outpt_sk"]
+                    discount_op+=2
+
+                    gas_saved_op+=6
+
+                    return True, [zero,zero2[0]]
+                else:
+                    return False, []
+            else:
+                
+                return False, []
+            
     
     elif opcode == "AND":
         out_pt = instr["outpt_sk"][0]
@@ -3312,9 +3378,39 @@ def apply_cond_transformation(instr,user_def_instrs,tstack):
                 return False, []
         else:
             return False,[]
+
+    elif opcode == "NOT":
+        out_pt = instr["outpt_sk"][0]
+        not_op = list(filter(lambda x: out_pt in x["inpt_sk"] and x["disasm"] == "NOT", user_def_instrs))
+        if len(or_op)==1:
+            not_instr = not_op[0]
+            out_pt2 = not_instr["outpt_sk"][0]
+            real_var = instr["inpt_sk"]
+
+            i = 0
+            while (i<len(tstack)):
+                if tstack[i].find(out_pt2)!=-1:
+                    tstack[i] = real_var
+
+            for elems in user_def_instrs:
+                if out_pt2 in elems["inpt_sk"]:
+                    pos = elems["inpt_sk"].index(out_pt2)
+                    elems["inpt_sk"][pos] = real_var
+                    
+                discount_op+=2
+                gas_saved_op+=6
+                
+                return True, [not_instr,instr]
+            else:
+                return False, []
+        else:
+            return False,[]
+
     else:
         return False, []
 
+
+    
 def apply_all_comparison(user_def_instrs,tstack):
     modified = True
     while(modified):
@@ -3536,4 +3632,5 @@ def get_evm_block(instructions):
         f.write(blocks[b])
         f.close()
         
-
+def get_sfs_dict():
+    return blocks_json_dict

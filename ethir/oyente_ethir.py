@@ -234,7 +234,7 @@ def run_solidity_analysis(inputs,hashes):
         function_names = hashes[inp["c_name"]]
         # result, return_code = symExec.run(disasm_file=inp['disasm_file'], source_map=inp['source_map'], source_file=inp['source'],cfg = args.control_flow_graph,saco = args.saco,execution = 0, cname = inp["c_name"],hashes = function_names,debug = args.debug,evm_version = evm_version_modifications,cfile = args.cfile,svc=svc_options,go = args.goto)
         try:
-            result, return_code = symExec.run(disasm_file=inp['disasm_file'], disasm_file_init = inp['disasm_file_init'], source_map=inp['source_map'], source_file=inp['source'],cfg = args.control_flow_graph,saco = args.saco,execution = 0, cname = inp["c_name"],hashes = function_names,debug = args.debug,evm_version = evm_version_modifications,cfile = args.cfile,svc=svc_options,go = args.goto, ebso = args.ebso,source_name = args.source)
+            result, return_code = symExec.run(disasm_file=inp['disasm_file'], disasm_file_init = inp['disasm_file_init'], source_map=inp['source_map'], source_file=inp['source'],cfg = args.control_flow_graph,saco = args.saco,execution = 0, cname = inp["c_name"],hashes = function_names,debug = args.debug,evm_version = evm_version_modifications,cfile = args.cfile,svc=svc_options,go = args.goto, ebso = args.ebso,source_name = args.source, storage = args.storage)
             
         except Exception as e:
             traceback.print_exc()
@@ -366,6 +366,8 @@ def analyze_solidity(input_type='solidity', args_i = None):
         args.cfile = False
         args.goto = False
         
+
+        
     x = dtimer()
     is_runtime = not(args.init)
     
@@ -414,7 +416,7 @@ def analyze_isolate_block(args_i = None):
     cname_aux = args.source.split("/")[-1]
     cname = cname_aux.strip().split(".")[0]
     
-    exit_code = rbr_isolate_block.evm2rbr_compiler(contract_name = cname, ebso = args.ebso, block = block_data)
+    exit_code = rbr_isolate_block.evm2rbr_compiler(contract_name = cname, ebso = args.ebso, block = block_data, sto = args.storage)
     return exit_code
 
 def hashes_cond(args):
