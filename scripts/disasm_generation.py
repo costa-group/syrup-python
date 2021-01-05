@@ -91,8 +91,8 @@ def generate_disasm_sol(block_name):
     opcode_sol = {}
     pushed_values_decimal = {}
 
-    pattern1 = re.compile("\(t_([0-9]*) ([0-9]*)\)")
-    pattern2 = re.compile("\(a_([0-9]*) ([0-9]*)\)")
+    pattern1 = re.compile("t_([0-9]*) ([0-9]*)")
+    pattern2 = re.compile("a_([0-9]*) ([0-9]*)")
 
     total_gas = 0
 
@@ -155,8 +155,8 @@ if __name__ == "__main__":
     opcode_sol = {}
     pushed_values_decimal = {}
 
-    pattern1 = re.compile("\(t_([0-9]*) ([0-9]*)\)")
-    pattern2 = re.compile("\(a_([0-9]*) ([0-9]*)\)")
+    pattern1 = re.compile("t_([0-9]*) ([0-9]*)")
+    pattern2 = re.compile("a_([0-9]*) ([0-9]*)")
 
     total_gas = 0
 
