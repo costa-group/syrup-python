@@ -69,12 +69,17 @@ def add_assert(statement):
     return "(assert "+ statement +")"
 
 
-def add_assert_soft(statement, weight, id=None):
+def add_assert_soft(statement, weight, id=None, exclamation=False):
     if id is None:
-        return "(assert-soft " + statement + " :weight " + str(weight) + ")"
+        if not exclamation:
+            return "(assert-soft " + statement + " :weight " + str(weight) + ")"
+        else:
+            return "(assert-soft (! " + statement + " :weight " + str(weight) + "))"
     else:
-        return "(assert-soft " + statement + " :weight " + str(weight) + " :id " + str(id) + ")"
-
+        if not exclamation:
+            return "(assert-soft " + statement + " :weight " + str(weight) + " :id " + str(id) + ")"
+        else:
+            return "(assert-soft (! " + statement + " :weight " + str(weight) + " :id " + str(id) + "))"
 
 # Methods to generate auxiliary statements for
 # SMT-Lib

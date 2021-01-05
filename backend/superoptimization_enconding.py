@@ -48,19 +48,28 @@ def generate_soft_constraints(solver_name, b0, bs, usr_instr, theta_stack, theta
     if solver_name == "z3" or solver_name == "oms":
         paper_soft_constraints(b0, bs, usr_instr, theta_stack, theta_comm, theta_non_comm)
     else:
-        pass
+        paper_soft_constraints(b0, bs, usr_instr, theta_stack, theta_comm, theta_non_comm, True)
 
 
 def generate_cost_functions(solver_name):
     if solver_name == "oms":
         write_encoding(set_minimize_function(label_name))
-    else:
-        pass
 
 
 def generate_configuration_statements(solver_name):
     if solver_name == "oms":
         write_encoding(set_model_true())
+
+
+# Adding necessary statements after check_sat statement.
+# Barcelogic doesn't support (get-objectives) statement.
+def generate_final_statements(solver_name):
+    if solver_name == "z3":
+        write_encoding(get_objectives())
+    elif solver_name == "oms":
+        write_encoding(get_objectives())
+        # If solver is OMS, we allow to generate the model for non-optimal solutions
+        write_encoding(load_objective_model())
 
 
 # Method to generate complete representation
@@ -81,10 +90,7 @@ def generate_smtlib_encoding(b0, bs, usr_instr, variables, initial_stack, final_
     generate_soft_constraints(solver_name, b0, bs, usr_instr, theta_stack, theta_comm, theta_non_comm)
     generate_cost_functions(solver_name)
     write_encoding(check_sat())
-    write_encoding(get_objectives())
-    # If solver is OMS, we allow to generate the model for non-optimal solutions
-    if solver_name == "oms":
-        write_encoding(load_objective_model())
+    generate_final_statements(solver_name)
     # get_model()
     for j in range(b0):
         write_encoding(get_value(t(j)))
