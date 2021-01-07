@@ -1152,6 +1152,7 @@ def compute_binary(expression,level):
     funct = expression[2]
 
     r, vals = all_integers([v0,v1])
+    
     if r and funct in ["+","-","*","/","^","and","or","xor","%","eq","gt","lt"]:
         print ("COMPUTE")
         exp_str = str(funct)+" "+str(vals[0])+" "+str(vals[1])+","+str(level)
@@ -1177,6 +1178,7 @@ def compute_binary(expression,level):
         already_considered.append(exp_str)
         
         return True, val
+        
     else:
         return False, expression
 
@@ -2983,6 +2985,12 @@ def apply_transform(instr):
 
             discount_op+=1
             return inp_vars[0]
+        elif inp_vars[0].strip() == inp_vars[1].strip():
+            saved_push+=1
+            gas_saved_op+=3
+
+            discount_op+=1
+            return 0
         else:
             return -1
         
@@ -3044,7 +3052,7 @@ def apply_transform(instr):
         else:
             return -1
 
-    elif opcode == "GT":
+    elif opcode == "GT" or opcode == "SGT":
         inp_vars = instr["inpt_sk"]
         if inp_vars[0] == 0:
             saved_push+=2
@@ -3052,16 +3060,28 @@ def apply_transform(instr):
 
             discount_op+=1
             return 0
+        elif inp_vars[0] == inp_vars[1]:
+            discount_op+=1
+            saved_push+=2
+            gas_saved_op+=3
+            
+            return 0
         else:
             return -1
 
-    elif opcode == "LT":
+    elif opcode == "LT" or opcode == "SLT":
         inp_vars = instr["inpt_sk"]
         if inp_vars[1] == 0:
             saved_push+=2
             gas_saved_op+=3
 
             discount_op+=1
+            return 0
+        elif inp_vars[0] == inp_vars[1]:
+            discount_op+=1
+            saved_push+=2
+            gas_saved_op+=3
+            
             return 0
         else:
             return -1
@@ -3234,7 +3254,9 @@ def apply_cond_transformation(instr,user_def_instrs,tstack):
     
         out_var = instr["outpt_sk"][0]
         is_zero = list(filter(lambda x: out_var in x["inpt_sk"] and x["disasm"] == "ISZERO",user_def_instrs))
-     
+
+        is_eq = list(filter(lambda x: out_var in x["inpt_sk"] and x["disasm"] == "EQ",user_def_instrs))
+        
         if len(is_zero)==1:
          
             zero = is_zero[0]
@@ -3251,6 +3273,18 @@ def apply_cond_transformation(instr,user_def_instrs,tstack):
                 return True, [zero,zero2[0]]
             else:
                 return False, []
+
+        elif len(is_eq) == 1:
+            eq = is_eq[0]
+
+            if 1 in eq["inpt_sk"]:
+                instr["outpt_sk"] = eq["outpt_sk"]
+                discount_op+=2
+
+                saved_push+=1
+                gas_saved_op+=3
+
+                return True, [eq]
         else:
                 
             return False, []
