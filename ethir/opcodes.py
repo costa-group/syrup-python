@@ -231,7 +231,7 @@ def get_ins_cost(opcode,params=None):
         return 0
     return 0
 
-def get_ebso_cost(opcode,params=None):
+def get_syrup_cost(opcode,params=None):
     if opcode in Wzero:
         return GCOST["Gzero"]
     elif opcode in Wbase:

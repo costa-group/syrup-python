@@ -6,7 +6,7 @@ import os
 from timeit import default_timer as dtimer
 
 
-ebso_path = "/tmp/costabs/jsons"
+syrup_path = "/tmp/costabs/jsons"
 costabs_path = "/tmp/costabs/"
 tmp_path = "/tmp/"
 
@@ -1620,14 +1620,14 @@ def generate_json(block_name,ss,ts,max_ss_idx1,gas,subblock = None):
         block_nm = block_name
 
     if "jsons" not in os.listdir(costabs_path):
-        os.mkdir(ebso_path)
+        os.mkdir(syrup_path)
 
-    # if block_nm not in os.listdir(ebso_path):
-    #     os.mkdir(ebso_path+"/"+block_nm)
+    # if block_nm not in os.listdir(syrup_path):
+    #     os.mkdir(syrup_path+"/"+block_nm)
 
     blocks_json_dict[block_nm] = json_dict
     
-    with open(ebso_path+"/"+source_name+"_"+block_nm+"_input.json","w") as json_file:
+    with open(syrup_path+"/"+source_name+"_"+block_nm+"_input.json","w") as json_file:
         json.dump(json_dict,json_file)
 
 
@@ -2519,7 +2519,7 @@ def get_block_cost(opcodes_list,opcodes_guard):
         if op == "MULMOD":
             gas = 10
         else:
-            gas = opcodes.get_ebso_cost(op.strip())
+            gas = opcodes.get_syrup_cost(op.strip())
         val+=gas
     return val
 
@@ -2822,7 +2822,7 @@ def smt_translate(rules,sname,storage):
     # for f in info_deploy:
     #     print f
     end = dtimer()
-    print("Blocks Generation EBSO: "+str(end-begin)+"s")
+    print("Blocks Generation SYRUP: "+str(end-begin)+"s")
 
 
 def smt_translate_isolate(rule,name,storage):
@@ -2886,7 +2886,7 @@ def smt_translate_isolate(rule,name,storage):
     # for f in info_deploy:
     #     print f
     end = dtimer()
-    print("Blocks Generation EBSO: "+str(end-begin)+"s")
+    print("Blocks Generation SYRUP: "+str(end-begin)+"s")
 
 def apply_transform(instr):
     global discount_op
@@ -3658,9 +3658,9 @@ def get_evm_block(instructions):
     if "costabs" not in os.listdir(tmp_path):
         os.mkdir(costabs_path)
     if "blocks" not in os.listdir(costabs_path):
-        os.mkdir(ebso_path)
+        os.mkdir(syrup_path)
     for b in blocks:
-        bl_path = ebso_path+"/block"+str(b)
+        bl_path = syrup_path+"/block"+str(b)
         os.mkdir(bl_path)
         f = open(bl_path+"/block_"+str(b)+".bl","w")
         f.write(blocks[b])

@@ -11,7 +11,7 @@ import shlex
 import subprocess
 import argparse
 from oyente_ethir import clean_dir, analyze_disasm_bytecode, analyze_bytecode, analyze_solidity, analyze_isolate_block, has_dependencies_installed
-from ebso_optimization import get_sfs_dict
+from syrup_optimization import get_sfs_dict
 from python_syrup import execute_syrup_backend
 from disasm_generation import generate_disasm_sol
 from sfs_verify import verify_sfs

@@ -16,7 +16,7 @@ from utils import run_command, process_hashes, process_isolate_block
 from input_helper import InputHelper
 import traceback
 
-ebso_path = "/tmp/costabs/jsons/"
+syrup_path = "/tmp/costabs/jsons/"
 costabs_path = "/tmp/costabs/"
 tmp_path = "/tmp/"
 
@@ -83,9 +83,9 @@ def clean_dir():
 
 
         if "jsons" in os.listdir(costabs_path):
-            for e in os.listdir(ebso_path):
-                os.remove(ebso_path+"/"+e)
-            os.rmdir(ebso_path)
+            for e in os.listdir(syrup_path):
+                os.remove(syrup_path+"/"+e)
+            os.rmdir(syrup_path)
 
         if "disasms" in os.listdir(costabs_path):
             for e in os.listdir(costabs_path+"/disasms"):
@@ -157,7 +157,7 @@ def analyze_disasm_bytecode(args_i = None):
 
     if args_i != None:
         args = args_i
-        args.ebso = True
+        args.syrup = True
         args.optimize = None
         args.cfile = False
         args.goto = False
@@ -171,7 +171,7 @@ def analyze_disasm_bytecode(args_i = None):
         # if args.invalid:
         #     svc_options["invalid"]=args.invalid
 
-        result, exit_code = symExec.run(disasm_file=args.source,cfg = args.control_flow_graph,saco = args.saco,debug = args.debug,evm_version = evm_version_modifications,cfile = args.cfile,svc=svc_options,go = args.goto, ebso = args.ebso)
+        result, exit_code = symExec.run(disasm_file=args.source,cfg = args.control_flow_graph,saco = args.saco,debug = args.debug,evm_version = evm_version_modifications,cfile = args.cfile,svc=svc_options,go = args.goto, syrup = args.syrup)
     else:
         exit_code = -1
         print("Option Error: --verify, --goto or --invalid options are only applied to c translation.\n")
@@ -205,7 +205,7 @@ def analyze_bytecode(args_i = None):
         # if args.invalid:
         #     svc_options["invalid"]=args.invalid
         
-        result, exit_code = symExec.run(disasm_file=inp['disasm_file'],cfg = args.control_flow_graph,saco = args.saco,debug = args.debug,evm_version = evm_version_modifications,cfile = args.cfile,svc=svc_options,go = args.goto, ebso = args.ebso,source_name = args.source)
+        result, exit_code = symExec.run(disasm_file=inp['disasm_file'],cfg = args.control_flow_graph,saco = args.saco,debug = args.debug,evm_version = evm_version_modifications,cfile = args.cfile,svc=svc_options,go = args.goto, syrup = args.syrup,source_name = args.source)
         helper.rm_tmp_files()
     else:
         exit_code = -1
@@ -234,7 +234,7 @@ def run_solidity_analysis(inputs,hashes):
         function_names = hashes[inp["c_name"]]
         # result, return_code = symExec.run(disasm_file=inp['disasm_file'], source_map=inp['source_map'], source_file=inp['source'],cfg = args.control_flow_graph,saco = args.saco,execution = 0, cname = inp["c_name"],hashes = function_names,debug = args.debug,evm_version = evm_version_modifications,cfile = args.cfile,svc=svc_options,go = args.goto)
         try:
-            result, return_code = symExec.run(disasm_file=inp['disasm_file'], disasm_file_init = inp['disasm_file_init'], source_map=inp['source_map'], source_file=inp['source'],cfg = args.control_flow_graph,saco = args.saco,execution = 0, cname = inp["c_name"],hashes = function_names,debug = args.debug,evm_version = evm_version_modifications,cfile = args.cfile,svc=svc_options,go = args.goto, ebso = args.ebso,source_name = args.source, storage = args.storage)
+            result, return_code = symExec.run(disasm_file=inp['disasm_file'], disasm_file_init = inp['disasm_file_init'], source_map=inp['source_map'], source_file=inp['source'],cfg = args.control_flow_graph,saco = args.saco,execution = 0, cname = inp["c_name"],hashes = function_names,debug = args.debug,evm_version = evm_version_modifications,cfile = args.cfile,svc=svc_options,go = args.goto, syrup = args.syrup,source_name = args.source, storage = args.storage)
             
         except Exception as e:
             traceback.print_exc()
@@ -254,7 +254,7 @@ def run_solidity_analysis(inputs,hashes):
             function_names = hashes[inp["c_name"]]
             #logging.info("contract %s:", inp['contract'])
             try:            
-                result, return_code = symExec.run(disasm_file=inp['disasm_file'], disasm_file_init = inp['disasm_file_init'], source_map=inp['source_map'], source_file=inp['source'],cfg = args.control_flow_graph,saco = args.saco,execution = i,cname = inp["c_name"],hashes = function_names,debug = args.debug,evm_version = evm_version_modifications,cfile = args.cfile,svc=svc_options,go = args.goto, ebso = args.ebso)
+                result, return_code = symExec.run(disasm_file=inp['disasm_file'], disasm_file_init = inp['disasm_file_init'], source_map=inp['source_map'], source_file=inp['source'],cfg = args.control_flow_graph,saco = args.saco,execution = i,cname = inp["c_name"],hashes = function_names,debug = args.debug,evm_version = evm_version_modifications,cfile = args.cfile,svc=svc_options,go = args.goto, syrup = args.syrup)
                 
             except Exception as e:
                 traceback.print_exc()
@@ -361,7 +361,7 @@ def analyze_solidity(input_type='solidity', args_i = None):
 
     if args_i != None:
         args = args_i
-        args.ebso = True
+        args.syrup = True
         args.optimize = None
         args.cfile = False
         args.goto = False
@@ -402,7 +402,7 @@ def analyze_isolate_block(args_i = None):
 
     if args_i != None:
         args = args_i
-        args.ebso = True
+        args.syrup = True
         args.optimize = None
         args.cfile = False
         args.goto = False
@@ -416,7 +416,7 @@ def analyze_isolate_block(args_i = None):
     cname_aux = args.source.split("/")[-1]
     cname = cname_aux.strip().split(".")[0]
     
-    exit_code = rbr_isolate_block.evm2rbr_compiler(contract_name = cname, ebso = args.ebso, block = block_data, sto = args.storage)
+    exit_code = rbr_isolate_block.evm2rbr_compiler(contract_name = cname, syrup = args.syrup, block = block_data, sto = args.storage)
     return exit_code
 
 def hashes_cond(args):
@@ -482,8 +482,9 @@ def main():
     parser.add_argument("-f", "--fields", type=str, help="Fields to be optimized by Gasol")
     parser.add_argument("-cname", "--contract_name", type=str, help="Name of the contract that is going to be optimized")
     parser.add_argument("-bl", "--block", type=str, help="block to be optimized (GASOL)")
-    parser.add_argument("-ebso", "--ebso", help="Generate the info for EBSO in a json file", action = "store_true")
+    parser.add_argument("-syrup", "--syrup", help="Generate the info for SYRUP in a json file", action = "store_true")
     parser.add_argument("-isb", "--isolate_block", help="Generate the RBR for an isolate block", action = "store_true")
+    parser.add_argument( "-storage", "--storage",                 help="Split using SSTORE and MSTORE", action="store_true")
     parser.add_argument( "-hashes", "--hashes",             help="Generate a file that contains the functions of the solidity file", action="store_true")
     args = parser.parse_args()
 
