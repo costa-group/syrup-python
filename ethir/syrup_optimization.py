@@ -382,7 +382,7 @@ def generate_sload_mload(load_ins,instructions,source_stack):
 
         elem = ((new_vars[0],func),1)
         new_uvar, defined = is_already_defined(elem)
-        return new_uvar
+        return new_uvar,elem
             
     else:
         if new_vars[0] not in zero_ary:
@@ -394,7 +394,7 @@ def generate_sload_mload(load_ins,instructions,source_stack):
 
         elem = ((val,funct),1)
         new_uvar, defined = is_already_defined(elem)
-        return new_uvar
+        return new_uvar,elem
 
 
 
@@ -1318,32 +1318,38 @@ def generate_storage_info(instructions,source_stack):
     sstores = list(sstore_seq)
     last_mload = ""
     mstores = list(mstore_seq)
+
+    storage_order = []
+    memory_order = []
     
     for x in range(0,len(instructions)):
         if instructions[x].find("sload")!=-1:
-            exp = generate_sload_mload(instructions[x],instructions[x-1::-1],source_stack)
+            exp,r = generate_sload_mload(instructions[x],instructions[x-1::-1],source_stack)
             last_sload = exp
             print("MIRA UN SLOAD")
             print(exp)
-
+            storage_order.append(r)
+            
         elif instructions[x].find("sstore")!=-1 and last_sload != "" and sload_relative_pos.get(last_sload,[])==[]:
             sload_relative_pos[last_sload]=sstores.pop(0)
+            storage_order.append(sload_relative_pos[last_sload])
             
         elif instructions[x].find("mload")!=-1:
-            exp = generate_sload_mload(instructions[x],instructions[x-1::-1],source_stack)
+            exp,r = generate_sload_mload(instructions[x],instructions[x-1::-1],source_stack)
             last_mload = exp
             print("MIRA UN MLOAD")
             print(exp)
-
+            memory_order.append(r)
+            
         elif instructions[x].find("mstore")!=-1 and last_mload != "" and mload_relative_pos.get(last_mload,[])==[]:
             mload_relative_pos[last_mload]=mstores.pop(0)
-
+            memory_order.append(mload_relative_pos[last_mload])
             
     print("FINAL SSTORE:")
     print(sstore_seq)
     print("FINAL SLOAD:")
     print(sload_relative_pos)
-    
+    print(storage_order)
         
 def generate_source_stack_variables(idx):
     ss_list = []
@@ -3668,3 +3674,16 @@ def get_evm_block(instructions):
         
 def get_sfs_dict():
     return blocks_json_dict
+
+
+#For updating sloads and mload variables
+def replace_uvar_load_instrs(old_uvar, new_uvar):
+    global variable_content
+
+    for v in variable_content:
+        if variable_content[v] == old_uvar:
+            variable_content[v] = new_uvar
+
+    for u in u_dict:
+        if u == old_uvar:
+            del u_dict[u]
