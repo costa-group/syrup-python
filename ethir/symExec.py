@@ -37,7 +37,7 @@ UNSIGNED_BOUND_NUMBER = 2**256 - 1
 CONSTANT_ONES_159 = BitVecVal((1 << 160) - 1, 256)
 
 Assertion = namedtuple('Assertion', ['pc', 'model'])
-ebso_path = "/tmp/costabs/blocks"
+syrup_path = "/tmp/costabs/blocks"
 costabs_path = "/tmp/costabs/"
 tmp_path = "/tmp/"
 
@@ -262,8 +262,8 @@ def initGlobalVars():
     global source_n
     source_n = ""
     
-    global ebso_opt
-    ebso_opt = ""
+    global syrup_opt
+    syrup_opt = ""
     
 def is_testing_evm():
     return global_params.UNIT_TEST != 0
@@ -322,7 +322,7 @@ def build_cfg_and_analyze(evm_version):
         tokens = tokenize.generate_tokens(disasm_file.readline)
         collect_vertices(tokens)
         construct_bb()
-        # if ebso_opt:
+        # if syrup_opt:
         #     get_evm_block()
         construct_static_edges()
         #print_cfg()
@@ -3318,7 +3318,7 @@ def get_scc(edges):
         scc_multiple.update(scc)
         return scc_multiple
         
-def run(disasm_file=None,disasm_file_init=None, source_map=None,source_map_init = None, source_file=None, cfg=None, saco = None, execution = None,cname = None, hashes = None, debug = None,ms_unknown=False,evm_version = False,cfile = None,svc = None,go = None,opt = None, ebso = None,source_name = None, storage = None):    
+def run(disasm_file=None,disasm_file_init=None, source_map=None,source_map_init = None, source_file=None, cfg=None, saco = None, execution = None,cname = None, hashes = None, debug = None,ms_unknown=False,evm_version = False,cfile = None,svc = None,go = None,opt = None, syrup = None,source_name = None, storage = None):    
     global g_disasm_file
     global g_source_file
     global g_src_map
@@ -3330,7 +3330,7 @@ def run(disasm_file=None,disasm_file_init=None, source_map=None,source_map_init 
     global name
     global public_fields
     global invalid_option
-    global ebso_opt
+    global syrup_opt
     global source_n
 
     if disasm_file_init != None:
@@ -3346,7 +3346,7 @@ def run(disasm_file=None,disasm_file_init=None, source_map=None,source_map_init 
     source_info = {}
     
     name = cname
-    ebso_opt = ebso
+    syrup_opt = syrup
 
     if source_name != None:
         source_n = source_name
@@ -3442,7 +3442,7 @@ def run(disasm_file=None,disasm_file_init=None, source_map=None,source_map_init 
         source_info["source_map"] = source_map
         source_info["name_state_variables"] = mapping_state_variables
 
-        rbr_rules = rbr.evm2rbr_compiler(blocks_input = vertices,stack_info = stack_h, block_unbuild = blocks_to_create,saco_rbr = saco,c_rbr = cfile, exe = execution, contract_name = cname, component = component_of_blocks, oyente_time = oyente_t,scc = scc,svc_labels = svc,gotos = go,fbm = f2blocks, source_info = source_info,ebso = ebso_opt,sname = s_name, sto = storage)
+        rbr_rules = rbr.evm2rbr_compiler(blocks_input = vertices,stack_info = stack_h, block_unbuild = blocks_to_create,saco_rbr = saco,c_rbr = cfile, exe = execution, contract_name = cname, component = component_of_blocks, oyente_time = oyente_t,scc = scc,svc_labels = svc,gotos = go,fbm = f2blocks, source_info = source_info,syrup = syrup_opt,sname = s_name, sto = storage)
 
 
     except Exception as e:
@@ -3490,9 +3490,9 @@ def get_evm_block():
     if "costabs" not in os.listdir(tmp_path):
         os.mkdir(costabs_path)
     if "jsons" not in os.listdir(costabs_path):
-        os.mkdir(ebso_path)
+        os.mkdir(syrup_path)
     for b in blocks:
-        bl_path = ebso_path+"/block"+str(b)
+        bl_path = syrup_path+"/block"+str(b)
         os.mkdir(bl_path)
         f = open(bl_path+"/block_"+str(b)+".bl","w")
         f.write(blocks[b])

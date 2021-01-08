@@ -12,7 +12,7 @@ from timeit import default_timer as dtimer
 from graph_scc import get_entry_scc
 import traceback
 
-from ebso_optimization import smt_translate
+from syrup_optimization import smt_translate
 
 costabs_path = "/tmp/costabs/" 
 tmp_path = "/tmp/"
@@ -135,8 +135,8 @@ def init_globals():
     global c_words
     c_words = ["char","for","index","y1","log","rindex","round","exp"]
 
-    global ebso_flag
-    ebso_flag = False
+    global syrup_flag
+    syrup_flag = False
 
     global mem_flow_info
     mem_flow_info = {}
@@ -364,12 +364,12 @@ def translateOpcodes0(opcode,index_variables):
         v0_aux, updated_variables = get_consume_variable(index_variables)
         v0, updated_variables = get_consume_variable(updated_variables)
         v1, updated_variables = get_new_variable(updated_variables)
-        if ebso_flag:
+        if syrup_flag:
             instr = v1+" = signextend("+v0_aux+","+v0+")"
         else:
             instr = v1+" = "+v0
     elif opcode == "STOP":
-        if ebso_flag:
+        if syrup_flag:
             instr = "stop(s("+str(index_variables)+"))"
         else:
             instr = "skip"
@@ -550,7 +550,7 @@ def translateOpcodes30(opcode, value, index_variables,block):
         v0, updated_variables = get_consume_variable(index_variables)
         v1, updated_variables = get_new_variable(updated_variables)
         val = str(value).split("_")
-        if val[0] == "Id" or ebso_flag:
+        if val[0] == "Id" or syrup_flag:
             instr = v1+" = calldataload"
             update_bc_in_use("calldataload",block)
         elif str(value).startswith("/*"):
@@ -577,7 +577,7 @@ def translateOpcodes30(opcode, value, index_variables,block):
         v1, updated_variables = get_consume_variable(updated_variables)
         v2, updated_variables = get_consume_variable(updated_variables)
 
-        if ebso_flag:
+        if syrup_flag:
             instr = "calldatacopy("+v0+","+v1+","+v2+")"  
         else:
             instr = ""
@@ -590,7 +590,7 @@ def translateOpcodes30(opcode, value, index_variables,block):
         v1, updated_variables = get_consume_variable(updated_variables)
         v2, updated_variables = get_consume_variable(updated_variables)
 
-        if ebso_flag:
+        if syrup_flag:
             instr = "codecopy("+v0+","+v1+","+v2+")"  
         else:
             instr = ""
@@ -616,7 +616,7 @@ def translateOpcodes30(opcode, value, index_variables,block):
         v2, updated_variables = get_consume_variable(updated_variables)
         v3, updated_variables = get_consume_variable(updated_variables)
 
-        if ebso_flag:
+        if syrup_flag:
             instr = "extcodecopy("+v0+","+v1+","+v2++","+v3+")"  
         else:
             instr = ""
@@ -701,7 +701,7 @@ def translateOpcodes50(opcode, value, index_variables,block,state_names):
     elif opcode == "MLOAD":
         _ , updated_variables = get_consume_variable(index_variables)
         v1, updated_variables = get_new_variable(updated_variables)
-        if ebso_flag:
+        if syrup_flag:
             instr = v1+" = mload("+v1+")"
 
             try:
@@ -726,7 +726,7 @@ def translateOpcodes50(opcode, value, index_variables,block,state_names):
         v0 , updated_variables = get_consume_variable(index_variables)
         v1 , updated_variables = get_consume_variable(updated_variables)
 
-        if ebso_flag:
+        if syrup_flag:
             instr = "mstore("+v0+","+v1+")"
 
             try:
@@ -753,7 +753,7 @@ def translateOpcodes50(opcode, value, index_variables,block,state_names):
         v0 , updated_variables = get_consume_variable(index_variables)
         v1 , updated_variables = get_consume_variable(updated_variables)
 
-        if ebso_flag:
+        if syrup_flag:
             instr = "mstore8("+v0+","+v1+")"
         else:
             try:
@@ -766,7 +766,7 @@ def translateOpcodes50(opcode, value, index_variables,block,state_names):
     elif opcode == "SLOAD":
         _ , updated_variables = get_consume_variable(index_variables)
         v1, updated_variables = get_new_variable(updated_variables)
-        if ebso_flag:
+        if syrup_flag:
             instr = v1+" = sload("+v1+")"
 
             try:
@@ -801,7 +801,7 @@ def translateOpcodes50(opcode, value, index_variables,block,state_names):
     elif opcode == "SSTORE":
         v0 , updated_variables = get_consume_variable(index_variables)
         v1 , updated_variables = get_consume_variable(updated_variables)
-        if ebso_flag:
+        if syrup_flag:
             instr = "sstore("+v0+","+v1+")"
 
             try:
@@ -880,7 +880,7 @@ def translateOpcodesA(opcode, index_variables):
         v0, updated_variables = get_consume_variable(index_variables)
         v1, updated_variables = get_consume_variable(updated_variables)
 
-        if ebso_flag:
+        if syrup_flag:
           instr = "log0("+v0+","+v1+")"  
         else:
             instr = ""
@@ -889,7 +889,7 @@ def translateOpcodesA(opcode, index_variables):
         v1, updated_variables = get_consume_variable(updated_variables)
         v2, updated_variables = get_consume_variable(updated_variables)
 
-        if ebso_flag:
+        if syrup_flag:
           instr = "log1("+v0+","+v1+","+v2+")"  
         else:
             instr = ""
@@ -900,7 +900,7 @@ def translateOpcodesA(opcode, index_variables):
         v2, updated_variables = get_consume_variable(updated_variables)
         v3, updated_variables = get_consume_variable(updated_variables)
 
-        if ebso_flag:
+        if syrup_flag:
           instr = "log2("+v0+","+v1+","+v2+","+v3+")"  
         else:
             instr = ""
@@ -912,7 +912,7 @@ def translateOpcodesA(opcode, index_variables):
         v3, updated_variables = get_consume_variable(updated_variables)
         v4, updated_variables = get_consume_variable(updated_variables)
 
-        if ebso_flag:
+        if syrup_flag:
           instr = "log3("+v0+","+v1+","+v2+","+v3+","+v4+")"  
         else:
             instr = ""
@@ -925,7 +925,7 @@ def translateOpcodesA(opcode, index_variables):
         v4, updated_variables = get_consume_variable(updated_variables)
         v5, updated_variables = get_consume_variable(updated_variables)
 
-        if ebso_flag:
+        if syrup_flag:
           instr = "log4("+v0+","+v1+","+v2+","+v3+","+v4+","+v5+")"  
         else:
             instr = ""
@@ -948,7 +948,7 @@ def translateOpcodesF(opcode, index_variables, addr):
         v01, updated_variables = get_consume_variable(updated_variables)
         v02, updated_variables = get_consume_variable(updated_variables)
         v1, updated_variables = get_new_variable(updated_variables)
-        if ebso_flag:
+        if syrup_flag:
             instr = v1+" = create("+v00+","+v01+","+v02+")"
         else:
             instr=""
@@ -960,7 +960,7 @@ def translateOpcodesF(opcode, index_variables, addr):
         v03, updated_variables = get_consume_variable(updated_variables)
         v1, updated_variables = get_new_variable(updated_variables)
 
-        if ebso_flag:
+        if syrup_flag:
             instr = v1+" = create2("+v00+","+v01+","+v02+","+v03+")"
         else:
             instr=""
@@ -975,7 +975,7 @@ def translateOpcodesF(opcode, index_variables, addr):
         v06, updated_variables = get_consume_variable(updated_variables)
         v1, updated_variables = get_new_variable(updated_variables)
 
-        if ebso_flag:
+        if syrup_flag:
             instr = v1+" = call("+v00+","+v01+","+v02+","+v03+","+v04+","+v05+","+v06+")"  
         else:
             instr = v1 +" = 1"
@@ -990,7 +990,7 @@ def translateOpcodesF(opcode, index_variables, addr):
         v06, updated_variables = get_consume_variable(updated_variables)
         v1, updated_variables = get_new_variable(updated_variables)
 
-        if ebso_flag:
+        if syrup_flag:
             instr = v1+" = callcode("+v00+","+v01+","+v02+","+v03+","+v04+","+v05+","+v06+")"  
         else:
             instr = v1 +" = 1"
@@ -999,7 +999,7 @@ def translateOpcodesF(opcode, index_variables, addr):
         # var = get_local_variable(addr)
         v0, updated_variables = get_consume_variable(index_variables)
         v1, updated_variables = get_consume_variable(updated_variables)
-        if ebso_flag:
+        if syrup_flag:
             instr = "return("+v0+","+v1+")"
         # instr = "r "+var
         else:
@@ -1007,12 +1007,12 @@ def translateOpcodesF(opcode, index_variables, addr):
     elif opcode == "REVERT":
         v0, updated_variables = get_consume_variable(index_variables)
         v1, updated_variables = get_consume_variable(updated_variables)
-        if ebso_flag:
+        if syrup_flag:
             instr = "revert("+v0+","+v1+")"
         else:
             instr = ""
     elif opcode == "ASSERTFAIL":
-        if ebso_flag:
+        if syrup_flag:
             instr = "assertfail(s("+str(index_variables)+"))"
         else:
             instr = ""
@@ -1026,7 +1026,7 @@ def translateOpcodesF(opcode, index_variables, addr):
         v05, updated_variables = get_consume_variable(updated_variables)
         v1, updated_variables = get_new_variable(updated_variables)
 
-        if ebso_flag :
+        if syrup_flag :
             instr = v1+" = delegatecall("+v00+","+v01+","+v02+","+v03+","+v04+","+v05+")"  
         else:
             instr = v1 +" = 1"
@@ -1040,7 +1040,7 @@ def translateOpcodesF(opcode, index_variables, addr):
         v05, updated_variables = get_consume_variable(updated_variables)
         v1, updated_variables = get_new_variable(updated_variables)
 
-        if ebso_flag :
+        if syrup_flag :
             instr = v1+" = staticcall("+v00+","+v01+","+v02+","+v03+","+v04+","+v05+")"  
         else:
             instr = v1 +" = 1"
@@ -1072,7 +1072,7 @@ def translateOpcodesF(opcode, index_variables, addr):
         v06, updated_variables = get_consume_variable(updated_variables)
         v1, updated_variables = get_new_variable(updated_variables)
 
-        if ebso_flag:
+        if syrup_flag:
             instr = v1+" = callstatic("+v00+","+v01+","+v02+","+v03+","+v04+","+v05+","+v06+")"  
         else:
             instr = v1 +" = 1"
@@ -1082,7 +1082,7 @@ def translateOpcodesF(opcode, index_variables, addr):
     elif opcode == "SUICIDE":
         v0, updated_variables = get_consume_variable(index_variables)
         
-        if ebso_flag:
+        if syrup_flag:
             instr = "suicide("+v0+")"
         else:
             instr = ""
@@ -1174,7 +1174,7 @@ def translateOpcodesZ(opcode, index_variables,block):
         v0, updated_variables = get_consume_variable(index_variables)
         v1, updated_variables = get_consume_variable(updated_variables)
         v2, updated_variables = get_consume_variable(updated_variables)
-        if ebso_flag:
+        if syrup_flag:
             instr = "returndatacopy("+v0+","+v1+","+v2+")"
         else:
             instr = ""
@@ -1711,13 +1711,13 @@ Main function that build the rbr representation from the CFG of a solidity file.
 -saco_rbr is True if it has to generate the RBR in SACO syntax.
 -exe refers to the number of smart contracts analyzed.
 '''
-def evm2rbr_compiler(blocks_input = None, stack_info = None, block_unbuild = None,saco_rbr = None,c_rbr = None, exe = None, contract_name = None, component = None, oyente_time = 0,scc = None,svc_labels = None,gotos=None,fbm = [], source_info = None,ebso = None,sname = None, sto = False):
+def evm2rbr_compiler(blocks_input = None, stack_info = None, block_unbuild = None,saco_rbr = None,c_rbr = None, exe = None, contract_name = None, component = None, oyente_time = 0,scc = None,svc_labels = None,gotos=None,fbm = [], source_info = None,syrup = None,sname = None, sto = False):
     global rbr_blocks
     global stack_index
     global verticesd
     global c_trans
     global all_state_vars
-    global ebso_flag
+    global syrup_flag
     
     init_globals()
     c_trans = c_rbr
@@ -1736,7 +1736,7 @@ def evm2rbr_compiler(blocks_input = None, stack_info = None, block_unbuild = Non
     blocks_dict = blocks_input
     vertices = blocks_input
 
-    ebso_flag = ebso
+    syrup_flag = syrup
     
     if svc_labels.get("verify",False):
         invalid_options = svc_labels.get("invalid",False)
@@ -1782,7 +1782,7 @@ def evm2rbr_compiler(blocks_input = None, stack_info = None, block_unbuild = Non
                         l = rbr_blocks["block"+str(jumps_to)][0].build_local_vars()
                         r.set_call_to_info((f,bc,l))
 
-                    r.update_rule(ebso)
+                    r.update_rule(syrup)
 
 
             rbr = sorted(rbr_blocks.values(),key = orderRBR)
@@ -1797,7 +1797,7 @@ def evm2rbr_compiler(blocks_input = None, stack_info = None, block_unbuild = Non
                 write_info_lines(rbr,source_map,contract_name)
                
 
-            if ebso:
+            if syrup:
                 smt_translate(rbr,sname,sto)
                 
             # if saco_rbr:
