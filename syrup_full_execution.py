@@ -60,11 +60,15 @@ def run_command(cmd):
     return solc_p.communicate()[0].decode()
 
 def get_solver_to_execute(smt_file):
+    global args
 
     if args.solver == "z3":
-        return z3_exec + " -smt2 " + smt_file + " -T:"+str(tout)
+        return z3_exec + " -smt2 " + smt_file
     elif args.solver == "barcelogic":
-        return bclt_exec + " -file " + smt_file
+        if args.tout is None:
+            return bclt_exec + " -file " + smt_file
+        else:
+            return bclt_exec + " -file " + smt_file + " -tlimit " + str(tout)
     else:
         return oms_exec + " " + smt_file
 
@@ -127,7 +131,8 @@ def main():
                     action='store_true', dest='at_most')
     parser.add_argument('-pushed-once', help='add a constraint to indicate that each pushed value is pushed at least once',
                     action='store_true', dest='pushed_once')
-
+    parser.add_argument("-tout", metavar='timeout', action='store', type=int, help="Timeout in seconds. "
+                                                                               "Works only for z3 and oms (so far)")
 
     args = parser.parse_args()
 
