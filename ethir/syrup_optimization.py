@@ -1,6 +1,6 @@
 from rbr_rule import RBRRule
 import json
-from utils import is_integer,all_integers
+from utils import is_integer,all_integers,all_symbolic
 import  opcodes
 import os
 from timeit import default_timer as dtimer
@@ -1349,6 +1349,7 @@ def generate_storage_info(instructions,source_stack):
     print(sstore_seq)
     print("FINAL SLOAD:")
     print(sload_relative_pos)
+    print("STORAGE ORDER:")
     print(storage_order)
         
 def generate_source_stack_variables(idx):
@@ -3687,3 +3688,62 @@ def replace_uvar_load_instrs(old_uvar, new_uvar):
     for u in u_dict:
         if u == old_uvar:
             del u_dict[u]
+
+
+def infer_independence(instructions,resource):
+    for i in xrange(len(instructions)):
+        suc = []
+        ins = instructions[i]
+        for rest_ins in instructions[i:]:
+            r = are_independent(ins,rest_ins,suc)
+            if not r:
+                suc.append(rest_ins)
+
+        if suc == []:
+            resource[ins] = suc
+
+
+'''If A = INSTRUCTION_A(x,_) and B = INSTRUCTION_B(y,_) A and B are
+independent if: 
+
+- x and y are numeric and x!=y
+
+ - if x and y are simbolyc and A and B are the same instruction they
+are independent if there are not a new instruction C =
+INSTRUCTION_C(z,_) such that z == x
+
+- if they are simbolic, in order to be sound they are dependent (it
+  can be improve with a flow analysis)
+
+The instructions are of the form 
+
+'''         
+def are_independent(instructionA, instructionB, dependences):
+    argA = instructionA[0][0]
+    argB = instructionB[0][0]
+
+    insA = instructionA[0][-1]
+    insB = instructionB[0][-1]
+
+
+    if argA == argB:
+        if insA != insB:
+            return False
+        else:
+            pred = list(filter(lambda x: x[0][-1]!=insA and x[0][0] == argA,dependences))
+            
+            return True if len(pred) == 0 else False
+        
+    
+    else: # if we are here, they are different.
+        if all_symbolic([argA,argB]):
+            return False
+
+        else:
+            return True
+    #         s1 = variable_content[argA]
+    #         s2 = variable_content[argB]
+            
+    #     else:
+    #         return True    
+            

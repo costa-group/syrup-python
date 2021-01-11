@@ -854,6 +854,15 @@ def all_integers(variables):
         return True, int_vals
     except:
         return False,variables
+
+def all_symbolic(variables):
+    for v in variables:
+        try:
+            x = int(v)
+            return False
+        except:
+            sym = True
+    return True
 # '''
 # It computes the index of each state variable to know its solidity name
 # state variable is a list with the state variables g0..gn
