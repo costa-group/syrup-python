@@ -1,3 +1,4 @@
+import opcodes 
 
 '''
 It takes the name of a file containing the optimized version of a
@@ -21,3 +22,14 @@ def is_integer(num):
         return True
     except:
         return False
+
+def get_block_cost(opcodes_list):
+    val = 0
+    print(opcodes_list)
+    for op in opcodes_list:
+        if op == "MULMOD":
+            gas = 10
+        else:
+            gas = opcodes.get_syrup_cost(op.strip())
+        val+=gas
+    return val

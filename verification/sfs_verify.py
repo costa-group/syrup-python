@@ -165,6 +165,7 @@ def verify_sfs(source, sfs_dict):
                 if os.path.getsize(solutions_path+f)!=0:
                     json_obj = sfs_dict[block_id]
                     input_stack = len(json_obj["src_ws"])
+                    gas = json_obj["current_cost"]
                     print("**********")
                     print("COMIENZA VERIFY: "+block_id)
                     print(input_stack)
@@ -175,24 +176,31 @@ def verify_sfs(source, sfs_dict):
                     block_data["input"] = y
 
                     print(block_data)
-                
-                    cname_aux = source.split("/")[-1]
-                    cname = cname_aux.strip().split(".")[0]
-    
-                    exit_code = rbr_isolate_block.evm2rbr_compiler(contract_name = cname, ebso = True, block = block_data)
-                    json_opt = get_sfs_dict()
-                    print("++++++++++++++")
-                    print(json_opt)
+                    
+                    value_gas = get_block_cost(x)
 
-                    if len(json_opt)>1:
-                        print("[ERROR] Something fails with the optimized block.")
+                    if value_gas > gas:
+                        result = "Block "+block_id+" : GAS ERROR"
+                        report+=result+"\n"
+
                     else:
+                        cname_aux = source.split("/")[-1]
+                        cname = cname_aux.strip().split(".")[0]
+    
+                        exit_code = rbr_isolate_block.evm2rbr_compiler(contract_name = cname, syrup = True, block = block_data)
+                        json_opt = get_sfs_dict()
+                        print("++++++++++++++")
+                        print(json_opt)
 
-                        result = are_equals(json_obj,json_opt[next(iter(json_opt.keys()))])
+                        if len(json_opt)>1:
+                            print("[ERROR] Something fails with the optimized block.")
+                        else:
 
-                        if result:
-                            result = "Block "+block_id+" :VERIFIED" 
-                            report+=result+"\n"
+                            result = are_equals(json_obj,json_opt[next(iter(json_opt.keys()))])
+
+                            if result:
+                                result = "Block "+block_id+" :VERIFIED" 
+                                report+=result+"\n"
                     
                 else:
                     report += "File for "+block_id+" is empty.\n"
@@ -203,10 +211,6 @@ def verify_sfs(source, sfs_dict):
     else:
         print("There are not solutions generated. They cannot be verified.")
 
-
-
-
-        
 
 
 if __name__ == '__main__':
