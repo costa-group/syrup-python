@@ -2723,7 +2723,6 @@ def smt_translate(rules,sname,storage):
     global original_opcodes
     global gas_t
     global compute_gast
-    global original_opcodes
     global int_not0
     global source_name
     global blocks_json_dict
@@ -2781,6 +2780,12 @@ def smt_translate(rules,sname,storage):
                         break
                     opcodes = get_opcodes(rule)
 
+
+                    print(costabs_path)
+                    print(source_name)
+                    print(rule.get_rule_name())
+                    print(str(len(opcodes)))
+                    print(str(len(list(filter(lambda x: x.find("nop(PUSH")!=-1,opcodes)))))
                     info = "INFO DEPLOY "+costabs_path+"ethir_OK_"+source_name+"_blocks_"+rule.get_rule_name()+" LENGTH="+str(len(opcodes))+" PUSH="+str(len(list(filter(lambda x: x.find("nop(PUSH")!=-1,opcodes))))
                     info_deploy.append(info)
 
@@ -2992,7 +2997,7 @@ def apply_transform(instr):
 
             discount_op+=1
             return inp_vars[0]
-        elif inp_vars[0].strip() == inp_vars[1].strip():
+        elif inp_vars[0] == inp_vars[1]:
             saved_push+=1
             gas_saved_op+=3
 
@@ -3423,7 +3428,7 @@ def apply_cond_transformation(instr,user_def_instrs,tstack):
     elif opcode == "NOT":
         out_pt = instr["outpt_sk"][0]
         not_op = list(filter(lambda x: out_pt in x["inpt_sk"] and x["disasm"] == "NOT", user_def_instrs))
-        if len(or_op)==1:
+        if len(not_op)==1:
             not_instr = not_op[0]
             out_pt2 = not_instr["outpt_sk"][0]
             real_var = instr["inpt_sk"]
