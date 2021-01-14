@@ -158,7 +158,11 @@ class InputHelper:
         return self.compiled_contracts
     
     def _compile_solidity_runtime(self):
+
+        print("MIRAMIRA")
         solc = get_solc_executable(self.solc_version)
+
+        print(solc)
         cmd = solc+" --bin-runtime %s" % self.source
 
         out = run_command(cmd)
@@ -394,13 +398,16 @@ class InputHelper:
         return self.solc_version
 
     def _get_suitable_version(self,pragmas):
-        v4 = len(filter(lambda x: x.find("0.4")!=-1,pragmas))
-        v5 = len(filter(lambda x: x.find("0.5")!=-1,pragmas))
-        v6 = len(filter(lambda x: x.find("0.6")!=-1,pragmas))
-        v7 = len(filter(lambda x: x.find("0.7")!=-1,pragmas))
-        v8 = len(filter(lambda x: x.find("0.8")!=-1,pragmas))
+        v4 = len(list(filter(lambda x: x.find("0.4")!=-1,pragmas)))
+        v5 = len(list(filter(lambda x: x.find("0.5")!=-1,pragmas)))
+        v6 = len(list(filter(lambda x: x.find("0.6")!=-1,pragmas)))
+        v7 = len(list(filter(lambda x: x.find("0.7")!=-1,pragmas)))
+        v8 = len(list(filter(lambda x: x.find("0.8")!=-1,pragmas)))
         m = max([v4,v5,v6,v7,v8])
 
+        print("MIRA")
+        print(m)
+        
         if m == v4:
             return "v4"
         elif m == v5:
