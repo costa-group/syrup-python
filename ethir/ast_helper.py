@@ -1,10 +1,11 @@
-from utils import run_command
+from utils import run_command,get_solc_executable
 from ast_walker import AstWalker
 import json
 
 class AstHelper:
-    def __init__(self, filename, input_type):
+    def __init__(self, filename, input_type,solidity_version=""):
         self.input_type = input_type
+        self.solc_version = solidity_version
         if input_type == "solidity":
             self.source_list = self.get_source_list(filename)
         elif input_type == "standard json":
@@ -20,7 +21,11 @@ class AstHelper:
         return out["sources"]
 
     def get_source_list(self, filename):
-        cmd = "solc --combined-json ast %s" % filename
+        
+        solc = get_solc_executable(self.solc_version)
+
+        cmd = solc+" --combined-json ast %s" % filename
+            
         out = run_command(cmd)
         out = json.loads(out)
         return out["sources"]
@@ -46,7 +51,7 @@ class AstHelper:
         return ret
 
     def get_linearized_base_contracts(self, id, contractsById):
-        return list(map(lambda id: contractsById[id], contractsById[id]["attributes"]["linearizedBaseContracts"]))
+        return map(lambda id: contractsById[id], contractsById[id]["attributes"]["linearizedBaseContracts"])
 
     def extract_state_definitions(self, c_name):
         node = self.contracts["contractsByName"][c_name]
