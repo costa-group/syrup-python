@@ -938,15 +938,16 @@ def get_involved_vars(instr,var):
         var_list.append(var0)
         funct = "calldataload"
 
+    elif instr.find("selfbalance")!=-1:
+        var_list.append("selfbalance")
+        funct =  "selfbalance"
+
+        
     elif instr.find("balance")!=-1:
 
         var0 = var.strip()
         var_list.append(var0)
         funct = "balance"
-
-    elif instr.find("selfbalance")!=-1:
-        var_list.append("selfbalance")
-        funct =  "selfbalance"
 
     elif instr.find("chainid")!=-1:
         var_list.append("chainid")
