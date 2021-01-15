@@ -55,7 +55,7 @@ def push_each_element_at_least_once(b0, theta_push, pushed_elements):
 
 # We can generate a graph that represents the dependencies between different opcodes
 # (input). Then, we can assume that each one has to follow that restriction.
-def restrain_instruction_order(b0, depencency_graph, first_time_instruction_appears, theta):
+def restrain_instruction_order(depencency_graph, first_position_instr_appears_dict, first_position_instr_cannot_appear_dict, theta):
     write_encoding("; Constraints that reflect the order among instructions")
     for instr, previous_instrs in depencency_graph.items():
 
@@ -74,9 +74,12 @@ def restrain_instruction_order(b0, depencency_graph, first_time_instruction_appe
             if previous_instr_name not in previous_values:
                 previous_values[previous_instr_name] = []
 
-            # We add a clause for each possible position in which previous equation may appear
-            for previous_position in range(first_time_instruction_appears[previous_instr_name],
-                                           first_time_instruction_appears[instr]):
+            # We add a clause for each possible position in which previous equation may appear before current one.
+            # This means that we have to take the min between current position or last position previous instruction
+            # could occur.
+            for previous_position in range(first_position_instr_appears_dict[previous_instr_name],
+                                           min(first_position_instr_appears_dict[instr],
+                                               first_position_instr_cannot_appear_dict[previous_instr_name])):
                 # If aj == -1, then we don't need to consider to assign aj
                 if aj == -1:
                     previous_values[previous_instr_name].append(add_eq(t(previous_position), theta[previous_instr_name]))
@@ -84,7 +87,8 @@ def restrain_instruction_order(b0, depencency_graph, first_time_instruction_appe
                     previous_values[previous_instr_name].append(add_and(add_eq(t(previous_position), theta[previous_instr_name]),
                                                    add_eq(a(previous_position), aj)))
 
-        for position in range(first_time_instruction_appears[instr], b0):
+        # We add a clause for every position the instruction may appear.
+        for position in range(first_position_instr_appears_dict[instr], first_position_instr_cannot_appear_dict[instr]):
 
             # If current instruction is chosen for position j, then previous instructions must be places in previous
             # positions. This means that (tj = theta) => and_{instr in prev_instr}
@@ -95,6 +99,12 @@ def restrain_instruction_order(b0, depencency_graph, first_time_instruction_appe
             # We update previous values list to add the possibility that previous instructions could be
             # executed in current position
             for previous_instr_name, aj in previous_instrs:
+
+                # If first position an instruction cannot appear is less or equal than current position, then
+                # we don't need to consider adding it to current clause
+                if first_position_instr_cannot_appear_dict[previous_instr_name] <= position:
+                    continue
+
                 # If aj == -1, then we don't need to consider to assign aj
                 if aj == -1:
                     previous_values[previous_instr_name].append(add_eq(t(position), theta[previous_instr_name]))
@@ -102,21 +112,16 @@ def restrain_instruction_order(b0, depencency_graph, first_time_instruction_appe
                     previous_values[previous_instr_name].append(add_and(add_eq(t(position), theta[previous_instr_name]),
                                                    add_eq(a(position), aj)))
 
-
-# Each uninterpreted function is used at least once, but we take into account first position it may appear
-def each_function_is_used_at_least_one_with_position(b0, user_instr, first_time_instruction_appears, theta_dict):
-    write_encoding("; All uninterpreted functions are eventually used, and only in some positions")
-    for instr in user_instr:
-        id = instr['id']
-        theta_instr = theta_dict[id]
-        first_possible_ocurrence = first_time_instruction_appears[id]
-        # For each position in which the instruction cannot appear, we add an explicit statement
-        for j in range(first_possible_ocurrence):
-            write_encoding(add_assert(add_not(add_eq(t(j), theta_instr))))
-
-        # We add a statement with the remaining positions to state that the instruction must appear
-        # at least one
+# Each uninterpreted function is used at least once
+def each_instruction_in_final_stack_is_used_at_least_once(b0, final_stack_theta_dict, first_position_instr_appears_dict,
+                                        first_position_instr_cannot_appear_dict):
+    write_encoding("; All uninterpreted functions in the final stack are eventually used")
+    for instr_id, theta_instr in final_stack_theta_dict.items():
         or_variables = []
-        for j in range(first_possible_ocurrence, b0):
+
+        initial_idx = first_position_instr_appears_dict.get(instr_id,0)
+        final_idx = first_position_instr_cannot_appear_dict.get(instr_id, b0)
+
+        for j in range(initial_idx, final_idx):
             or_variables.append(add_eq(t(j), theta_instr))
         write_encoding(add_assert(add_or(*or_variables)))

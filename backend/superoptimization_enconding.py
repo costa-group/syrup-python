@@ -12,7 +12,9 @@ from encoding_files import write_encoding, write_opcode_map, write_instruction_m
 
 
 # Method to generate redundant constraints according to flags (at least once is included by default)
-def generate_redundant_constraints(flags, b0, user_instr, theta_stack, theta_comm, theta_non_comm, final_stack):
+def generate_redundant_constraints(flags, b0, user_instr, theta_stack, theta_comm, theta_non_comm, final_stack,
+                                   dependency_graph, first_position_instr_appears_dict,
+                                   first_position_instr_cannot_appear_dict, theta_dict):
     if flags['at-most']:
         valid_theta = list(map(lambda instr: theta_comm[instr['id']] if instr['commutative'] else theta_non_comm[instr['id']],
                              filter(lambda instr: instr['gas'] > 2, user_instr)))
@@ -23,11 +25,14 @@ def generate_redundant_constraints(flags, b0, user_instr, theta_stack, theta_com
     if flags['no-output-before-pop']:
         no_output_before_pop(b0, theta_stack)
     if flags['instruction-order']:
-        theta_dict = dict(theta_stack, **theta_comm, **theta_non_comm)
-        dependency_graph = generate_dependency_graph(user_instr)
-        instructions_position = generate_number_of_previous_instr_dict(dependency_graph)
-        restrain_instruction_order(b0, dependency_graph, instructions_position, theta_dict)
-        each_function_is_used_at_least_one_with_position(b0, user_instr, instructions_position, theta_dict)
+        final_stack_instrs = list(filter(lambda instr: instr['outpt_sk'] and (instr['outpt_sk'][0] in final_stack), user_instr))
+        final_stack_dict = {instr['id']: theta_dict[instr['id']] for instr in final_stack_instrs}
+        each_instruction_in_final_stack_is_used_at_least_once(b0, final_stack_dict,
+                                                              first_position_instr_appears_dict,
+                                                              first_position_instr_cannot_appear_dict)
+        restrain_instruction_order(dependency_graph, first_position_instr_appears_dict,
+                                   first_position_instr_cannot_appear_dict, theta_dict)
+
     # If flag isn't set, then we use by default the generation for each function used at least once in each position
     else:
         each_function_is_used_at_least_once(b0, len(theta_stack),
@@ -61,6 +66,21 @@ def generate_configuration_statements(solver_name):
         write_encoding(set_model_true())
 
 
+# Generates the corresponding structures for both instruction encoding and
+# instruction order. If flags -instruction-order is activated, then it returns
+# dependency graph, first_position_instr_appears_dict and first_position_instr_cannot_appear_dict.
+# If not, it returns empty dicts that simulates the behaviour of these structures. There's no problem
+# with being empty, as they are accessed using get method with the corresponding correct values by default.
+def generate_instruction_dicts(b0, user_instr, final_stack, flags):
+    if flags['instruction-order']:
+        # We obtain the id of those instructions whose output is in the final stack
+        final_stack_ids = list(map(lambda instr: instr['id'],
+                                   filter(lambda instr: instr['outpt_sk'] and (instr['outpt_sk'][0] in final_stack),
+                                             user_instr)))
+        return generate_instruction_order_structures(b0, user_instr, final_stack_ids)
+    else:
+        return dict(), dict(), dict()
+
 # Adding necessary statements after check_sat statement.
 # Barcelogic doesn't support (get-objectives) statement.
 def generate_final_statements(solver_name):
@@ -75,18 +95,25 @@ def generate_final_statements(solver_name):
 # Method to generate complete representation
 def generate_smtlib_encoding(b0, bs, usr_instr, variables, initial_stack, final_stack, flags, additional_info):
     solver_name = additional_info['solver']
+    theta_stack = generate_stack_theta(bs)
+    theta_comm, theta_non_comm = generate_uninterpreted_theta(usr_instr, len(theta_stack))
+    comm_instr, non_comm_instr = separe_usr_instr(usr_instr)
+    dependency_graph, first_position_instr_appears_dict, first_position_instr_cannot_appear_dict = \
+        generate_instruction_dicts(b0, usr_instr, final_stack, flags)
+    theta_dict = dict(theta_stack, **theta_comm, **theta_non_comm)
+
     write_encoding(set_logic('QF_LIA'))
     generate_configuration_statements(solver_name)
     generate_asserts_from_additional_info(additional_info)
     initialize_variables(variables, bs, b0)
     variables_assignment_constraint(variables)
-    theta_stack = generate_stack_theta(bs)
-    theta_comm, theta_non_comm = generate_uninterpreted_theta(usr_instr, len(theta_stack))
-    comm_instr, non_comm_instr = separe_usr_instr(usr_instr)
-    instructions_constraints(b0, bs, comm_instr, non_comm_instr, theta_stack, theta_comm, theta_non_comm)
+    instructions_constraints(b0, bs, comm_instr, non_comm_instr, theta_stack, theta_comm, theta_non_comm,
+                             first_position_instr_appears_dict, first_position_instr_cannot_appear_dict)
     initial_stack_encoding(initial_stack, bs)
     final_stack_encoding(final_stack, bs, b0)
-    generate_redundant_constraints(flags, b0, usr_instr, theta_stack, theta_comm, theta_non_comm, final_stack)
+    generate_redundant_constraints(flags, b0, usr_instr, theta_stack, theta_comm, theta_non_comm, final_stack,
+                                   dependency_graph, first_position_instr_appears_dict,
+                                   first_position_instr_cannot_appear_dict, theta_dict)
     generate_soft_constraints(solver_name, b0, bs, usr_instr, theta_stack, theta_comm, theta_non_comm)
     generate_cost_functions(solver_name)
     write_encoding(check_sat())
@@ -98,8 +125,6 @@ def generate_smtlib_encoding(b0, bs, usr_instr, variables, initial_stack, final_
     write_encoding("; Stack: " + str(theta_stack))
     write_encoding("; Comm: " + str(theta_comm))
     write_encoding("; Non-Comm: " + str(theta_non_comm))
-
-    theta_dict = dict(theta_stack, **theta_comm, **theta_non_comm)
 
     write_instruction_map(generate_instr_map(usr_instr, theta_stack, theta_comm, theta_non_comm))
     write_opcode_map(generate_disasm_map(usr_instr, theta_dict))

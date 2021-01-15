@@ -202,7 +202,7 @@ def update_with_tree_level(b0, dependency_theta_graph, current_idx, instr, first
 # Generates a dict that given b0, returns the first position in which a instruction cannot appear
 # due to dependencies with other instructions.
 def generate_first_position_instr_cannot_appear(b0, final_stack_instr, dependency_graph):
-    first_position_instr_cannot_appear = {}
+    first_position_instr_cannot_appear = {'PUSH': b0}
 
     # We consider instructions in the final stack, as they determine which position is the last possible one (following
     # the dependencies to reach it). We are assuming each other instruction is related to these instructions. Otherwise,
@@ -240,6 +240,17 @@ def generate_dependency_graph(user_instr):
                 dependency_theta_graph[instr_id].append(('PUSH', stack_elem))
 
     return dependency_theta_graph
+
+
+# Method that returns all necessary structures for generating constraints related to
+# instruction order: dependency graph, first_position_instr_appears_dict and first_position_instr_cannot_appear_dict.
+# Read the corresponding methods for more info.
+def generate_instruction_order_structures(b0, user_instr, final_stack_ids):
+    dependency_graph = generate_dependency_graph(user_instr)
+    first_position_instr_appears_dict = generate_number_of_previous_instr_dict(dependency_graph)
+    first_position_instr_cannot_appear_dict = generate_first_position_instr_cannot_appear(b0, final_stack_ids,
+                                                                                          dependency_graph)
+    return dependency_graph, first_position_instr_appears_dict, first_position_instr_cannot_appear_dict
 
 
 # Generate a dict that contains the real value as a key, and

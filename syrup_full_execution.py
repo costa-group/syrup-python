@@ -63,7 +63,7 @@ def get_solver_to_execute(smt_file):
     global args
 
     if args.solver == "z3":
-        return z3_exec + " -smt2 " + smt_file+ " -T:"+str(tout)
+        return z3_exec + " -smt2 " + smt_file
     elif args.solver == "barcelogic":
         if args.tout is None:
             return bclt_exec + " -file " + smt_file
