@@ -944,7 +944,6 @@ def get_involved_vars(instr,var):
 
         
     elif instr.find("balance")!=-1:
-
         var0 = var.strip()
         var_list.append(var0)
         funct = "balance"
@@ -2982,6 +2981,11 @@ def apply_transform(instr):
             
             discount_op+=1
             return inp_vars[0]
+        elif inp_vars[0] == 1:
+            gas_saved_op+=60
+            
+            discount_op+=1
+            return inp_vars[1]
         else:
             return -1
 
@@ -3685,7 +3689,7 @@ def apply_cond_transformation(instr,user_def_instrs,tstack):
             return False,[]
 
 
-    elif opcode == "ORIGIN" or opcode == "ADDRESS" or opcode == "COINBASE" or opcode == "CALLER":
+    elif opcode == "ORIGIN" or opcode == "COINBASE" or opcode == "CALLER":
         out_pt = instr["outpt_sk"][0]
         and_op = list(filter(lambda x: out_pt in x["inpt_sk"] and x["disasm"] == "AND", user_def_instrs))
         if len(and_op) == 1:
@@ -3727,7 +3731,132 @@ def apply_cond_transformation(instr,user_def_instrs,tstack):
         else:
             return False,[]
 
+    elif opcode == "SHL":
+        out_pt = instr["outpt_sk"][0]
+        mul_op = list(filter(lambda x: out_pt in x["inpt_sk"] and x["disasm"] == "MUL", user_def_instrs))
+        div_op = list(filter(lambda x: out_pt in x["inpt_sk"] and x["disasm"] == "DIV", user_def_instrs))
+        if len(mul_op) == 1 and instr["inpt_sk"][1] == 1:
+            mul_instr = mul_op[0]
+
+            if mul_instr["inpt_sk"][1] == out_pt:
+                instr["outpt_sk"] = mul_instr["outpt_sk"]
+                instr["inpt_sk"][1] = mul_instr["inpt_sk"][0]
+
+                discount_op+=1
+                gas_saved_op+=5
+                saved_push+=1
+
+                return True, [mul_instr]
+
+            elif mul_instr["inpt_sk"][0] == out_pt:
+                instr["outpt_sk"] = mul_instr["outpt_sk"]
+                instr["inpt_sk"][1] = mul_instr["inpt_sk"][1]
+
+                discount_op+=1
+                gas_saved_op+=5
+                saved_push+=1
+
+                return True, [mul_instr]
+
+            else:
+                return False, []
+
+        elif len(div_op) == 1 and instr["inpt_sk"][1] == 1:
+            div_instr = div_op[0]
+
+            if div_instr["inpt_sk"][1] == out_pt:
+                
+                instr["outpt_sk"] = div_instr["outpt_sk"]
+                instr["inpt_sk"][1] = div_instr["inpt_sk"][0]
+
+                idx = user_def_counter.get("SHR",0)
+            
+                instr["id"] = "SHR_"+str(idx)
+                instr["opcode"] = "1c"
+                instr["disasm"] = "SHR"
+                instr["commutative"] = False            
+                
+                
+                discount_op+=1
+                gas_saved_op+=5
+                saved_push+=1
+
+                return True, [div_instr]
+            
+        else:
+            return False, []
+
+    elif opcode == "ADDRESS":
+        out_pt = instr["outpt_sk"][0]
+        bal_op = list(filter(lambda x: out_pt in x["inpt_sk"] and x["disasm"] == "BALANCE", user_def_instrs))
+
+        and_op = list(filter(lambda x: out_pt in x["inpt_sk"] and x["disasm"] == "AND", user_def_instrs))
+
+        if len(bal_op) == 1:
+            bal_instr = bal_op[0]
+
+            instr["outpt_sk"] = bal_instr["outpt_sk"]
+
+            idx = user_def_counter.get("SELFBALANCE",0)
+            
+            instr["id"] = "SELFBALANCE_"+str(idx)
+            instr["opcode"] = "47"
+            instr["disasm"] = "SELFBALANCE"
+            instr["commutative"] = False            
+                
+            discount_op+=1
+            gas_saved_op+=397 #BALANCE 400 ADDRESS 2 SELFBALANCE 5
+            
+            return True,[bal_instr]
         
+        elif len(and_op) == 1:
+            and_instr = and_op[0]
+            if -1+2**160 in and_instr["inpt_sk"]:
+                instr["outpt_sk"] = and_instr["outpt_sk"]
+                discount_op+=1
+
+                saved_push+=1
+                gas_saved_op+=3
+                
+                return True,[and_instr]
+            else:
+                return False, []
+        else:
+            return False, []
+        
+    elif opcode == "EXP":
+        if instr["inpt_sk"][0] == 0:
+            instr["inpt_sk"].pop(0)
+
+            idx = user_def_counter.get("ISZERO",0)
+            
+            instr["id"] = "ISZERO_"+str(idx)
+            instr["opcode"] = "15"
+            instr["disasm"] = "ISZERO"
+            instr["commutative"] = False            
+                
+            saved_push+=1
+            gas_saved_op+=57
+
+            return True, []
+
+        elif instr["inpt_sk"][0] == 2:
+            instr["inpt_sk"].pop(0)
+            instr["inpt_sk"].append(1)
+            idx = user_def_counter.get("SHL",0)
+            
+            instr["id"] = "SHL_"+str(idx)
+            instr["opcode"] = "1b"
+            instr["disasm"] = "SHL"
+            instr["commutative"] = False            
+                
+            gas_saved_op+=57 #EXP-SHL
+
+            return True, []
+
+        else:
+            return False, []
+
     else:
         return False, []
 
