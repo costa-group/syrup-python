@@ -201,14 +201,21 @@ def update_with_tree_level(b0, dependency_theta_graph, current_idx, instr, first
 
 # Generates a dict that given b0, returns the first position in which a instruction cannot appear
 # due to dependencies with other instructions.
-def generate_first_position_instr_cannot_appear(b0, final_stack_instr, dependency_graph):
+def generate_first_position_instr_cannot_appear(b0, final_stack_instr, dependency_graph, top_elem_is_instruction):
     first_position_instr_cannot_appear = {'PUSH': b0}
 
     # We consider instructions in the final stack, as they determine which position is the last possible one (following
     # the dependencies to reach it). We are assuming each other instruction is related to these instructions. Otherwise,
     # it would mean that there exists some intermediate instructions that do not affect the final results and thus,
     # they must be omitted.
-    b0_aux = b0
+
+    # If first instruction corresponds to top of the stack, we initialize the search with b0. Otherwise,
+    # it means that another extra instruction must be performed after this, and thus, we start searching with b0 - 1.
+    if top_elem_is_instruction:
+        b0_aux = b0
+    else:
+        b0_aux = b0 - 1
+
     for final_instr in final_stack_instr:
         update_with_tree_level(b0, dependency_graph, b0_aux, final_instr, first_position_instr_cannot_appear)
 
@@ -245,11 +252,11 @@ def generate_dependency_graph(user_instr):
 # Method that returns all necessary structures for generating constraints related to
 # instruction order: dependency graph, first_position_instr_appears_dict and first_position_instr_cannot_appear_dict.
 # Read the corresponding methods for more info.
-def generate_instruction_order_structures(b0, user_instr, final_stack_ids):
+def generate_instruction_order_structures(b0, user_instr, final_stack_ids, top_elem_is_instruction):
     dependency_graph = generate_dependency_graph(user_instr)
     first_position_instr_appears_dict = generate_number_of_previous_instr_dict(dependency_graph)
     first_position_instr_cannot_appear_dict = generate_first_position_instr_cannot_appear(b0, final_stack_ids,
-                                                                                          dependency_graph)
+                                                                                          dependency_graph, top_elem_is_instruction)
     return dependency_graph, first_position_instr_appears_dict, first_position_instr_cannot_appear_dict
 
 
