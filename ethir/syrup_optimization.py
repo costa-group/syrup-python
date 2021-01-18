@@ -2958,6 +2958,12 @@ def apply_transform(instr):
 
             discount_op+=1
             return 0
+        elif 0 in inp_vars:
+            saved_push+=2
+            gas_saved_op+=3
+
+            discount_op+=1
+            return inp_vars[1] if inp_vars[0] == 0 else inp_vars[0]
         else:
             return -1
 
@@ -3032,6 +3038,14 @@ def apply_transform(instr):
             
             discount_op+=1
             return inp_vars[0]
+
+        elif inp_vars == 0:
+            saved_push+=2
+            gas_saved_op+=5
+
+            discount_op+=1
+            return 0
+
         else:
             return -1
 
@@ -3050,10 +3064,18 @@ def apply_transform(instr):
 
             discount_op+=1
             return 0
-        
+
+        elif inp[1] == 0:
+            saved_push+=2
+            gas_saved_op+=5
+
+            discount_op+=1
+            return 0
+
+            
         else:
             return -1
-        
+
     elif opcode == "EQ":
         inp_vars = instr["inpt_sk"]
         if inp_vars[0] == inp_vars[1]:
@@ -3123,6 +3145,21 @@ def apply_transform(instr):
             gas_saved_op+=3
             saved_push+=1
             return 0
+        else:
+            return -1
+
+    elif opcode == "SHR" or opcode == "SHL":
+        inp_vars = instr["inpt_sk"]
+        if inp_vars[0] == 0:
+            discount_op+=1
+            saved_push+=2
+            gas_saved_op+=3
+            return inp_vars[1]
+        elif inp_vars[1] == 0:
+            discount_op+=1
+            saved_push+=2
+            gas_saved_op+=3
+            return inp_vars[0]
         else:
             return -1
 
@@ -3292,7 +3329,7 @@ def apply_cond_transformation(instr,user_def_instrs,tstack):
 
             if 1 in eq["inpt_sk"]:
                 instr["outpt_sk"] = eq["outpt_sk"]
-                discount_op+=2
+                discount_op+=1
 
                 saved_push+=1
                 gas_saved_op+=3
@@ -3310,7 +3347,7 @@ def apply_cond_transformation(instr,user_def_instrs,tstack):
                 index = user_def_instrs.index(is_zero[0])
                 zero_instr = user_def_instrs[index]
                 zero_instr["inpt_sk"] = [instr["inpt_sk"][1]]
-                discount_op+=2
+                discount_op+=1
 
                 saved_push+=1
                 gas_saved_op+=3
@@ -3393,11 +3430,13 @@ def apply_cond_transformation(instr,user_def_instrs,tstack):
     elif opcode == "AND":
         out_pt = instr["outpt_sk"][0]
         and_op = list(filter(lambda x: out_pt in x["inpt_sk"] and x["disasm"] == "AND", user_def_instrs))
+        or_op = list(filter(lambda x: out_pt in x["inpt_sk"] and x["disasm"] == "OR", user_def_instrs))
+        
         if len(and_op)==1:
             and_instr = and_op[0]
-            if and_instr["inpt_sk"][1] == instr["inpt_sk"][1]:
+            if (and_instr["inpt_sk"][1] in instr["inpt_sk"]) or (and_instr["inpt_sk"][0] in instr["inpt_sk"]):
                 instr["outpt_sk"] = and_instr["outpt_sk"]
-                discount_op+=2
+                discount_op+=1
 
                 saved_push+=1
                 gas_saved_op+=3
@@ -3405,17 +3444,58 @@ def apply_cond_transformation(instr,user_def_instrs,tstack):
                 return True, [and_instr]
             else:
                 return False, []
+
+        elif len(or_op) == 1:
+            or_instr = or_op[0]
+            out_pt2 = or_instr["outpt_sk"][0]
+            if out_pt == or_instr["inpt_sk"][1]: #(or(x,and(x,y)) = x, or(x,and(y,x)) = x, or(and(x,y),x) = x, or(and(y,x),x) = x
+    
+                if or_instr["inpt_sk"][0] == instr["inpt_sk"][0]:
+                    x = instr["inpt_sk"][0]
+                elif or_instr["inpt_sk"][0] == instr["inpt_sk"][1]:
+                    x = instr["inpt_sk"][1]
+                else:
+                    return False, []
+            elif out_pt == or_instr["inpt_sk"][0]:
+                if or_instr["inpt_sk"][1] == instr["inpt_sk"][0]:
+                    x = instr["inpt_sk"][0]
+                elif or_instr["inpt_sk"][1] == instr["inpt_sk"][1]:
+                    x = instr["inpt_sk"][1]
+                else:
+                    return False, []
+
+            else:
+                return False, []
+
+            i = 0
+                
+            while (i<len(tstack)):
+                if tstack[i] == (out_pt2):
+                    tstack[i] = x
+
+            for elems in user_def_instrs:
+                if out_pt2 in elems["inpt_sk"]:
+                    pos = elems["inpt_sk"].index(out_pt2)
+                    elems["inpt_sk"][pos] = x
+                    
+            discount_op+=2
+            gas_saved_op+=6
+                
+            return True, [or_instr,instr]
+            
+
         else:
             return False,[]
         
     elif opcode == "OR":
         out_pt = instr["outpt_sk"][0]
         or_op = list(filter(lambda x: out_pt in x["inpt_sk"] and x["disasm"] == "OR", user_def_instrs))
+        and_op = list(filter(lambda x: out_pt in x["inpt_sk"] and x["disasm"] == "AND", user_def_instrs))
         if len(or_op)==1:
             or_instr = or_op[0]
-            if or_instr["inpt_sk"][1] == instr["inpt_sk"][1]:
+            if (or_instr["inpt_sk"][1] in instr["inpt_sk"]) or (or_instr["inpt_sk"][0] in instr["inpt_sk"]):
                 instr["outpt_sk"] = or_instr["outpt_sk"]
-                discount_op+=2
+                discount_op+=1
 
                 saved_push+=1
                 gas_saved_op+=3
@@ -3423,12 +3503,117 @@ def apply_cond_transformation(instr,user_def_instrs,tstack):
                 return True, [or_instr]
             else:
                 return False, []
+
+        elif len(and_op) == 1: 
+            and_instr = and_op[0]
+            out_pt2 = and_instr["outpt_sk"][0]
+            if out_pt == and_instr["inpt_sk"][1]: #(and(x,or(x,y)) = x, and(x,or(y,x)) = x, and(or(x,y),x) = x, and(or(y,x),x) = x
+    
+                if and_instr["inpt_sk"][0] == instr["inpt_sk"][0]:
+                    x = instr["inpt_sk"][0]
+                elif and_instr["inpt_sk"][0] == instr["inpt_sk"][1]:
+                    x = instr["inpt_sk"][1]
+                else:
+                    return False, []
+            elif out_pt == and_instr["inpt_sk"][0]:
+                if and_instr["inpt_sk"][1] == instr["inpt_sk"][0]:
+                    x = instr["inpt_sk"][0]
+                elif and_instr["inpt_sk"][1] == instr["inpt_sk"][1]:
+                    x = instr["inpt_sk"][1]
+                else:
+                    return False, []
+
+            else:
+                return False, []
+
+            i = 0
+                
+            while (i<len(tstack)):
+                if tstack[i] == (out_pt2):
+                    tstack[i] = x
+
+            for elems in user_def_instrs:
+                if out_pt2 in elems["inpt_sk"]:
+                    pos = elems["inpt_sk"].index(out_pt2)
+                    elems["inpt_sk"][pos] = x
+                    
+            discount_op+=2
+            gas_saved_op+=6
+                
+            return True, [and_instr,instr]
+            
         else:
             return False,[]
 
+
+    elif opcode == "XOR":
+        out_pt = instr["outpt_sk"][0]
+        xor_op = list(filter(lambda x: out_pt in x["inpt_sk"] and x["disasm"] == "XOR", user_def_instrs))
+        isz_op = list(filter(lambda x: out_pt in x["inpt_sk"] and x["disasm"] == "ISZERO", user_def_instrs))
+        
+        if len(or_op)==1:
+            xor_instr = xor_op[0]
+            out_pt2 = xor_instr["outpt_sk"][0]
+            if out_pt == xor_instr["inpt_sk"][1]: #xor(x,xor(x,y)) = y, xor(x,xor(y,x)) = y, xor(xor(x,y),x) = y, xor(xor(y,x),x) = y
+    
+                if xor_instr["inpt_sk"][0] == instr["inpt_sk"][0]:
+                    y = instr["inpt_sk"][1]
+                elif xor_instr["inpt_sk"][0] == instr["inpt_sk"][1]:
+                    y = instr["inpt_sk"][0]
+                else:
+                    return False, []
+            elif out_pt == xor_instr["inpt_sk"][0]:
+                if xor_instr["inpt_sk"][1] == instr["inpt_sk"][0]:
+                    y = instr["inpt_sk"][1]
+                elif xor_instr["inpt_sk"][1] == instr["inpt_sk"][1]:
+                    y = instr["inpt_sk"][0]
+                else:
+                    return False, []
+
+            else:
+                return False, []
+
+            i = 0
+                
+            while (i<len(tstack)):
+                if tstack[i] == (out_pt2):
+                    tstack[i] = y
+
+            for elems in user_def_instrs:
+                if out_pt2 in elems["inpt_sk"]:
+                    pos = elems["inpt_sk"].index(out_pt2)
+                    elems["inpt_sk"][pos] = y
+                    
+            discount_op+=2
+            gas_saved_op+=6
+                
+            return True, [xor_instr,instr]
+
+        elif len(isz_op) == 1: #ISZ(XOR(X,Y)) = EQ(X,Y)
+            isz_instr = isz_op[0]
+            idx = user_def_counter.get("EQ",0)
+            
+            instr["outpt_sk"] = isz_instr["outpt_sk"]
+            instr["id"] = "EQ_"+str(idx)
+            instr["opcode"] = "14"
+            instr["disasm"] = "EQ"
+            instr["commutative"] = True            
+
+            discount_op+=1
+            gas_saved_op+=3
+
+            return True, [isz_instr]
+                
+        else:
+            return False,[]
+
+        
     elif opcode == "NOT":
         out_pt = instr["outpt_sk"][0]
         not_op = list(filter(lambda x: out_pt in x["inpt_sk"] and x["disasm"] == "NOT", user_def_instrs))
+        and_op = list(filter(lambda x: out_pt in x["inpt_sk"] and x["disasm"] == "AND", user_def_instrs))
+        or_op = list(filter(lambda x: out_pt in x["inpt_sk"] and x["disasm"] == "NOT", user_def_instrs))
+
         if len(not_op)==1:
             not_instr = not_op[0]
             out_pt2 = not_instr["outpt_sk"][0]
@@ -3436,7 +3621,7 @@ def apply_cond_transformation(instr,user_def_instrs,tstack):
 
             i = 0
             while (i<len(tstack)):
-                if tstack[i].find(out_pt2)!=-1:
+                if tstack[i] == (out_pt2):
                     tstack[i] = real_var
 
             for elems in user_def_instrs:
@@ -3450,9 +3635,99 @@ def apply_cond_transformation(instr,user_def_instrs,tstack):
                 return True, [not_instr,instr]
             else:
                 return False, []
+
+        elif len(and_op) == 1: #and(x,not(x)) = 0
+            and_instr = and_op[0]
+            out_pt2 = and_instr["outpt_sk"][0]
+
+            if instr["inpt_sk"][0] in and_instr["inpt_sk"]:
+                real_var = 0
+                i = 0
+                while (i<len(tstack)):
+                    if tstack[i] == (out_pt2):
+                        tstack[i] = real_var
+
+                for elems in user_def_instrs:
+                    if out_pt2 in elems["inpt_sk"]:
+                        pos = elems["inpt_sk"].index(out_pt2)
+                        elems["inpt_sk"][pos] = real_var
+                    
+                discount_op+=2
+                gas_saved_op+=6
+                
+                return True, [and_instr,instr]
+
+            else:
+                return False, []
+
+        elif len(or_op) == 1: #or(x,not(x)) = 2^256-1
+            or_instr = or_op[0]
+            out_pt2 = or_instr["outpt_sk"][0]
+
+            if instr["inpt_sk"][0] in or_instr["inpt_sk"]:
+                real_var = -1+2**256
+                i = 0
+                while (i<len(tstack)):
+                    if tstack[i] == (out_pt2):
+                        tstack[i] = real_var
+
+                for elems in user_def_instrs:
+                    if out_pt2 in elems["inpt_sk"]:
+                        pos = elems["inpt_sk"].index(out_pt2)
+                        elems["inpt_sk"][pos] = real_var
+                    
+                discount_op+=2
+                gas_saved_op+=6
+                
+                return True, [or_instr,instr]
+
         else:
             return False,[]
 
+
+    elif opcode == "ORIGIN" or opcode == "ADDRESS" or opcode == "COINBASE" or opcode == "CALLER":
+        out_pt = instr["outpt_sk"][0]
+        and_op = list(filter(lambda x: out_pt in x["inpt_sk"] and x["disasm"] == "AND", user_def_instrs))
+        if len(and_op) == 1:
+            and_instr = and_op[0]
+            if -1+2**160 in and_instr["inpt_sk"]:
+                instr["outpt_sk"] = and_instr["outpt_sk"]
+                discount_op+=1
+
+                saved_push+=1
+                gas_saved_op+=3
+                
+                return True,[and_instr]
+            else:
+                return False, []
+        else:
+            return False, []
+
+
+    elif opcode == "SUB":
+        out_pt = instr["outpt_sk"][0]
+        isz_op = list(filter(lambda x: out_pt in x["inpt_sk"] and x["disasm"] == "ISZERO", user_def_instrs))
+        
+
+        if len(isz_op) == 1: #ISZ(SUB(X,Y)) = EQ(X,Y)
+            isz_instr = isz_op[0]
+            idx = user_def_counter.get("EQ",0)
+            
+            instr["outpt_sk"] = isz_instr["outpt_sk"]
+            instr["id"] = "EQ_"+str(idx)
+            instr["opcode"] = "14"
+            instr["disasm"] = "EQ"
+            instr["commutative"] = True            
+
+            discount_op+=1
+            gas_saved_op+=3
+
+            return True, [isz_instr]
+                
+        else:
+            return False,[]
+
+        
     else:
         return False, []
 
