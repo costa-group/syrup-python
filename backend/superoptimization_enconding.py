@@ -74,10 +74,18 @@ def generate_configuration_statements(solver_name):
 def generate_instruction_dicts(b0, user_instr, final_stack, flags):
     if flags['instruction-order']:
         # We obtain the id of those instructions whose output is in the final stack
+        final_stack_instrs = list(filter(lambda instr: instr['outpt_sk'] and (instr['outpt_sk'][0] in final_stack),user_instr))
+
+        index_map = {v: i for i, v in enumerate(final_stack)}
+
+        # We order instructions according to its position in the final stack. This is important to generate
+        # the first_position_instruction_can_occur dict, as position is taken into account.
         final_stack_ids = list(map(lambda instr: instr['id'],
-                                   filter(lambda instr: instr['outpt_sk'] and (instr['outpt_sk'][0] in final_stack),
-                                             user_instr)))
-        return generate_instruction_order_structures(b0, user_instr, final_stack_ids)
+                                      sorted(final_stack_instrs, key= lambda instr: index_map[instr['outpt_sk'][0]])))
+
+        # We check if any the top element in the stack corresponds to the output of an uninterpreted function
+        top_elem_is_instruction = any([0 == index_map[instr['outpt_sk'][0]] for instr in final_stack_instrs])
+        return generate_instruction_order_structures(b0, user_instr, final_stack_ids, top_elem_is_instruction)
     else:
         return dict(), dict(), dict()
 
