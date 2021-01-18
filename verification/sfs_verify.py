@@ -158,12 +158,16 @@ def verify_sfs(source, sfs_dict):
         if not os.path.exists(solutions_path):
             print("[ERROR] Path "+solutions_path+" does not exist.")
         else:
-            solution_files = filter(lambda x: x.find("disasm_opt")!=-1,os.listdir(solutions_path))
+            solution_files = list(filter(lambda x: x.find("disasm_opt")!=-1,os.listdir(solutions_path)))
+            print(solution_files)
             for f in solution_files:
-
                 block_id = get_block_id(f)
                 if os.path.getsize(solutions_path+f)!=0:
-                    json_obj = sfs_dict[block_id]
+                    if len(solution_files) == 1: #analyze json directly
+                        json_obj = sfs_dict
+                        block_id = f
+                    else:
+                        json_obj = sfs_dict[block_id]
                     input_stack = len(json_obj["src_ws"])
                     gas = json_obj["current_cost"]
                     print("**********")

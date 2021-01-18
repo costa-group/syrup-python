@@ -15,6 +15,7 @@ from syrup_optimization import get_sfs_dict
 from python_syrup import execute_syrup_backend
 from disasm_generation import generate_disasm_sol
 from sfs_verify import verify_sfs
+import json
 
 def init():
     global project_path
@@ -153,7 +154,6 @@ def main():
         execute_ethir()
 
         sfs_dict = get_sfs_dict()
-        
         if args.solver:
             
             for f in glob.glob(json_dir + "/*.json"):
@@ -167,6 +167,10 @@ def main():
                     generate_solution(block_name)
 
     else:
+
+        with open(args.source) as f:
+            sfs_dict = json.load(f)
+        
         execute_syrup_backend(args)
         if not args.write_only:
 
