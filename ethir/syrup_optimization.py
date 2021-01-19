@@ -3288,8 +3288,9 @@ def apply_cond_transformation(instr,user_def_instrs,tstack):
                 saved_push+=2
                 gas_saved_op+=3
 
-                
                 discount_op+=2
+
+                print("ISZ(GT(X,0))")
                 return True, [instr]
             else:
                 return False, []
@@ -3304,7 +3305,8 @@ def apply_cond_transformation(instr,user_def_instrs,tstack):
             instr["commutative"] = False
             discount_op+=1
             saved_push+=2
-            
+
+            print("GT(1,X)")
             return True, []
 
 
@@ -3320,6 +3322,7 @@ def apply_cond_transformation(instr,user_def_instrs,tstack):
 
                     gas_saved_op+=6
 
+                    print("ISZ(ISZ(GT(X,Y)))")
                     
                     return True, [zero,zero2[0]]
                 else:
@@ -3347,6 +3350,7 @@ def apply_cond_transformation(instr,user_def_instrs,tstack):
                 
                 gas_saved_op+=6
 
+                print("ISZ(ISZ(ISZ(X)))")
                 
                 return True, [zero,zero2[0]]
             else:
@@ -3362,6 +3366,7 @@ def apply_cond_transformation(instr,user_def_instrs,tstack):
                 saved_push+=1
                 gas_saved_op+=3
 
+                print("EQ(1,ISZ(X))")
                 return True, [eq]
         else:
                 
@@ -3379,6 +3384,8 @@ def apply_cond_transformation(instr,user_def_instrs,tstack):
 
                 saved_push+=1
                 gas_saved_op+=3
+
+                print("ISZ(LT(0,X))")
                 
                 return True, [instr]
             else:
@@ -3395,7 +3402,8 @@ def apply_cond_transformation(instr,user_def_instrs,tstack):
             discount_op+=1
 
             saved_push+=1
-            
+
+            print("LT(X,1)")
             return True, []
         
          else:
@@ -3410,12 +3418,15 @@ def apply_cond_transformation(instr,user_def_instrs,tstack):
 
                     gas_saved_op+=6
 
+                    print("ISZ(ISZ(LT(X,Y)))")
+                    
                     return True, [zero,zero2[0]]
                 else:
                     return False, []
             else:
                 
                 return False, []
+            
     elif opcode == "EQ":
         if 0 in instr["inpt_sk"]:
             var0 = instr["inpt_sk"][0]
@@ -3431,6 +3442,8 @@ def apply_cond_transformation(instr,user_def_instrs,tstack):
             discount_op+=1
 
             saved_push+=1
+
+            print("EQ(0,X)")
             
             return True, []
 
@@ -3447,6 +3460,9 @@ def apply_cond_transformation(instr,user_def_instrs,tstack):
 
                     gas_saved_op+=6
 
+
+                    print("ISZ(ISZ(EQ(X,Y)))")
+                    
                     return True, [zero,zero2[0]]
                 else:
                     return False, []
@@ -3468,6 +3484,8 @@ def apply_cond_transformation(instr,user_def_instrs,tstack):
 
                 saved_push+=1
                 gas_saved_op+=3
+
+                print("AND(X,AND(X,Y))")
                 
                 return True, [and_instr]
             else:
@@ -3508,7 +3526,10 @@ def apply_cond_transformation(instr,user_def_instrs,tstack):
                     
             discount_op+=2
             gas_saved_op+=6
-                
+
+
+            print("OR(X,AND(X,Y))")
+            
             return True, [or_instr,instr]
             
 
@@ -3527,6 +3548,8 @@ def apply_cond_transformation(instr,user_def_instrs,tstack):
 
                 saved_push+=1
                 gas_saved_op+=3
+
+                print("OR(OR(X,Y),Y)")
                 
                 return True, [or_instr]
             else:
@@ -3567,7 +3590,9 @@ def apply_cond_transformation(instr,user_def_instrs,tstack):
                     
             discount_op+=2
             gas_saved_op+=6
-                
+
+            print("AND(X,OR(X,Y))")
+            
             return True, [and_instr,instr]
             
         else:
@@ -3614,7 +3639,9 @@ def apply_cond_transformation(instr,user_def_instrs,tstack):
                     
             discount_op+=2
             gas_saved_op+=6
-                
+
+            print("XOR(X,XOR(X,Y))")
+            
             return True, [xor_instr,instr]
 
         elif len(isz_op) == 1: #ISZ(XOR(X,Y)) = EQ(X,Y)
@@ -3630,6 +3657,8 @@ def apply_cond_transformation(instr,user_def_instrs,tstack):
             discount_op+=1
             gas_saved_op+=3
 
+            print("ISZ(XOR(X,Y))")
+            
             return True, [isz_instr]
                 
         else:
@@ -3659,6 +3688,8 @@ def apply_cond_transformation(instr,user_def_instrs,tstack):
                     
                 discount_op+=2
                 gas_saved_op+=6
+
+                print("NOT(NOT(X))")
                 
                 return True, [not_instr,instr]
             else:
@@ -3682,6 +3713,8 @@ def apply_cond_transformation(instr,user_def_instrs,tstack):
                     
                 discount_op+=2
                 gas_saved_op+=6
+
+                print("AND(X,NOT(X))")
                 
                 return True, [and_instr,instr]
 
@@ -3706,6 +3739,8 @@ def apply_cond_transformation(instr,user_def_instrs,tstack):
                     
                 discount_op+=2
                 gas_saved_op+=6
+
+                print("OR(X,NOT(X))")
                 
                 return True, [or_instr,instr]
 
@@ -3724,6 +3759,8 @@ def apply_cond_transformation(instr,user_def_instrs,tstack):
 
                 saved_push+=1
                 gas_saved_op+=3
+
+                print("AND(ORIGIN,2^160-1)")
                 
                 return True,[and_instr]
             else:
@@ -3750,6 +3787,8 @@ def apply_cond_transformation(instr,user_def_instrs,tstack):
             discount_op+=1
             gas_saved_op+=3
 
+            print("ISZ(SUB(X,Y))")
+
             return True, [isz_instr]
                 
         else:
@@ -3770,6 +3809,8 @@ def apply_cond_transformation(instr,user_def_instrs,tstack):
                 gas_saved_op+=5
                 saved_push+=1
 
+                print("MUL(X,SHL(Y,1)")
+                
                 return True, [mul_instr]
 
             elif mul_instr["inpt_sk"][0] == out_pt:
@@ -3780,6 +3821,8 @@ def apply_cond_transformation(instr,user_def_instrs,tstack):
                 gas_saved_op+=5
                 saved_push+=1
 
+                print("MUL(SHL(X,1),Y)")
+                
                 return True, [mul_instr]
 
             else:
@@ -3805,6 +3848,7 @@ def apply_cond_transformation(instr,user_def_instrs,tstack):
                 gas_saved_op+=5
                 saved_push+=1
 
+                print("DIV(X,SHL(Y,1))")
                 return True, [div_instr]
             
         else:
@@ -3830,7 +3874,8 @@ def apply_cond_transformation(instr,user_def_instrs,tstack):
                 
             discount_op+=1
             gas_saved_op+=397 #BALANCE 400 ADDRESS 2 SELFBALANCE 5
-            
+
+            print("BALANCE(ADDRESS)")
             return True,[bal_instr]
         
         elif len(and_op) == 1:
@@ -3841,6 +3886,8 @@ def apply_cond_transformation(instr,user_def_instrs,tstack):
 
                 saved_push+=1
                 gas_saved_op+=3
+
+                print("AND(ADDRESS,2^160)")
                 
                 return True,[and_instr]
             else:
@@ -3862,6 +3909,8 @@ def apply_cond_transformation(instr,user_def_instrs,tstack):
             saved_push+=1
             gas_saved_op+=57
 
+            print("EXP(0,X)")
+            
             return True, []
 
         elif instr["inpt_sk"][0] == 2:
@@ -3876,6 +3925,7 @@ def apply_cond_transformation(instr,user_def_instrs,tstack):
                 
             gas_saved_op+=57 #EXP-SHL
 
+            print("EXP(2,X)")
             return True, []
 
         else:
