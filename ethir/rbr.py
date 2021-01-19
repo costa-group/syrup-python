@@ -1798,7 +1798,7 @@ def evm2rbr_compiler(blocks_input = None, stack_info = None, block_unbuild = Non
                
 
             if syrup:
-                smt_translate(rbr,sname,sto)
+                smt_translate(rbr,sname,contract_name,sto)
                 
             # if saco_rbr:
             #     saco.rbr2saco(rbr,exe,contract_name)
