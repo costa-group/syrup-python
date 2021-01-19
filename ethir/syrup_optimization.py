@@ -39,6 +39,9 @@ int_not0 = []
 global source_name
 source_name = ""
 
+global cname
+cname = ""
+
 global saved_push
 saved_push = 0
 
@@ -1645,7 +1648,7 @@ def generate_json(block_name,ss,ts,max_ss_idx1,gas,subblock = None):
 
     blocks_json_dict[block_nm] = json_dict
     
-    with open(syrup_path+"/"+source_name+"_"+block_nm+"_input.json","w") as json_file:
+    with open(syrup_path+"/"+source_name+"_"+cname+"_"+block_nm+"_input.json","w") as json_file:
         json.dump(json_dict,json_file)
 
 
@@ -2671,7 +2674,7 @@ def write_instruction_block(rule_name,opcodes,subblock = None):
     if "disasms" not in os.listdir(costabs_path):
         os.mkdir(costabs_path+"/disasms")
     
-    byte_file =  open(costabs_path+"/disasms/"+source_name+"_"+block_nm+".disasm","w")
+    byte_file =  open(costabs_path+"/disasms/"+source_name+"_"+cname+"_"+block_nm+".disasm","w")
     for e in op:
         byte_file.write(e+"\n")
     byte_file.close()
@@ -2746,7 +2749,7 @@ def compute_max_program_len(opcodes, num_guard,block = None):
     return len(new_opcodes)
     
 
-def smt_translate(rules,sname,storage):
+def smt_translate(rules,sname,contract_name,storage):
     global s_counter
     global max_instr_size
     global original_opcodes
@@ -2758,10 +2761,10 @@ def smt_translate(rules,sname,storage):
     global saved_push
     global gas_saved_op
     global visited
+    global cname
     
     visited = []
     init_globals()
-
     
     if storage:
         add_storage2split()
@@ -2779,6 +2782,7 @@ def smt_translate(rules,sname,storage):
     int_not0 = [-1+2**256]#map(lambda x: -1+2**x, range(8,264,8))
 
     source_name =  sname
+    cname = contract_name
     gas_check = 0
     
     for rlist in rules:
