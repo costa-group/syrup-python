@@ -1158,6 +1158,7 @@ def compute_binary(expression,level):
         exp_str = str(funct)+" "+str(vals[0])+" "+str(vals[1])+","+str(level)
         exp_str_comm = str(funct)+" "+str(vals[1])+" "+str(vals[0])+","+str(level)
         #print (exp_str)
+        print("[RULE]: Evaluate expression "+str(expression))
         val = evaluate_expression(funct,vals[0],vals[1])
         #print (val)
         
@@ -1195,6 +1196,7 @@ def compute_ternary(expression):
     r, vals = all_integers([v0,v1,v2])
     if r and funct in ["+","*"]:
         val = evaluate_expression_ter(funct,vals[0],vals[1],vals[2])
+        print("[RULE]: Evaluate expression "+str(expression))
         gas_saved_op+=8
         saved_push+=3
         
