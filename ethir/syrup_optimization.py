@@ -3214,6 +3214,9 @@ def apply_transform_rules(user_def_instrs,list_vars,tstack):
             r = apply_transform(instr)
             #print (r)
             if r!=-1:
+                print("[RULE]: Simplification rule type 1")
+                print(instr)
+                
                 replace_var_userdef(instr["outpt_sk"][0],r,user_def_instrs)
                 #print ("***********")
                 #print (user_def_instrs)
@@ -3955,6 +3958,7 @@ def apply_comparation_rules(user_def_instrs,tstack):
         #print (r)
         #print (d_instr)
         if r:
+            print("[RULE]: Simplification rule type 2")
             modified = True
             for b in d_instr:
                 idx = user_def_instrs.index(b)
