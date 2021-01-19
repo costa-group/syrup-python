@@ -31,7 +31,7 @@ global gas_t
 gas_t = 0
 
 global compute_gast
-compute_gast = False
+compute_gast = True
 
 global int_not0
 int_not0 = []
@@ -1281,10 +1281,10 @@ def generate_encoding(instructions,variables,source_stack):
         search_for_value(v,instructions_reverse, source_stack)
         variable_content[v] = s_dict[v]
 
-    print (" A VEEEER")
-    print (variable_content)
-    print (u_dict)
-    print ("///////////////////////")
+    # print (" A VEEEER")
+    # print (variable_content)
+    # print (u_dict)
+    # print ("///////////////////////")
 
 
     # sloads_aux = sload_relative_pos
@@ -2651,6 +2651,9 @@ def is_visited(rule):
             visited.append(num)
             return False
     else:
+        # print(" a ver")
+        # print(visited)
+        # print(id_rule)
         if str(id_rule) in visited:
             return True
         else:
@@ -2752,7 +2755,9 @@ def smt_translate(rules,sname,storage):
     global int_not0
     global source_name
     global blocks_json_dict
-
+    global saved_push
+    global gas_saved_op
+    global visited
     
     visited = []
     init_globals()
@@ -2765,6 +2770,8 @@ def smt_translate(rules,sname,storage):
     blocks_json_dict = {}
     
     gas_t = 0
+    saved_push = 0
+    gas_saved_op = 0
     begin = dtimer()
 
     info_deploy = []
@@ -2789,7 +2796,7 @@ def smt_translate(rules,sname,storage):
             #     print "GAS: "+str(g)
             #     gas_t+=g
 
-            compute_gast = False
+            compute_gast = True
             original_opcodes = []
 
             if rule.get_type() == "block":
@@ -2799,7 +2806,7 @@ def smt_translate(rules,sname,storage):
             if rule.get_type() == "block" and not rule.get_isTerminal():
                 if not is_visited(rule):
                     init_globals()
-                        
+                    
                     instructions = filter_opcodes(rule)
                     
                     if instructions!=[] and instructions[-1].find("call(block2(")!=-1:
@@ -2843,10 +2850,8 @@ def smt_translate(rules,sname,storage):
                     
             elif rule.get_type() == "block" and rule.get_isTerminal():
                 if not is_visited(rule):
-
                     info = "INFO DEPLOY "+costabs_path+"ethir_OK_"+source_name+"_blocks_"+rule.get_rule_name()+" LENGTH="+str(len(opcodes))+" PUSH="+str(len(list(filter(lambda x: x.find("nop(PUSH")!=-1,opcodes))))
                     info_deploy.append(info)
-
                     init_globals()
                     opcodes = get_opcodes(rule)
                     original_opcodes = opcodes
@@ -3444,8 +3449,8 @@ def apply_cond_transformation(instr,user_def_instrs,tstack):
             instr["disasm"] = "ISZERO"
             instr["inpt_sk"] = [nonz]
             instr["commutative"] = False
-            discount_op+=1
 
+            discount_op+=1
             saved_push+=1
 
             print("EQ(0,X)")
