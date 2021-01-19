@@ -976,7 +976,7 @@ def translateOpcodesF(opcode, index_variables, addr):
         v1, updated_variables = get_new_variable(updated_variables)
 
         if syrup_flag:
-            instr = v1+" = call("+v00+","+v01+","+v02+","+v03+","+v04+","+v05+","+v06+")"  
+            instr = v1+" = call_ext("+v00+","+v01+","+v02+","+v03+","+v04+","+v05+","+v06+")"  
         else:
             instr = v1 +" = 1"
         
@@ -1027,7 +1027,7 @@ def translateOpcodesF(opcode, index_variables, addr):
         v1, updated_variables = get_new_variable(updated_variables)
 
         if syrup_flag :
-            instr = v1+" = delegatecall("+v00+","+v01+","+v02+","+v03+","+v04+","+v05+")"  
+            instr = v1+" = delegatecall_ext("+v00+","+v01+","+v02+","+v03+","+v04+","+v05+")"  
         else:
             instr = v1 +" = 1"
 
@@ -1041,7 +1041,7 @@ def translateOpcodesF(opcode, index_variables, addr):
         v1, updated_variables = get_new_variable(updated_variables)
 
         if syrup_flag :
-            instr = v1+" = staticcall("+v00+","+v01+","+v02+","+v03+","+v04+","+v05+")"  
+            instr = v1+" = staticcall_ext("+v00+","+v01+","+v02+","+v03+","+v04+","+v05+")"  
         else:
             instr = v1 +" = 1"
 
