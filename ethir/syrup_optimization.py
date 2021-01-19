@@ -186,9 +186,9 @@ def get_stack_variables(rule):
 def generate_target_stack_idx(input_elems,list_opcodes):
     init_val = 0
 
-    print ("TARGET STACK")
-    print (input_elems)
-    print (list_opcodes)
+    #print ("TARGET STACK")
+    #print (input_elems)
+    #print (list_opcodes)
     
     for op in list_opcodes:
         opcode = op[4:-1].strip()
@@ -203,7 +203,7 @@ def generate_target_stack_idx(input_elems,list_opcodes):
     return target_vars
     
 def generate_vars_target_stack(guard_instrs, call,opcodes):
-    print (opcodes)
+    #print (opcodes)
     stack_rule = output_stack_rule(call)
     #num_target_stack = output_stack_block(stack_rule,guard_instrs)
     if call.find("call(block")!=-1 and "nop(JUMP)" in opcodes:
@@ -256,9 +256,9 @@ def search_for_value_aux(var, instructions,source_stack,level):
     found = False
     vars_instr = " "
 
-    print ("BUSCANDOOO")
-    print (var)
-    print (instructions)
+    #print ("BUSCANDOOO")
+    #print (var)
+    #print (instructions)
     
     while(i<len(instructions) and not(found)):
 
@@ -274,8 +274,8 @@ def search_for_value_aux(var, instructions,source_stack,level):
     else:
         value = var.strip()
 
-    print (value)
-    print ("------------------------")
+    #print (value)
+    #print ("------------------------")
         
     new_vars, funct = get_involved_vars(value,vars_instr[0])
     
@@ -360,8 +360,8 @@ def generate_sstore_mstore(store_ins,instructions,source_stack):
 
     exp_join = rebuild_expression(new_vars,funct,values,level)
 
-    print("LLEGO AQUI SSTORE")
-    print(exp_join)
+    #print("LLEGO AQUI SSTORE")
+    #print(exp_join)
 
     return exp_join[1],exp_join[2]
 
@@ -988,10 +988,10 @@ def get_involved_vars(instr,var):
         var_list.append("coinbase")
         funct =  "coinbase"
 
-    elif instr.startswith("call("):
+    elif instr.startswith("call_ext("):
         instr_new = instr.strip("\n")
-        pos = instr_new.find("call(")
-        arg = instr[pos+5:-1]
+        pos = instr_new.find("call_ext(")
+        arg = instr[pos+9:-1]
         vars06 = arg.split(",")
         var0 = vars06[0].strip()
         var1 = vars06[1].strip()
@@ -1057,10 +1057,10 @@ def get_involved_vars(instr,var):
 
         funct = "callstatic"
 
-    elif instr.startswith("delegatecall("):
+    elif instr.startswith("delegatecall_ext("):
         instr_new = instr.strip("\n")
-        pos = instr_new.find("delegatecall(")
-        arg = instr[pos+13:-1]
+        pos = instr_new.find("delegatecall_ext(")
+        arg = instr[pos+17:-1]
         vars05 = arg.split(",")
         var0 = vars05[0].strip()
         var1 = vars05[1].strip()
@@ -1078,10 +1078,10 @@ def get_involved_vars(instr,var):
 
         funct = "delegatecall"
 
-    elif instr.startswith("staticcall("):
+    elif instr.startswith("staticcall_ext("):
         instr_new = instr.strip("\n")
-        pos = instr_new.find("staticcall(")
-        arg = instr[pos+11:-1]
+        pos = instr_new.find("staticcall_ext(")
+        arg = instr[pos+15:-1]
         vars05 = arg.split(",")
         var0 = vars05[0].strip()
         var1 = vars05[1].strip()
@@ -1154,12 +1154,12 @@ def compute_binary(expression,level):
     r, vals = all_integers([v0,v1])
     
     if r and funct in ["+","-","*","/","^","and","or","xor","%","eq","gt","lt"]:
-        print ("COMPUTE")
+        #print ("COMPUTE")
         exp_str = str(funct)+" "+str(vals[0])+" "+str(vals[1])+","+str(level)
         exp_str_comm = str(funct)+" "+str(vals[1])+" "+str(vals[0])+","+str(level)
-        print (exp_str)
+        #print (exp_str)
         val = evaluate_expression(funct,vals[0],vals[1])
-        print (val)
+        #print (val)
         
         if funct in ["*","/","%"]:
             gas_saved_op+=5
@@ -1170,10 +1170,10 @@ def compute_binary(expression,level):
         if exp_str not in already_considered:    
             if (funct in ["+","*","and","or","xor","eq"]) and (exp_str_comm not in already_considered):
                 discount_op+=2
-                print ("YEEEES")
+                #print ("YEEEES")
             elif funct not in ["+","*","and","or","xor","eq"]:
                 discount_op+=2
-                print ("YEEEES")
+                #print ("YEEEES")
 
         already_considered.append(exp_str)
         
@@ -1213,7 +1213,7 @@ def rebuild_expression(vars_input,funct,values,level):
         
         r, expression = compute_binary(expression,level)
         arity = 2
-    else: #len == 3
+    elif len(vars_input) == 3: #len == 3
         v0 = values[vars_input[0]]
         v1 = values[vars_input[1]]
         v2 = values[vars_input[2]]
@@ -1221,6 +1221,15 @@ def rebuild_expression(vars_input,funct,values,level):
         r, expression = compute_ternary(expression)
         arity = 3
 
+    else:
+        variables = []
+        for v in vars_input:
+            variables.append(values[v])
+        variables.append(funct)
+        expression = tuple(variables)
+        r = False
+        #print(expression)
+        arity = len(vars_input)
     return r, expression, arity
 
 def create_new_uvar():
@@ -1280,7 +1289,7 @@ def generate_encoding(instructions,variables,source_stack):
     # sload_relative_pos = {}
 
     if not split_sto:
-        print("VEAMOS QUE TAL PATA")
+        #print("VEAMOS QUE TAL PATA")
         generate_storage_info(instructions,source_stack)
     
 
@@ -1292,16 +1301,16 @@ def generate_storage_info(instructions,source_stack):
     global sload_relative_pos
     global mload_relative_pos
     
-    print("SLOADS")
-    print(sload_relative_pos)
+    #print("SLOADS")
+    #print(sload_relative_pos)
 
     for x in range(0,len(instructions)):
         s_dict = {}
 
         if instructions[x].find("sstore")!=-1:
             exp = generate_sstore_mstore(instructions[x],instructions[x-1::-1],source_stack)
-            print("ESTO GUARDO EN SSTORE")
-            print(exp)
+            #print("ESTO GUARDO EN SSTORE")
+            #print(exp)
             sstore_seq.append(exp)
                 
         # elif instructions[x].find("sload")!=-1:
@@ -1310,8 +1319,8 @@ def generate_storage_info(instructions,source_stack):
             
         elif instructions[x].find("mstore")!=-1:
             exp = generate_sstore_mstore(instructions[x],instructions[x-1::-1],source_stack)
-            print("ESTO GUARDO EN MSTORE")
-            print(exp)
+            #print("ESTO GUARDO EN MSTORE")
+            #print(exp)
             mstore_seq.append(exp)
 
     last_sload = ""
@@ -1326,8 +1335,8 @@ def generate_storage_info(instructions,source_stack):
         if instructions[x].find("sload")!=-1:
             exp,r = generate_sload_mload(instructions[x],instructions[x-1::-1],source_stack)
             last_sload = exp
-            print("MIRA UN SLOAD")
-            print(exp)
+            #print("MIRA UN SLOAD")
+            #print(exp)
             storage_order.append(r)
             
         elif instructions[x].find("sstore")!=-1 and last_sload != "" and sload_relative_pos.get(last_sload,[])==[]:
@@ -1337,20 +1346,20 @@ def generate_storage_info(instructions,source_stack):
         elif instructions[x].find("mload")!=-1:
             exp,r = generate_sload_mload(instructions[x],instructions[x-1::-1],source_stack)
             last_mload = exp
-            print("MIRA UN MLOAD")
-            print(exp)
+            #print("MIRA UN MLOAD")
+            #print(exp)
             memory_order.append(r)
             
         elif instructions[x].find("mstore")!=-1 and last_mload != "" and mload_relative_pos.get(last_mload,[])==[]:
             mload_relative_pos[last_mload]=mstores.pop(0)
             memory_order.append(mload_relative_pos[last_mload])
             
-    print("FINAL SSTORE:")
-    print(sstore_seq)
-    print("FINAL SLOAD:")
-    print(sload_relative_pos)
-    print("STORAGE ORDER:")
-    print(storage_order)
+    #print("FINAL SSTORE:")
+    #print(sstore_seq)
+    #print("FINAL SLOAD:")
+    #print(sload_relative_pos)
+    #print("STORAGE ORDER:")
+    #print(storage_order)
         
 def generate_source_stack_variables(idx):
     ss_list = []
@@ -1363,8 +1372,8 @@ def generate_source_stack_variables(idx):
 def get_s_counter(source_stack,target_stack):
     global s_counter
 
-    print (source_stack)
-    print (target_stack)
+    #print (source_stack)
+    #print (target_stack)
     max_ss = int(source_stack[0].strip()[2:-1]) if source_stack !=[] else -1
     max_ts = int(target_stack[0].strip()[2:-1]) if target_stack != [] else -1
 
@@ -1411,9 +1420,9 @@ def recompute_vars_set(sstack,tstack,userdef):
     for user_ins in userdef:
         output_vars = user_ins["outpt_sk"]
         input_vars = user_ins["inpt_sk"]
-        print (output_vars)
-        print (input_vars)
-        print (tstack)
+        #print (output_vars)
+        #print (input_vars)
+        #print (tstack)
         potential_vars = output_vars+input_vars+tstack
         for v in potential_vars:
             if str(v).startswith("s(") and v not in vars_list:
@@ -1507,10 +1516,10 @@ def generate_json(block_name,ss,ts,max_ss_idx1,gas,subblock = None):
     global blocks_json_dict
 
 
-    print ("AQUIIIIIIIIIIIIIII")
-    print (block_name)
-    print (ss)
-    print (ts)
+    #print ("AQUIIIIIIIIIIIIIII")
+    #print (block_name)
+    #print (ss)
+    #print (ts)
     
     max_ss_idx = compute_max_idx(max_ss_idx1,ss)
     
@@ -1532,16 +1541,16 @@ def generate_json(block_name,ss,ts,max_ss_idx1,gas,subblock = None):
             new_ts.append(v)
         else:
             new_ts.append(new_v)
-            
+
     for user_ins in user_defins:
-        print (user_ins)
+        #print (user_ins)
         new_inpt_sk = []
 
         for v in user_ins["inpt_sk"]:
-            print (v)
-            print (new_v)
-            print (max_ss_idx)
-            print (new_ss)
+            #print (v)
+            #print (new_v)
+            #print (max_ss_idx)
+            #print (new_ss)
             new_v = compute_reverse_svar(v,max_ss_idx)
             new_inpt_sk.append(new_v)
 
@@ -1551,8 +1560,8 @@ def generate_json(block_name,ss,ts,max_ss_idx1,gas,subblock = None):
 
     vars_list = compute_vars_set(new_ss,new_ts)
 
-    print ("COMPRUEBAAAA")
-    print (user_defins)
+    #print ("COMPRUEBAAAA")
+    #print (user_defins)
    
     new_user_defins,new_ts = apply_all_simp_rules(user_defins,vars_list,new_ts)
     apply_all_comparison(new_user_defins,new_ts)
@@ -1560,7 +1569,7 @@ def generate_json(block_name,ss,ts,max_ss_idx1,gas,subblock = None):
     vars_list = recompute_vars_set(new_ss,new_ts,new_user_defins)
     
     total_inpt_vars = []
-    print (new_user_defins)
+    #print (new_user_defins)
     
     for user_ins in new_user_defins:
         for v in user_ins["inpt_sk"]:
@@ -1578,8 +1587,8 @@ def generate_json(block_name,ss,ts,max_ss_idx1,gas,subblock = None):
 
 
     not_used = get_not_used_stack_variables(new_ss,new_ts,total_inpt_vars)
-    print (block_name)
-    print (not_used)
+    #print (block_name)
+    #print (not_used)
 
 
 
@@ -1589,8 +1598,8 @@ def generate_json(block_name,ss,ts,max_ss_idx1,gas,subblock = None):
         max_instr_size = num
         num_pops = num
 
-    print ("DISCOUNT")
-    print (discount_op)
+    #print ("DISCOUNT")
+    #print (discount_op)
 
 
     #Adding sstore seq
@@ -1656,7 +1665,7 @@ def optimized_json(inpt_vars,ss,ts,remove_vars):
 
     
     while(i>0 and not end):
-        print ("OPTIMIZEMOS")
+        #print ("OPTIMIZEMOS")
         same_pos = ss[-1] == ts[-1]
         involved = ts[-1] in inpt_vars
         dups = ts[-1] in ts[:-1]
@@ -1688,9 +1697,9 @@ def build_userdef_instructions():
             is_new, obj = generate_userdefname(u_var,funct,[args],already_defined,arity_exp)
 
             if not is_new and funct not in ["gas","timestamp","returndatasize"]:
-                print ("NO ES NUEVO")
-                print (funct)
-                print (obj)
+                #print ("NO ES NUEVO")
+                #print (funct)
+                #print (obj)
                 modified_svariable(u_var, obj["outpt_sk"][0])
 
             else:
@@ -1702,9 +1711,9 @@ def build_userdef_instructions():
             is_new, obj = generate_userdefname(u_var,funct,args,already_defined,arity_exp)
 
             if not is_new:
-                print ("NO ES NUEVO")
-                print (funct)
-                print (obj)
+                #print ("NO ES NUEVO")
+                #print (funct)
+                #print (obj)
                 modified_svariable(u_var, obj["outpt_sk"][0])
 
             else:
@@ -1751,7 +1760,22 @@ def build_userdef_instructions():
 
                 else:
                     user_defins.append(obj)
-                    
+        else:
+            funct = args_exp[-1]
+            args = []
+            for v in args_exp[:-1]:
+                args.append(v)
+
+            is_new, obj = generate_userdefname(u_var,funct,args,already_defined,arity_exp)
+
+            if not is_new:
+                #print ("NO ES NUEVO")
+                #print (funct)
+                #print (obj)
+                modified_svariable(u_var, obj["outpt_sk"][0])
+
+            else:
+                user_defins.append(obj)
 def generate_userdefname(u_var,funct,args,already_defined,arity):
     global user_def_counter
     
@@ -1975,8 +1999,8 @@ def modified_svariable(old_uvar, new_uvar):
     global s_dict
     global u_dict
 
-    print (old_uvar)
-    print (new_uvar)
+    #print (old_uvar)
+    #print (new_uvar)
     
     for s_var in s_dict.keys():
         if str(s_dict[s_var]).find(old_uvar)!=-1:
@@ -2060,17 +2084,17 @@ def get_max_stackindex_set(instructions):
 def is_optimizable(opcode_instructions,instructions):
     ins_aux = list(map(lambda x: x.strip()[4:-1], opcode_instructions))
     ins = list(filter(lambda x: x in split_block or x in terminate_block, ins_aux))
-    print ("OPTIMIZAR")
-    print (instructions)
-    print (opcode_instructions)
-    print (ins_aux)
-    print (ins)
+    #print ("OPTIMIZAR")
+    #print (instructions)
+    #print (opcode_instructions)
+    #print (ins_aux)
+    #print (ins)
 
     if list(filter(lambda x: x.find("POP")==-1, ins_aux)) == []:
         return True
     
     if ins == []:
-        print(instructions[:-1])
+        #print(instructions[:-1])
         return True if (instructions[:-1]!=[] or len(instructions)==1) else False
     else:
         return False
@@ -2110,7 +2134,7 @@ def translate_block(rule,instructions,opcodes,isolated=False):
         x = list(filter(lambda x: (x.find("POP")==-1) and (x.find("JUMPDEST")==-1) and (x.find("JUMP")==-1)and(x.find("JUMPI")==-1),opcodes))
 
         if x == [] and num_pops >0:
-            print ("ESTOY AQUII")
+            #print ("ESTOY AQUII")
 
             t_vars_idx = source_stack_idx-num_pops
             seq = range(0,t_vars_idx)
@@ -2139,7 +2163,7 @@ def translate_block(rule,instructions,opcodes,isolated=False):
     print ("Target Stack")
     print (t_vars)
 
-    print (source_stack_idx)
+    #print (source_stack_idx)
     source_stack = generate_source_stack_variables(source_stack_idx)
     get_s_counter(source_stack,t_vars)
     print ("GENERATING ENCONDING")
@@ -2153,8 +2177,8 @@ def translate_block(rule,instructions,opcodes,isolated=False):
     
     if  gas!=0:
         gas_t+=get_cost(original_opcodes)
-        print ("AQUI")
-        print (gas_t)
+        #print ("AQUI")
+        #print (gas_t)
         generate_json(rule.get_rule_name(),source_stack,t_vars,source_stack_idx-1,gas)
 
         new_opcodes = compute_opcodes2write(opcodes,num_guard)
@@ -2184,25 +2208,25 @@ def generate_subblocks(rule,list_subblocks,isolated = False):
 
     source_stack_idx-=1
     i = 0
-    print ("COMIENZO")
+    #print ("COMIENZO")
     while(i < len(list_subblocks)-1):
-        print ("BLOQUE NUEVO")
+        #print ("BLOQUE NUEVO")
         init_globals()
         block = list_subblocks[i]
-        print (block)
-        print (source_stack)
-        print (user_defins)
+        #print (block)
+        #print (source_stack)
+        #print (user_defins)
         nop_instr = block[-1]
         last_instr = block[-2]
 
-        print ("OPCODES: "+rule.get_rule_name())
-        print (nop_instr)
+        #print ("OPCODES: "+rule.get_rule_name())
+        #print (nop_instr)
         ts_idx = compute_target_stack_subblock(last_instr,nop_instr)
 
         seq = range(ts_idx,-1,-1)
         target_stack = list(map(lambda x: "s("+str(x)+")",seq))
 
-        print (target_stack)
+        #print (target_stack)
         #translate block
 
         new_nexts = translate_subblock(rule,block,source_stack,target_stack,source_stack_idx,i,list_subblocks[i+1])
@@ -2217,26 +2241,26 @@ def generate_subblocks(rule,list_subblocks,isolated = False):
             source_stack_idx = new_idxstack
             seq = range(source_stack_idx-1,-1,-1)
             source_stack = list(map(lambda x: "s("+str(x)+")",seq))
-            print (block)
-            print (new_block)
+            #print (block)
+            #print (new_block)
 
             
         i+=1
 
     instrs = list_subblocks[-1]
-    print ("FINAL")
-    print (instrs)
-    print (source_stack)
+    #print ("FINAL")
+    #print (instrs)
+    #print (source_stack)
     if source_stack == []:
         source_stack_idx = -1
     block = instrs[2:]
     if block != []:
-        print ("VAMOS A VER")
-        print (source_stack_idx)
+        #print ("VAMOS A VER")
+        #print (source_stack_idx)
         translate_last_subblock(rule,block,source_stack,source_stack_idx,i,isolated)
-    print ("**************")
+    #print ("**************")
     if compute_gast:
-        print ("AQUI")
+        #print ("AQUI")
         gas_t+=get_cost(original_opcodes)
 
     
@@ -2267,19 +2291,19 @@ def translate_subblock(rule,instrs,sstack,tstack,sstack_idx,idx,next_block):
         
         generate_encoding(instr,tstack,sstack)
         build_userdef_instructions()
-        print (user_defins)
-        print ("**********")
+        #print (user_defins)
+        #print ("**********")
         gas = get_block_cost(opcodes,0)
         max_stack_size = max_idx_used(instructions,tstack)
         if max_stack_size!=0 and gas !=0:
             compute_gast = True
-            print ("VEEENGA")
+            #print ("VEEENGA")
             new_tstack,new_nexts = optimize_splitpop_block(tstack,sstack,next_block,opcodes)
             if new_nexts != []:
                 pops2remove = new_nexts[2]
                 gas = gas+2*pops2remove
                 max_instr_size+=pops2remove
-            print (tstack,new_tstack)
+            #print (tstack,new_tstack)
             
             generate_json(rule.get_rule_name(),sstack,new_tstack,sstack_idx,gas,subblock=idx)
             new_opcodes = compute_opcodes2write(opcodes,0)
@@ -2292,11 +2316,11 @@ def translate_subblock(rule,instrs,sstack,tstack,sstack_idx,idx,next_block):
 
 def optimize_splitpop_block(tstack,source_stack,next_block,opcodes):
 
-    print ("EMPIEZA")
-    print (tstack)
-    print (source_stack)
-    print (next_block)
-    print (opcodes)
+    #print ("EMPIEZA")
+    #print (tstack)
+    #print (source_stack)
+    #print (next_block)
+    #print (opcodes)
     
     i = 0
     target_stack = compute_target_stack(tstack)
@@ -2315,21 +2339,21 @@ def optimize_splitpop_block(tstack,source_stack,next_block,opcodes):
         return tstack,[]
     else:
         if split_opcode == "nop(SSTORE)" or split_opcode == "nop(MSTORE)":
-            print ("VAYA VAYA")
+            #print ("VAYA VAYA")
             split_stack = target_stack[:2]
             rest_stack = target_stack[2:]
-            print (split_stack)
-            print (rest_stack)
+            #print (split_stack)
+            #print (rest_stack)
             finished = False
             init_i = i
-            print ("EMPIEZA BLOQUE")
-            print (init_i)
+            #print ("EMPIEZA BLOQUE")
+            #print (init_i)
             while(i>0 and rest_stack !=[] and not finished):
                 val = rest_stack.pop(0)
-                print (val)
+                #print (val)
                 if val in source_stack and val not in split_stack:
                     finished = True
-                    print (val)
+                    #print (val)
                     rest_stack = [val]+rest_stack
                 else:
                     i-=1
@@ -2341,11 +2365,11 @@ def optimize_splitpop_block(tstack,source_stack,next_block,opcodes):
                 #     rest_stack = [val]+rest_stack
             
             
-            print ("POPS TO REMOVE")
-            print (i)
+            #print ("POPS TO REMOVE")
+            #print (i)
 
-            print (rest_stack)
-            print (source_stack)
+            #print (rest_stack)
+            #print (source_stack)
             todelete= True
             source_copy = list(source_stack)
             while i > 0 and todelete and (source_copy != []) and (rest_stack !=[]):
@@ -2357,16 +2381,16 @@ def optimize_splitpop_block(tstack,source_stack,next_block,opcodes):
                     todelete = False
           
             pops2remove = init_i-i
-            print (pops2remove)
+            #print (pops2remove)
 
             new_next_block,new_next_stack = modify_next_block(next_block,pops2remove)
-            print (new_next_block)
+            #print (new_next_block)
             
             end_target_stack = tstack[:2]+tstack[2+pops2remove:]#split_stack+rest_stack
-            print ("MIRAAAA")
-            print (end_target_stack)
-            print (next_block)
-            print (new_next_stack)
+            #print ("MIRAAAA")
+            #print (end_target_stack)
+            #print (next_block)
+            #print (new_next_stack)
             return end_target_stack,(new_next_block,new_next_stack,pops2remove)
         else:
           return tstack,[]
@@ -2374,14 +2398,14 @@ def optimize_splitpop_block(tstack,source_stack,next_block,opcodes):
 
 def modify_next_block(next_block,pops2remove):
     split_instr = next_block[0]
-    print (split_instr)
+    #print (split_instr)
     name = split_instr.split("(")[0]
-    print (split_instr.split(",")[0][9:-1])
+    #print (split_instr.split(",")[0][9:-1])
     idx1 = int(split_instr.split(",")[0][9:-1]) #sstore(
     idx2 = int(split_instr.split(",")[1][2:-2])
 
     new_name = name+"(s("+str(idx1-pops2remove)+"),s("+str(idx2-pops2remove)+"))"
-    print (pops2remove*2)
+    #print (pops2remove*2)
     new_nextblock = [new_name,next_block[1]]+next_block[2+pops2remove*2:]
     return new_nextblock,idx2-pops2remove
     
@@ -2418,17 +2442,17 @@ def translate_last_subblock(rule,block,sstack,sstack_idx,idx,isolated):
         pops = list(filter(lambda x: x.find("nop(POP)")!=-1,opcodes))
         num_pops = len(pops)
 
-        print ("OPCODES: "+rule.get_rule_name())
-        print (opcodes)
+        #print ("OPCODES: "+rule.get_rule_name())
+        #print (opcodes)
         
         if not isolated:
 
             x = list(filter(lambda x: (x.find("POP")==-1) and (x.find("JUMPDEST")==-1) and (x.find("JUMP")==-1)and(x.find("JUMPI")==-1),opcodes))
 
             if x == [] and num_pops >0:
-                print ("ESTOY AQUII")
-                print (sstack_idx)
-                print (num_pops)
+                #print ("ESTOY AQUII")
+                #print (sstack_idx)
+                #print (num_pops)
                 t_vars_idx = sstack_idx-num_pops+1
                 seq = range(0,t_vars_idx)
                 tstack = list(map(lambda x: "s("+str(x)+")",seq))[::-1]
@@ -2438,28 +2462,28 @@ def translate_last_subblock(rule,block,sstack,sstack_idx,idx,isolated):
         else:
             tstack = generate_target_stack_idx(sstack_idx+1,opcodes)[::-1]
         get_s_counter(sstack,tstack)
-        print ("GENERATING ENCONDING")
-        print (instructions)
-        print (tstack)
-        print (sstack)
+        #print ("GENERATING ENCONDING")
+        #print (instructions)
+        #print (tstack)
+        #print (sstack)
         generate_encoding(instructions,tstack,sstack)
     
         build_userdef_instructions()
-        print (user_defins)
+        #print (user_defins)
         gas = get_block_cost(opcodes,len(guards_op))
         max_stack_size = max_idx_used(instructions,tstack)
         if gas!=0:
             compute_gast = True
-            print ("MIRA")
-            print (sstack_idx)
-            print (sstack)
+            #print ("MIRA")
+            #print (sstack_idx)
+            #print (sstack)
             generate_json(rule.get_rule_name(),sstack,tstack,sstack_idx,gas,subblock=idx)
             new_opcodes = compute_opcodes2write(opcodes,num_guard)
             write_instruction_block(rule.get_rule_name(),new_opcodes,subblock=idx)
     
 def get_new_source_stack(instr,nop_instr,idx):
-    print (instr)
-    print (nop_instr)
+    #print (instr)
+    #print (nop_instr)
     
     if instr.find("=")!=-1:
         ins = instr.strip()
@@ -2574,14 +2598,14 @@ def generate_terminal_subblocks(rule,list_subblocks):
 
     source_stack_idx-=1
     i = 0
-    print ("COMIENZO")
+    #print ("COMIENZO")
     while(i < len(list_subblocks)-1):
         init_globals()
         block = list_subblocks[i]
         
-        print (block)
-        print (source_stack)
-        print (user_defins)
+        #print (block)
+        #print (source_stack)
+        #print (user_defins)
         nop_instr = block[-1]
         last_instr = block[-2]
         ts_idx = compute_target_stack_subblock(last_instr,nop_instr)
@@ -2589,7 +2613,7 @@ def generate_terminal_subblocks(rule,list_subblocks):
         seq = range(ts_idx,-1,-1)
         target_stack = list(map(lambda x: "s("+str(x)+")",seq))
         
-        print (target_stack)
+        #print (target_stack)
         #translate block
 
         new_nexts = translate_subblock(rule,block,source_stack,target_stack,source_stack_idx,i,list_subblocks[i+1])
@@ -2670,7 +2694,7 @@ def get_bytecode_representation(instructions):
         str_b = str_b+op_val+num
 
 def max_idx_used(instructions,tstack):
-    print (instructions)
+    #print (instructions)
     
     if instructions == []:
         return 0
@@ -2682,7 +2706,7 @@ def max_idx_used(instructions,tstack):
 
         
     insts = list(filter(lambda x: x.find("=")!=-1,instructions))
-    print (insts)
+    #print (insts)
     variables = list(map(lambda x: x.split("=")[0].strip(),insts))
 
     real_variables = list(filter(lambda x: x.find("s(")!=-1,variables))
@@ -2781,16 +2805,16 @@ def smt_translate(rules,sname,storage):
                     opcodes = get_opcodes(rule)
 
 
-                    print(costabs_path)
-                    print(source_name)
-                    print(rule.get_rule_name())
-                    print(str(len(opcodes)))
+                    #print(costabs_path)
+                    #print(source_name)
+                    #print(rule.get_rule_name())
+                    #print(str(len(opcodes)))
                     print(str(len(list(filter(lambda x: x.find("nop(PUSH")!=-1,opcodes)))))
                     info = "INFO DEPLOY "+costabs_path+"ethir_OK_"+source_name+"_blocks_"+rule.get_rule_name()+" LENGTH="+str(len(opcodes))+" PUSH="+str(len(list(filter(lambda x: x.find("nop(PUSH")!=-1,opcodes))))
                     info_deploy.append(info)
 
                     original_opcodes = opcodes
-                    print ("-*-*-*-*-*-*-*-*-*-*-*")
+                    #print ("-*-*-*-*-*-*-*-*-*-*-*")
 
                     res = is_optimizable(opcodes,instructions)
                     
@@ -2878,10 +2902,10 @@ def smt_translate_isolate(rule,name,storage):
         
     print ("-*-*-*-*-*-*-*-*-*-*-*")
 
-    print("ENTRO AQUI PABLO")
+    #print("ENTRO AQUI PABLO")
     res = is_optimizable(opcodes,instructions)
     if res and not x[0]:
-        print ("no")
+        #print ("no")
         translate_block(rule,instructions,opcodes,True)
 
     else: #we need to split the blocks into subblocks
@@ -2932,7 +2956,7 @@ def apply_transform(instr):
         
     elif opcode == "OR":
         inp_vars = instr["inpt_sk"]
-        print (inp_vars)
+        #print (inp_vars)
         if 0 in inp_vars:
             saved_push+=2
             gas_saved_op+=3
@@ -3173,7 +3197,7 @@ def apply_all_simp_rules(user_def,list_vars,tstack):
     user_def_instrs = user_def
     target_stack = tstack
     while(modified):
-        print ("CUCU")
+        #print ("CUCU")
         modified, user_def_instrs,target_stack = apply_transform_rules(user_def_instrs,list_vars,target_stack)
     return user_def_instrs,target_stack
 
@@ -3182,20 +3206,20 @@ def apply_transform_rules(user_def_instrs,list_vars,tstack):
     target_stack = tstack
     modified = False
     for instr in user_def_instrs:
-        print ("------------IT-------------")
-        print (instr)
+        #print ("------------IT-------------")
+        #print (instr)
         if instr["disasm"] in ["AND","OR","XOR","ADD","SUB","MUL","DIV","EXP","EQ","GT","LT","NOT","ISZERO"]:
-            print ("AQUIIIII")
-            print (instr)
+            #print ("AQUIIIII")
+            #print (instr)
             r = apply_transform(instr)
-            print (r)
+            #print (r)
             if r!=-1:
                 replace_var_userdef(instr["outpt_sk"][0],r,user_def_instrs)
-                print ("***********")
-                print (user_def_instrs)
-                print (target_stack)
+                #print ("***********")
+                #print (user_def_instrs)
+                #print (target_stack)
                 target_stack = replace_var(instr["outpt_sk"][0],r,target_stack)
-                print (target_stack)
+                #print (target_stack)
                 delete_from_listvars(instr["outpt_sk"][0],list_vars)
                 to_delete.append(instr)
                 modified = True
@@ -3206,8 +3230,8 @@ def apply_transform_rules(user_def_instrs,list_vars,tstack):
         if instr not in to_delete:
             new_user_def.append(instr)
 
-    print ("MIRA")
-    print (new_user_def)
+    #print ("MIRA")
+    #print (new_user_def)
     return modified, new_user_def, target_stack, 
 
 def replace_var_userdef(out_var,value,user_def):
@@ -3216,7 +3240,7 @@ def replace_var_userdef(out_var,value,user_def):
         inpt = instr["inpt_sk"]
         if out_var in inpt:
             idx = inpt.index(out_var)
-            print (inpt)
+            #print (inpt)
             part1 = inpt[:idx]
             part2 = inpt[idx+1:]
             part1.append(value)
@@ -3865,7 +3889,7 @@ def apply_cond_transformation(instr,user_def_instrs,tstack):
 def apply_all_comparison(user_def_instrs,tstack):
     modified = True
     while(modified):
-        print ("********************IT*********************")
+        #print ("********************IT*********************")
         modified = apply_comparation_rules(user_def_instrs,tstack)
 
         
@@ -3873,13 +3897,13 @@ def apply_comparation_rules(user_def_instrs,tstack):
     modified = False
 
     for instr in user_def_instrs:
-        print ("--------IT COMP--------")
-        print (instr)
+        #print ("--------IT COMP--------")
+        #print (instr)
         
         r, d_instr = apply_cond_transformation(instr,user_def_instrs,tstack)
-        print ("VEAMOS VEAMOS")
-        print (r)
-        print (d_instr)
+        #print ("VEAMOS VEAMOS")
+        #print (r)
+        #print (d_instr)
         if r:
             modified = True
             for b in d_instr:
@@ -3977,10 +4001,10 @@ def opt_sstore_sstore(rule):
 
     instructions = rule.get_instructions()
 
-    print ("VEAMOS")
-    print (instructions)
-    print (variables)
-    print (source_stack)
+    #print ("VEAMOS")
+    #print (instructions)
+    #print (variables)
+    #print (source_stack)
 
     sstore_instr = list(filter(lambda x: x.find("sstore(")!=-1,instructions))
 
@@ -4004,9 +4028,9 @@ def opt_sstore_sstore(rule):
     except:
         return False, []
 
-    print ("UOOOOO")
+    #print ("UOOOOO")
     cont1 = dict(variable_content)
-    print (cont1)
+    #print (cont1)
     
     instr2 = instructions[i+2:]
 
@@ -4019,15 +4043,15 @@ def opt_sstore_sstore(rule):
         
     cont2 = dict(variable_content)
 
-    print ("AQUI")
-    print (cont1)
-    print (cont2)
+    #print ("AQUI")
+    #print (cont1)
+    #print (cont2)
 
     if cont1 == cont2:
         idxop = instructions.index("nop(SSTORE)")
         
         instr_end = instructions[:idxop-1]+instructions[idxop+1:]
-        print ("OPTIMIZO SSTORE")
+        #print ("OPTIMIZO SSTORE")
         return True, instr_end
     else:
         val1ss1 = cont1["s("+str(sstore1_idx)+")"]
@@ -4039,7 +4063,7 @@ def opt_sstore_sstore(rule):
         if val1ss1 == val1ss2 and val2ss1 == val2ss2:
             idxop = instructions.index("nop(SSTORE)")
             instr_end = instructions[:idxop-1]+instructions[idxop+1:]
-            print ("OPTIMIZO SSTORE")
+            #print ("OPTIMIZO SSTORE")
             return True, instr_end
         else:
             return False,[]
