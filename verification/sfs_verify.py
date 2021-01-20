@@ -106,13 +106,27 @@ def compare_variables(var_origin, var_opt, src_origin, src_opt, user_def_origin,
             
             j = 0
 
+            result = True
+            
             inpt_origin = elem_origin["inpt_sk"]
             inpt_opt = elem_opt["inpt_sk"]
+            
             while j < len(inpt_origin):
                 r = compare_variables(inpt_origin[j], inpt_opt[j],src_origin, src_opt, user_def_origin, user_def_opt)
-                if not r:
-                    return False
+                result = result and r
                 j+=1
+
+            if not result and not elem_origin["commutative"]:
+                return False
+
+            if not result and elem_origin["commutative"]:
+                result = True
+                j = 0
+                while j < len(inpt_origin):
+                    r = compare_variables(inpt_origin[j], inpt_opt[len(inpt_opt)-j-1],src_origin, src_opt, user_def_origin, user_def_opt)
+                    if not r:
+                        return False
+                    j+=1
     return True
 
 # def compare_usrdef_instr(elem_origin, elem_opt, json_origin,json_opt):
