@@ -8,7 +8,11 @@ import re
 import json
 import pandas as pd
 import sys
-from timeit import default_timer as timer
+import resource
+sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))+"/backend")
+from encoding_utils import generate_phi_dict
+sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))+"/verification")
+from sfs_verify import are_equals
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))+"/scripts")
 
@@ -22,7 +26,7 @@ def init():
 
     # Timeout in s
     global tout
-    tout = 30
+    tout = 10
 
     global barcelogic_path
     barcelogic_path = project_path + "/bin/barcelogic"
@@ -61,13 +65,31 @@ def init():
     global results_dir
     results_dir = project_path + "/results/prueba/"
 
+    global syrup_full_execution_path
+    syrup_full_execution_path = project_path + "/syrup_full_execution.py"
+
+    global final_json_path
+    final_json_path = tmp_costabs + "/jsons/block__block0_input.json"
+
+    global final_disasm_blk_path
+    final_disasm_blk_path = tmp_costabs + "/block.disasm_blk"
+
+    global syrup_full_execution_flags
+    syrup_full_execution_flags = " -isb -s " + final_disasm_blk_path
+
 
 def run_command(cmd):
     FNULL = open(os.devnull, 'w')
-    start = timer()
     solc_p = subprocess.Popen(shlex.split(cmd), stdout=subprocess.PIPE,
                               stderr=FNULL)
-    return solc_p.communicate()[0].decode(), timer() - start
+    return solc_p.communicate()[0].decode()
+
+
+def run_and_measure_command(cmd):
+    usage_start = resource.getrusage(resource.RUSAGE_CHILDREN)
+    solution = run_command(cmd)
+    usage_stop = resource.getrusage(resource.RUSAGE_CHILDREN)
+    return solution, usage_stop.ru_utime + usage_stop.ru_stime - usage_start.ru_utime - usage_start.ru_stime
 
 
 def submatch(string):
@@ -98,10 +120,17 @@ if __name__=="__main__":
                 data = json.load(path)
                 source_gas_cost = data['current_cost']
                 file_results['source_gas_cost'] = int(source_gas_cost)
+                init_program_length = data['init_progr_len']
+                file_results['init_progr_len'] = int(init_program_length)
+                user_instr = data['user_instrs']
+                final_stack = data['tgt_ws']
+                file_results['number_of_necessary_uninterpreted_instructions'] = len(user_instr)
+                file_results['number_of_necessary_push'] = len(generate_phi_dict(user_instr, final_stack))
+                initial_stack = data['src_ws']
             run_command(syrup_path + " " + file + " " + syrup_flags)
-            solution, executed_time = run_command(barcelogic_path + " -file " + encoding_file + " " + barcelogic_flags)
+            solution, executed_time = run_and_measure_command(barcelogic_path + " -file " + encoding_file + " " + barcelogic_flags)
+            executed_time = round(executed_time, 3)
             target_gas_cost, shown_optimal = analyze_file(solution)
-            executed_time = round(executed_time, 2)
 
             # If target gas cost = -1, no model has been found.
             if target_gas_cost == -1:
@@ -124,14 +153,35 @@ if __name__=="__main__":
                 run_command(disasm_generation_file)
 
                 with open(instruction_final_solution, 'r') as f:
-                    file_results['target_disasm'] = f.read()
+                    instructions_disasm = f.read()
+                    file_results['target_disasm'] = instructions_disasm
+                    # Check all those strings that are not numbers
+                    number_of_instructions = len(list(filter(lambda elem: not elem.isnumeric() and elem != '',
+                                                             instructions_disasm.split(' '))))
+                    file_results['final_progr_len'] = number_of_instructions
+
+                    # Generate the disasm_blk file, including the size of the initial stack in the first
+                    # line and the disasm instructions in the second one. This will be used to check if the
+                    # initial SFS and the new generated one are equivalent
+                    with open(final_disasm_blk_path, 'w') as f2:
+                        print(len(initial_stack), file=f2)
+                        print(instructions_disasm, file=f2)
+
                 with open(gas_final_solution, 'r') as f:
                     file_results['real_gas'] = f.read()
+
+                run_command(syrup_full_execution_path + " " + syrup_full_execution_flags)
+
+                with open(final_json_path) as path:
+                    data2 = json.load(path)
+                    file_results['result_is_correct'] = are_equals(data, data2)
 
             rows_list.append(file_results)
 
         df = pd.DataFrame(rows_list, columns=['block_id', 'target_gas_cost', 'real_gas',
                                               'shown_optimal', 'no_model_found', 'source_gas_cost', 'saved_gas',
-                                              'solver_time_in_sec', 'target_disasm'])
+                                              'solver_time_in_sec', 'target_disasm', 'init_progr_len','final_progr_len',
+                                              'number_of_necessary_uninterpreted_instructions',
+                                              'number_of_necessary_push', 'result_is_correct'])
         csv_file = results_dir + contract_path.split('/')[-1] + "_results_barcelogic.csv"
         df.to_csv(csv_file)
