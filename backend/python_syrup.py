@@ -46,8 +46,8 @@ def execute_syrup_backend(args_i,json_file = None):
     es = initialize_dir_and_streams(path,solver,json_path)
 
     b0, bs, user_instr, variables, initial_stack, final_stack = parse_data(json_path)
-    flags = {'at-most': args_i.at_most, 'pushed-at-least': args_i.pushed_once, 'instruction-order': False,
-             'no-output-before-pop': False}
+    flags = {'at-most': args_i.at_most, 'pushed-at-least': args_i.pushed_once, 'instruction-order': args_i.instruction_order,
+             'no-output-before-pop': args_i.no_output_before_pop, 'inequality-gas-model': args_i.inequality_gas_model}
     additional_info = {'tout': args_i.tout, 'solver': args_i.solver}
 
     generate_smtlib_encoding(b0, bs, user_instr, variables, initial_stack, final_stack, flags, additional_info)
@@ -74,6 +74,8 @@ if __name__ == "__main__":
                     action='store_true', dest='no_output_before_pop')
     ap.add_argument("-tout", metavar='timeout', action='store', type=int, help="Timeout in seconds. "
                                                                                "Works only for z3 and oms (so far)")
+    ap.add_argument("-inequality-gas-model", dest='inequality_gas_model', action='store_true',
+                    help="Soft constraints with inequalities instead of equalities")
 
     args = vars(ap.parse_args())
     json_path = args['json_path']
@@ -82,7 +84,8 @@ if __name__ == "__main__":
     timeout = args['tout']
 
     flags = {'at-most': args['at_most'], 'pushed-at-least': args['pushed_once'],
-             'instruction-order': args['instruction_order'], 'no-output-before-pop': args['no_output_before_pop']}
+             'instruction-order': args['instruction_order'], 'no-output-before-pop': args['no_output_before_pop'],
+             'inequality-gas-model': args['inequality_gas_model']}
 
     additional_info = {'tout': args['tout'], 'solver': solver}
     es = initialize_dir_and_streams(path,solver)

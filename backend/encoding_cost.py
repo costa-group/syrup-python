@@ -35,3 +35,18 @@ def paper_soft_constraints(b0, bs, user_instr, theta_stack, theta_comm, theta_no
 
         # We update previous_cost
         previous_cost = gas_cost
+
+
+# Method for generating an alternative model for soft constraints. This method is similar to the previous one,
+# but instead it is based on inequalities and shorter constraints. See new paper for more details
+def alternative_soft_constraints(b0, bs, user_instr, theta_stack, theta_comm, theta_non_comm, is_barcelogic=False):
+    write_encoding("; Alternative soft constraints model")
+    instr_costs = generate_costs_ordered_dict(bs, user_instr, theta_stack, theta_comm, theta_non_comm)
+
+    # For every instruction and every position in the sequence, we add a soft constraint
+    for theta_instr, gas_cost in instr_costs.items():
+        if gas_cost == 0:
+            continue
+
+        for j in range(b0):
+            write_encoding(add_assert_soft(add_not(add_eq(t(j), theta_instr)), gas_cost, label_name, is_barcelogic))
