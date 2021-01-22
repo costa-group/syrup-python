@@ -127,6 +127,9 @@ def main():
     parser.add_argument("-solver", "--solver",             help="Choose the solver", choices = ["z3","barcelogic","oms"])
     parser.add_argument("-json", "--json",             help="The input file is a json that contains the SFS of the block to be analyzed", action="store_true")
     parser.add_argument("-v", "--verify",             help="Generate a verification report checking if the SFS of the original and the optimized block are the same", action="store_true")
+    parser.add_argument("-optimize-run", "--optimize-run",             help="Enable optimization flag in solc compiler", action="store_true")
+    parser.add_argument("-run", "--run",             help="Set for how many contract runs to optimize (200 by default if --optimize-run)", default=-1,action="store",type=int)
+    parser.add_argument("-no-yul-opt", "--no-yul-opt",             help="Disable yul optimization in solc compiler (when possible)", action="store_true")
     parser.add_argument('-write-only', help="print smt constraint in SMT-LIB format,a mapping to instructions, and objectives", action='store_true')
     parser.add_argument('-at-most', help='add a constraint for each uninterpreted function so that they are used at most once',
                     action='store_true', dest='at_most')
