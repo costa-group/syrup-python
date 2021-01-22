@@ -132,8 +132,14 @@ def main():
                     action='store_true', dest='at_most')
     parser.add_argument('-pushed-once', help='add a constraint to indicate that each pushed value is pushed at least once',
                     action='store_true', dest='pushed_once')
-    parser.add_argument("-tout", metavar='timeout', action='store', type=int, help="Timeout in seconds. "
-                                                                               "Works only for z3 and oms (so far)")
+    parser.add_argument("-tout", metavar='timeout', action='store', type=int, help="Timeout in seconds.")
+    parser.add_argument("-inequality-gas-model", dest='inequality_gas_model', action='store_true',
+                    help="Soft constraints with inequalities instead of equalities")
+    parser.add_argument("-instruction-order", help='add a constraint representing the order among instructions',
+                    action='store_true', dest='instruction_order')
+    parser.add_argument("-no-output-before-pop", help='add a constraint representing the fact that the previous instruction'
+                                                  'of a pop can only be a instruction that does not generate an output',
+                    action='store_true', dest='no_output_before_pop')
 
     args = parser.parse_args()
 

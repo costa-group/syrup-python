@@ -5,7 +5,7 @@
 from encoding_utils import *
 from encoding_initialize import initialize_variables, variables_assignment_constraint, \
     initial_stack_encoding, final_stack_encoding
-from encoding_cost import paper_soft_constraints, label_name
+from encoding_cost import paper_soft_constraints, label_name, alternative_soft_constraints
 from encoding_instructions import instructions_constraints
 from encoding_redundant import *
 from encoding_files import write_encoding, write_opcode_map, write_instruction_map, write_gas_map
@@ -49,11 +49,12 @@ def generate_asserts_from_additional_info(additional_info):
             write_encoding(set_timeout(float(additional_info['tout'])))
 
 
-def generate_soft_constraints(solver_name, b0, bs, usr_instr, theta_stack, theta_comm, theta_non_comm):
-    if solver_name == "z3" or solver_name == "oms":
-        paper_soft_constraints(b0, bs, usr_instr, theta_stack, theta_comm, theta_non_comm)
+def generate_soft_constraints(solver_name, b0, bs, usr_instr, theta_stack, theta_comm, theta_non_comm, flags):
+    is_barcelogic = solver_name == "barcelogic"
+    if not flags['inequality-gas-model']:
+        paper_soft_constraints(b0, bs, usr_instr, theta_stack, theta_comm, theta_non_comm, is_barcelogic)
     else:
-        paper_soft_constraints(b0, bs, usr_instr, theta_stack, theta_comm, theta_non_comm, True)
+        alternative_soft_constraints(b0, bs, usr_instr, theta_stack, theta_comm, theta_non_comm, is_barcelogic)
 
 
 def generate_cost_functions(solver_name):
@@ -89,6 +90,7 @@ def generate_instruction_dicts(b0, user_instr, final_stack, flags):
     else:
         return dict(), dict(), dict()
 
+
 # Adding necessary statements after check_sat statement.
 # Barcelogic doesn't support (get-objectives) statement.
 def generate_final_statements(solver_name):
@@ -122,7 +124,7 @@ def generate_smtlib_encoding(b0, bs, usr_instr, variables, initial_stack, final_
     generate_redundant_constraints(flags, b0, usr_instr, theta_stack, theta_comm, theta_non_comm, final_stack,
                                    dependency_graph, first_position_instr_appears_dict,
                                    first_position_instr_cannot_appear_dict, theta_dict)
-    generate_soft_constraints(solver_name, b0, bs, usr_instr, theta_stack, theta_comm, theta_non_comm)
+    generate_soft_constraints(solver_name, b0, bs, usr_instr, theta_stack, theta_comm, theta_non_comm, flags)
     generate_cost_functions(solver_name)
     write_encoding(check_sat())
     generate_final_statements(solver_name)
