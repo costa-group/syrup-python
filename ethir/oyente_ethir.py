@@ -188,6 +188,12 @@ def analyze_bytecode(args_i = None):
 
     
     x = dtimer()
+
+    # compiler_opt = {}
+    # compiler_opt["optimize"] = args.optimize_run
+    # compiler_opt["no-yul"] = args.no_yul_opt
+    # compiler_opt["runs"] = args.run
+    
     helper = InputHelper(InputHelper.BYTECODE, source=args.source,evm = args.evm)
     inp = helper.get_inputs()[0]
     y = dtimer()
@@ -367,6 +373,11 @@ def analyze_solidity(input_type='solidity', args_i = None):
         args.goto = False
         
 
+    # compiler_opt = {}
+    # compiler_opt["optimize"] = args.optimize_run
+    # compiler_opt["no-yul"] = args.no_yul_opt
+    # compiler_opt["runs"] = args.run
+        
         
     x = dtimer()
     is_runtime = not(args.init)
@@ -479,6 +490,9 @@ def main():
     parser.add_argument("-i", "--invalid",             help="Translate the specified invalid bytecodes into SV-COMP error labels. Use with -c flag", choices = ["array","div0","all"])
     parser.add_argument("-g", "--goto",             help="Transform recursive rules into iterative rules using gotos. Use with -c flag", action="store_true")
     parser.add_argument("-opt", "--optimize",             help="Fields to be optimized by Gasol", action="store_true")
+    # parser.add_argument("-optimize-run", "--optimize-run",             help="Enable optimization flag in solc compiler", action="store_true")
+    # parser.add_argument("-run", "--run",             help="Set for how many contract runs to optimize (200 by default)", action="store",type=int)
+    # parser.add_argument("-no-yul-opt", "--no-yul-opt",             help="Disable yul optimization in solc compiler (when possible)", action="store_true")
     parser.add_argument("-f", "--fields", type=str, help="Fields to be optimized by Gasol")
     parser.add_argument("-cname", "--contract_name", type=str, help="Name of the contract that is going to be optimized")
     parser.add_argument("-bl", "--block", type=str, help="block to be optimized (GASOL)")
