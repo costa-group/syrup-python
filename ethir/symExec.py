@@ -264,6 +264,9 @@ def initGlobalVars():
     
     global syrup_opt
     syrup_opt = ""
+
+    global optimization
+    optimization = False
     
 def is_testing_evm():
     return global_params.UNIT_TEST != 0
@@ -509,7 +512,8 @@ def collect_vertices(tokens):
                     is_new_line = True
                     current_line_content += push_val + ' '
                     instructions[current_ins_address] = current_line_content
-                    idx = mapping_push_instruction(current_line_content, current_ins_address, idx, positions, length) if g_src_map else None
+                    if not optimization:
+                        idx = mapping_push_instruction(current_line_content, current_ins_address, idx, positions, length) if g_src_map else None
                     log.debug(current_line_content)
                     current_line_content = ""
                     wait_for_push = False
@@ -537,7 +541,8 @@ def collect_vertices(tokens):
             is_new_line = True
             log.debug(current_line_content)
             instructions[current_ins_address] = current_line_content
-            idx = mapping_non_push_instruction(current_line_content, current_ins_address, idx, positions, length) if g_src_map else None
+            if not optimization:
+                idx = mapping_non_push_instruction(current_line_content, current_ins_address, idx, positions, length) if g_src_map else None
             current_line_content = ""
             continue
         elif tok_type == NAME:
@@ -3318,7 +3323,7 @@ def get_scc(edges):
         scc_multiple.update(scc)
         return scc_multiple
         
-def run(disasm_file=None,disasm_file_init=None, source_map=None,source_map_init = None, source_file=None, cfg=None, saco = None, execution = None,cname = None, hashes = None, debug = None,ms_unknown=False,evm_version = False,cfile = None,svc = None,go = None,opt = None, syrup = None,source_name = None, storage = None):    
+def run(disasm_file=None,disasm_file_init=None, source_map=None,source_map_init = None, source_file=None, cfg=None, saco = None, execution = None,cname = None, hashes = None, debug = None,ms_unknown=False,evm_version = False,cfile = None,svc = None,go = None,opt = None, syrup = None,source_name = None, storage = None, opt_bytecode = False):    
     global g_disasm_file
     global g_source_file
     global g_src_map
@@ -3332,6 +3337,7 @@ def run(disasm_file=None,disasm_file_init=None, source_map=None,source_map_init 
     global invalid_option
     global syrup_opt
     global source_n
+    global optimization
 
     if disasm_file_init != None:
         analyze_init(disasm_file_init,source_file,source_map_init,source_map,evm_version)
@@ -3358,7 +3364,6 @@ def run(disasm_file=None,disasm_file_init=None, source_map=None,source_map_init 
         
     if hashes != None:
         f_hashes = hashes
-
     
         
     if cname != None:
@@ -3369,7 +3374,9 @@ def run(disasm_file=None,disasm_file_init=None, source_map=None,source_map_init 
 
     invalid_option = svc.get("invalid",False)
     verify = svc.get("verify",False)
-        
+
+    optimization = opt_bytecode
+    
     begin = dtimer()
 
     if source_file != None and verify:

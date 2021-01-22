@@ -189,10 +189,10 @@ def analyze_bytecode(args_i = None):
     
     x = dtimer()
 
-    # compiler_opt = {}
-    # compiler_opt["optimize"] = args.optimize_run
-    # compiler_opt["no-yul"] = args.no_yul_opt
-    # compiler_opt["runs"] = args.run
+    compiler_opt = {}
+    compiler_opt["optimize"] = args.optimize_run
+    compiler_opt["no-yul"] = args.no_yul_opt
+    compiler_opt["runs"] = args.run
     
     helper = InputHelper(InputHelper.BYTECODE, source=args.source,evm = args.evm)
     inp = helper.get_inputs()[0]
@@ -240,7 +240,7 @@ def run_solidity_analysis(inputs,hashes):
         function_names = hashes[inp["c_name"]]
         # result, return_code = symExec.run(disasm_file=inp['disasm_file'], source_map=inp['source_map'], source_file=inp['source'],cfg = args.control_flow_graph,saco = args.saco,execution = 0, cname = inp["c_name"],hashes = function_names,debug = args.debug,evm_version = evm_version_modifications,cfile = args.cfile,svc=svc_options,go = args.goto)
         try:
-            result, return_code = symExec.run(disasm_file=inp['disasm_file'], disasm_file_init = inp['disasm_file_init'], source_map=inp['source_map'], source_file=inp['source'],cfg = args.control_flow_graph,saco = args.saco,execution = 0, cname = inp["c_name"],hashes = function_names,debug = args.debug,evm_version = evm_version_modifications,cfile = args.cfile,svc=svc_options,go = args.goto, syrup = args.syrup,source_name = args.source, storage = args.storage)
+            result, return_code = symExec.run(disasm_file=inp['disasm_file'], disasm_file_init = inp['disasm_file_init'], source_map=inp['source_map'], source_file=inp['source'],cfg = args.control_flow_graph,saco = args.saco,execution = 0, cname = inp["c_name"],hashes = function_names,debug = args.debug,evm_version = evm_version_modifications,cfile = args.cfile,svc=svc_options,go = args.goto, syrup = args.syrup,source_name = args.source, storage = args.storage,opt_bytecode = args.optimize_run)
             
         except Exception as e:
             traceback.print_exc()
@@ -260,7 +260,7 @@ def run_solidity_analysis(inputs,hashes):
             function_names = hashes[inp["c_name"]]
             #logging.info("contract %s:", inp['contract'])
             try:            
-                result, return_code = symExec.run(disasm_file=inp['disasm_file'], disasm_file_init = inp['disasm_file_init'], source_map=inp['source_map'], source_file=inp['source'],cfg = args.control_flow_graph,saco = args.saco,execution = i,cname = inp["c_name"],hashes = function_names,debug = args.debug,evm_version = evm_version_modifications,cfile = args.cfile,svc=svc_options,go = args.goto, syrup = args.syrup,source_name = args.source, storage = args.storage)
+                result, return_code = symExec.run(disasm_file=inp['disasm_file'], disasm_file_init = inp['disasm_file_init'], source_map=inp['source_map'], source_file=inp['source'],cfg = args.control_flow_graph,saco = args.saco,execution = i,cname = inp["c_name"],hashes = function_names,debug = args.debug,evm_version = evm_version_modifications,cfile = args.cfile,svc=svc_options,go = args.goto, syrup = args.syrup,source_name = args.source, storage = args.storage,opt_bytecode = args.optimize_run)
                 
             except Exception as e:
                 traceback.print_exc()
@@ -373,17 +373,17 @@ def analyze_solidity(input_type='solidity', args_i = None):
         args.goto = False
         
 
-    # compiler_opt = {}
-    # compiler_opt["optimize"] = args.optimize_run
-    # compiler_opt["no-yul"] = args.no_yul_opt
-    # compiler_opt["runs"] = args.run
+    compiler_opt = {}
+    compiler_opt["optimize"] = args.optimize_run
+    compiler_opt["no-yul"] = args.no_yul_opt
+    compiler_opt["runs"] = args.run
         
         
     x = dtimer()
     is_runtime = not(args.init)
     
     if input_type == 'solidity':
-        helper = InputHelper(InputHelper.SOLIDITY, source=args.source,evm =args.evm,runtime=is_runtime)
+        helper = InputHelper(InputHelper.SOLIDITY, source=args.source,evm =args.evm,runtime=is_runtime,opt_options = compiler_opt)
     elif input_type == 'standard_json':
         helper = InputHelper(InputHelper.STANDARD_JSON, source=args.source,evm=args.evm, allow_paths=args.allow_paths)
     elif input_type == 'standard_json_output':
@@ -490,9 +490,9 @@ def main():
     parser.add_argument("-i", "--invalid",             help="Translate the specified invalid bytecodes into SV-COMP error labels. Use with -c flag", choices = ["array","div0","all"])
     parser.add_argument("-g", "--goto",             help="Transform recursive rules into iterative rules using gotos. Use with -c flag", action="store_true")
     parser.add_argument("-opt", "--optimize",             help="Fields to be optimized by Gasol", action="store_true")
-    # parser.add_argument("-optimize-run", "--optimize-run",             help="Enable optimization flag in solc compiler", action="store_true")
-    # parser.add_argument("-run", "--run",             help="Set for how many contract runs to optimize (200 by default)", action="store",type=int)
-    # parser.add_argument("-no-yul-opt", "--no-yul-opt",             help="Disable yul optimization in solc compiler (when possible)", action="store_true")
+    parser.add_argument("-optimize-run", "--optimize-run",             help="Enable optimization flag in solc compiler", action="store_true")
+    parser.add_argument("-run", "--run",             help="Set for how many contract runs to optimize (200 by default if --optimize-run)", default=-1,action="store",type=int)
+    parser.add_argument("-no-yul-opt", "--no-yul-opt",             help="Disable yul optimization in solc compiler (when possible)", action="store_true")
     parser.add_argument("-f", "--fields", type=str, help="Fields to be optimized by Gasol")
     parser.add_argument("-cname", "--contract_name", type=str, help="Name of the contract that is going to be optimized")
     parser.add_argument("-bl", "--block", type=str, help="block to be optimized (GASOL)")
