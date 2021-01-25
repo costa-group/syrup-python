@@ -30,7 +30,8 @@ def parse_data(json_path):
     final_stack = list(map(add_bars_to_string, data['tgt_ws']))
     variables = list(map(add_bars_to_string, data['vars']))
     current_cost = data['current_cost']
-    return b0, bs, user_instr, variables, initial_stack, final_stack, current_cost
+    instr_seq = data.get('disasm_seq', [])
+    return b0, bs, user_instr, variables, initial_stack, final_stack, current_cost, instr_seq
 
 
 #Executes the smt encoding generator from the main script
@@ -46,11 +47,11 @@ def execute_syrup_backend(args_i,json_file = None):
 
     es = initialize_dir_and_streams(path,solver,json_path)
 
-    b0, bs, user_instr, variables, initial_stack, final_stack, current_cost = parse_data(json_path)
+    b0, bs, user_instr, variables, initial_stack, final_stack, current_cost, instr_seq = parse_data(json_path)
     flags = {'at-most': args_i.at_most, 'pushed-at-least': args_i.pushed_once, 'instruction-order': args_i.instruction_order,
              'no-output-before-pop': args_i.no_output_before_pop, 'inequality-gas-model': args_i.inequality_gas_model,
              'initial-solution': args_i.initial_solution}
-    additional_info = {'tout': args_i.tout, 'solver': args_i.solver, 'current_cost': current_cost}
+    additional_info = {'tout': args_i.tout, 'solver': args_i.solver, 'current_cost': current_cost, 'instr_seq': instr_seq}
 
     generate_smtlib_encoding(b0, bs, user_instr, variables, initial_stack, final_stack, flags, additional_info)
 
@@ -87,13 +88,13 @@ if __name__ == "__main__":
     solver = args['solver']
     timeout = args['tout']
 
-    b0, bs, user_instr, variables, initial_stack, final_stack, current_cost = parse_data(json_path)
+    b0, bs, user_instr, variables, initial_stack, final_stack, current_cost, instr_seq = parse_data(json_path)
 
     flags = {'at-most': args['at_most'], 'pushed-at-least': args['pushed_once'],
              'instruction-order': args['instruction_order'], 'no-output-before-pop': args['no_output_before_pop'],
              'inequality-gas-model': args['inequality_gas_model'], 'initial-solution': args['initial_solution']}
 
-    additional_info = {'tout': args['tout'], 'solver': solver, 'current_cost': current_cost}
+    additional_info = {'tout': args['tout'], 'solver': solver, 'current_cost': current_cost, 'instr_seq': instr_seq}
     es = initialize_dir_and_streams(path,solver)
 
     generate_smtlib_encoding(b0, bs, user_instr, variables, initial_stack, final_stack, flags, additional_info)

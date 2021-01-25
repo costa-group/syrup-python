@@ -18,13 +18,13 @@ def generate_previous_solution_statement(b0, theta_dict, instr_seq):
         and_variables.append(add_eq(t(i), theta_dict[instr]))
     for i in range(len(instr_seq_with_generic_push), b0):
         and_variables.append(add_eq(t(i), theta_dict['NOP']))
-    write_encoding(add_assert(add_eq(previous_solution_var, add_and(and_variables))))
-
-
+    write_encoding(add_assert(add_eq(previous_solution_var, add_and(*and_variables))))
 
 
 # Generates the soft constraints contained in the paper.
-def paper_soft_constraints(b0, bs, user_instr, theta_dict, is_barcelogic=False, previous_solution_weight=-1):
+def paper_soft_constraints(b0, bs, user_instr, theta_dict, is_barcelogic=False, instr_seq=None, previous_solution_weight=-1):
+    if instr_seq is None:
+        instr_seq = []
     write_encoding("; Soft constraints from paper")
     instr_costs = generate_costs_ordered_dict(bs, user_instr, theta_dict)
     disjoin_sets = generate_disjoint_sets_from_cost(instr_costs)
@@ -34,6 +34,7 @@ def paper_soft_constraints(b0, bs, user_instr, theta_dict, is_barcelogic=False, 
     if previous_solution_weight != -1:
         bool_variables.append(previous_solution_var)
         write_encoding(declare_boolvar(previous_solution_var))
+        generate_previous_solution_statement(b0, theta_dict, instr_seq)
         write_encoding(add_assert_soft(add_not(previous_solution_var), previous_solution_weight, label_name,
                                        is_barcelogic))
     for gas_cost in disjoin_sets:
