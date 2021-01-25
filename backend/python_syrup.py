@@ -29,7 +29,8 @@ def parse_data(json_path):
     initial_stack = list(map(add_bars_to_string, data['src_ws']))
     final_stack = list(map(add_bars_to_string, data['tgt_ws']))
     variables = list(map(add_bars_to_string, data['vars']))
-    return b0, bs, user_instr, variables, initial_stack, final_stack
+    current_cost = data['current_cost']
+    return b0, bs, user_instr, variables, initial_stack, final_stack, current_cost
 
 
 #Executes the smt encoding generator from the main script
@@ -45,10 +46,11 @@ def execute_syrup_backend(args_i,json_file = None):
 
     es = initialize_dir_and_streams(path,solver,json_path)
 
-    b0, bs, user_instr, variables, initial_stack, final_stack = parse_data(json_path)
+    b0, bs, user_instr, variables, initial_stack, final_stack, current_cost = parse_data(json_path)
     flags = {'at-most': args_i.at_most, 'pushed-at-least': args_i.pushed_once, 'instruction-order': args_i.instruction_order,
-             'no-output-before-pop': args_i.no_output_before_pop, 'inequality-gas-model': args_i.inequality_gas_model}
-    additional_info = {'tout': args_i.tout, 'solver': args_i.solver}
+             'no-output-before-pop': args_i.no_output_before_pop, 'inequality-gas-model': args_i.inequality_gas_model,
+             'initial-solution': args_i.initial_solution}
+    additional_info = {'tout': args_i.tout, 'solver': args_i.solver, 'current_cost': current_cost}
 
     generate_smtlib_encoding(b0, bs, user_instr, variables, initial_stack, final_stack, flags, additional_info)
 
@@ -76,6 +78,8 @@ if __name__ == "__main__":
                                                                                "Works only for z3 and oms (so far)")
     ap.add_argument("-inequality-gas-model", dest='inequality_gas_model', action='store_true',
                     help="Soft constraints with inequalities instead of equalities")
+    ap.add_argument("-initial-solution", dest='initial_solution', action='store_true',
+                    help="Consider the instructions of blocks without optimizing as part of the encoding")
 
     args = vars(ap.parse_args())
     json_path = args['json_path']
@@ -83,14 +87,15 @@ if __name__ == "__main__":
     solver = args['solver']
     timeout = args['tout']
 
+    b0, bs, user_instr, variables, initial_stack, final_stack, current_cost = parse_data(json_path)
+
     flags = {'at-most': args['at_most'], 'pushed-at-least': args['pushed_once'],
              'instruction-order': args['instruction_order'], 'no-output-before-pop': args['no_output_before_pop'],
-             'inequality-gas-model': args['inequality_gas_model']}
+             'inequality-gas-model': args['inequality_gas_model'], 'initial-solution': args['initial_solution']}
 
-    additional_info = {'tout': args['tout'], 'solver': solver}
+    additional_info = {'tout': args['tout'], 'solver': solver, 'current_cost': current_cost}
     es = initialize_dir_and_streams(path,solver)
 
-    b0, bs, user_instr, variables, initial_stack, final_stack = parse_data(json_path)
     generate_smtlib_encoding(b0, bs, user_instr, variables, initial_stack, final_stack, flags, additional_info)
 
     es.close()

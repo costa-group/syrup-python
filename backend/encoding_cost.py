@@ -6,14 +6,23 @@ from encoding_files import write_encoding
 # Label name for soft constraints
 label_name = 'gas'
 
+# Bool name for encoding a previous solution
+previous_solution_var = 'b'
 
 # Generates the soft constraints contained in the paper.
-def paper_soft_constraints(b0, bs, user_instr, theta_stack, theta_comm, theta_non_comm, is_barcelogic=False):
+def paper_soft_constraints(b0, bs, user_instr, theta_stack, theta_comm, theta_non_comm, is_barcelogic=False,
+                           previous_solution_weight=-1):
     write_encoding("; Soft constraints from paper")
     instr_costs = generate_costs_ordered_dict(bs, user_instr, theta_stack, theta_comm, theta_non_comm)
     disjoin_sets = generate_disjoint_sets_from_cost(instr_costs)
     previous_cost = 0
     or_variables = []
+    bool_variables = []
+    if previous_solution_weight != -1:
+        bool_variables.append(previous_solution_var)
+        write_encoding(declare_boolvar(previous_solution_var))
+        write_encoding(add_assert_soft(add_not(previous_solution_var), previous_solution_weight, label_name,
+                                       is_barcelogic))
     for gas_cost in disjoin_sets:
         # We skip the first set of instructions, as they have
         # no soft constraint associated. Neverthelss, we add
@@ -28,8 +37,8 @@ def paper_soft_constraints(b0, bs, user_instr, theta_stack, theta_comm, theta_no
         # Before adding current associated opcodes, we generate
         # the constraints for each tj.
         for j in range(b0):
-            write_encoding(add_assert_soft(add_or(*list(map(lambda var: add_eq(t(j), var), or_variables))), wi,
-                                           label_name, is_barcelogic))
+            write_encoding(add_assert_soft(add_or(*[*bool_variables, *list(map(lambda var: add_eq(t(j), var), or_variables))]),
+                                           wi, label_name, is_barcelogic))
         for instr in disjoin_sets[gas_cost]:
             or_variables.append(instr)
 

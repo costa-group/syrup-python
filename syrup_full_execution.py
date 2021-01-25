@@ -143,6 +143,8 @@ def main():
     parser.add_argument("-no-output-before-pop", help='add a constraint representing the fact that the previous instruction'
                                                   'of a pop can only be a instruction that does not generate an output',
                     action='store_true', dest='no_output_before_pop')
+    parser.add_argument("-initial-solution", dest='initial_solution', action='store_true',
+                    help="Consider the instructions of blocks without optimizing as part of the encoding")
 
     args = parser.parse_args()
 

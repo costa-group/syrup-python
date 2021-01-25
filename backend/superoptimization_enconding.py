@@ -49,10 +49,19 @@ def generate_asserts_from_additional_info(additional_info):
             write_encoding(set_timeout(float(additional_info['tout'])))
 
 
-def generate_soft_constraints(solver_name, b0, bs, usr_instr, theta_stack, theta_comm, theta_non_comm, flags):
+def generate_soft_constraints(solver_name, b0, bs, usr_instr, theta_stack, theta_comm, theta_non_comm, flags,
+                              current_cost):
     is_barcelogic = solver_name == "barcelogic"
+
+    # We need to address whether the want to encode the initial solution (in which case,
+    # weight is assigned to -1) or not. Only paper soft constraints take into account this value.
+    if flags['initial-solution']:
+        weight = current_cost
+    else:
+        weight = -1
+
     if not flags['inequality-gas-model']:
-        paper_soft_constraints(b0, bs, usr_instr, theta_stack, theta_comm, theta_non_comm, is_barcelogic)
+        paper_soft_constraints(b0, bs, usr_instr, theta_stack, theta_comm, theta_non_comm, is_barcelogic, weight)
     else:
         alternative_soft_constraints(b0, bs, usr_instr, theta_stack, theta_comm, theta_non_comm, is_barcelogic)
 
@@ -105,6 +114,7 @@ def generate_final_statements(solver_name):
 # Method to generate complete representation
 def generate_smtlib_encoding(b0, bs, usr_instr, variables, initial_stack, final_stack, flags, additional_info):
     solver_name = additional_info['solver']
+    current_cost = additional_info['current_cost']
     theta_stack = generate_stack_theta(bs)
     theta_comm, theta_non_comm = generate_uninterpreted_theta(usr_instr, len(theta_stack))
     comm_instr, non_comm_instr = separe_usr_instr(usr_instr)
@@ -124,7 +134,8 @@ def generate_smtlib_encoding(b0, bs, usr_instr, variables, initial_stack, final_
     generate_redundant_constraints(flags, b0, usr_instr, theta_stack, theta_comm, theta_non_comm, final_stack,
                                    dependency_graph, first_position_instr_appears_dict,
                                    first_position_instr_cannot_appear_dict, theta_dict)
-    generate_soft_constraints(solver_name, b0, bs, usr_instr, theta_stack, theta_comm, theta_non_comm, flags)
+    generate_soft_constraints(solver_name, b0, bs, usr_instr, theta_stack, theta_comm, theta_non_comm, flags,
+                              current_cost)
     generate_cost_functions(solver_name)
     write_encoding(check_sat())
     generate_final_statements(solver_name)
