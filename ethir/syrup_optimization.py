@@ -1515,7 +1515,7 @@ def generate_sstore_info(sstore_elem):
 
     
     
-def generate_json(block_name,ss,ts,max_ss_idx1,gas,subblock = None):
+def generate_json(block_name,ss,ts,max_ss_idx1,gas,opcodes_seq,subblock = None):
     global max_instr_size
     global num_pops
     global blocks_json_dict
@@ -1632,6 +1632,7 @@ def generate_json(block_name,ss,ts,max_ss_idx1,gas,subblock = None):
     json_dict["tgt_ws"] = new_ts
     json_dict["user_instrs"] = new_user_defins
     json_dict["current_cost"] = gas
+    json_dict["disasm_seq"] = list(map(lambda x: x[4:-1],opcodes_seq)) #deleting nop(_)
     #append user_instrs
 
 
@@ -2184,9 +2185,10 @@ def translate_block(rule,instructions,opcodes,isolated=False):
         gas_t+=get_cost(original_opcodes)
         #print ("AQUI")
         #print (gas_t)
-        generate_json(rule.get_rule_name(),source_stack,t_vars,source_stack_idx-1,gas)
-
+        
         new_opcodes = compute_opcodes2write(opcodes,num_guard)
+        generate_json(rule.get_rule_name(),source_stack,t_vars,source_stack_idx-1,gas, new_opcodes)
+
         write_instruction_block(rule.get_rule_name(),new_opcodes)
 
 
@@ -2309,9 +2311,9 @@ def translate_subblock(rule,instrs,sstack,tstack,sstack_idx,idx,next_block):
                 gas = gas+2*pops2remove
                 max_instr_size+=pops2remove
             #print (tstack,new_tstack)
-            
-            generate_json(rule.get_rule_name(),sstack,new_tstack,sstack_idx,gas,subblock=idx)
+
             new_opcodes = compute_opcodes2write(opcodes,0)
+            generate_json(rule.get_rule_name(),sstack,new_tstack,sstack_idx,gas,new_opcodes,subblock=idx)
             write_instruction_block(rule.get_rule_name(),new_opcodes,subblock=idx)
         return new_nexts
     else:
@@ -2482,8 +2484,8 @@ def translate_last_subblock(rule,block,sstack,sstack_idx,idx,isolated):
             #print ("MIRA")
             #print (sstack_idx)
             #print (sstack)
-            generate_json(rule.get_rule_name(),sstack,tstack,sstack_idx,gas,subblock=idx)
             new_opcodes = compute_opcodes2write(opcodes,num_guard)
+            generate_json(rule.get_rule_name(),sstack,tstack,sstack_idx,gas,new_opcodes,subblock=idx)
             write_instruction_block(rule.get_rule_name(),new_opcodes,subblock=idx)
     
 def get_new_source_stack(instr,nop_instr,idx):
@@ -2782,7 +2784,8 @@ def smt_translate(rules,sname,contract_name,storage):
     int_not0 = [-1+2**256]#map(lambda x: -1+2**x, range(8,264,8))
 
     source_name =  sname
-    cname = contract_name
+    if cname:
+        cname = contract_name
     gas_check = 0
     
     for rlist in rules:
@@ -3225,8 +3228,7 @@ def apply_transform_rules(user_def_instrs,list_vars,tstack):
             r = apply_transform(instr)
             #print (r)
             if r!=-1:
-                print("[RULE]: Simplification rule type 1")
-                print(instr)
+                print("[RULE]: Simplification rule type 1: "+str(instr))
                 
                 replace_var_userdef(instr["outpt_sk"][0],r,user_def_instrs)
                 #print ("***********")
@@ -3969,7 +3971,8 @@ def apply_comparation_rules(user_def_instrs,tstack):
         #print (r)
         #print (d_instr)
         if r:
-            print("[RULE]: Simplification rule type 2")
+            print("[RULE]: Simplification rule type 2: "+str(instr))
+            print("[RULE]: Delete rules: "+str(d_instr))
             modified = True
             for b in d_instr:
                 idx = user_def_instrs.index(b)
