@@ -13,7 +13,7 @@ def add_bars_to_string(string):
 
 # Given a string, we return the string PUSH if the string is
 # of the form PUSHx, or returns the same string otherwise.
-def return_generic_push_instruction(string):
+def generate_generic_push_instruction(string):
     if string[0].startswith('PUSH'):
         return 'PUSH'
     return string

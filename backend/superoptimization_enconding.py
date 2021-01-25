@@ -49,7 +49,7 @@ def generate_asserts_from_additional_info(additional_info):
             write_encoding(set_timeout(float(additional_info['tout'])))
 
 
-def generate_soft_constraints(solver_name, b0, bs, usr_instr, theta_stack, theta_comm, theta_non_comm, flags,
+def generate_soft_constraints(solver_name, b0, bs, usr_instr, theta_dict, flags,
                               current_cost):
     is_barcelogic = solver_name == "barcelogic"
 
@@ -61,9 +61,9 @@ def generate_soft_constraints(solver_name, b0, bs, usr_instr, theta_stack, theta
         weight = -1
 
     if not flags['inequality-gas-model']:
-        paper_soft_constraints(b0, bs, usr_instr, theta_stack, theta_comm, theta_non_comm, is_barcelogic, weight)
+        paper_soft_constraints(b0, bs, usr_instr, theta_dict, is_barcelogic, weight)
     else:
-        alternative_soft_constraints(b0, bs, usr_instr, theta_stack, theta_comm, theta_non_comm, is_barcelogic)
+        alternative_soft_constraints(b0, bs, usr_instr, theta_dict, is_barcelogic)
 
 
 def generate_cost_functions(solver_name):
@@ -134,8 +134,7 @@ def generate_smtlib_encoding(b0, bs, usr_instr, variables, initial_stack, final_
     generate_redundant_constraints(flags, b0, usr_instr, theta_stack, theta_comm, theta_non_comm, final_stack,
                                    dependency_graph, first_position_instr_appears_dict,
                                    first_position_instr_cannot_appear_dict, theta_dict)
-    generate_soft_constraints(solver_name, b0, bs, usr_instr, theta_stack, theta_comm, theta_non_comm, flags,
-                              current_cost)
+    generate_soft_constraints(solver_name, b0, bs, usr_instr, theta_dict, flags, current_cost)
     generate_cost_functions(solver_name)
     write_encoding(check_sat())
     generate_final_statements(solver_name)
@@ -149,4 +148,4 @@ def generate_smtlib_encoding(b0, bs, usr_instr, variables, initial_stack, final_
 
     write_instruction_map(generate_instr_map(usr_instr, theta_stack, theta_comm, theta_non_comm))
     write_opcode_map(generate_disasm_map(usr_instr, theta_dict))
-    write_gas_map(generate_costs_ordered_dict(bs, usr_instr, theta_stack, theta_comm, theta_non_comm))
+    write_gas_map(generate_costs_ordered_dict(bs, usr_instr, theta_dict))

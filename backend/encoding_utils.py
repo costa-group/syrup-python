@@ -91,17 +91,14 @@ def separe_usr_instr(user_instr):
 
 # Generates an ordered dict that contains all instructions associated value of theta
 # as keys, and their gas cost as values. Ordered by increasing costs
-def generate_costs_ordered_dict(bs, user_instr, theta_stack, theta_comm, theta_non_comm):
-    instr_costs = {theta_stack["PUSH"]: 3, theta_stack["POP"]: 2, theta_stack["NOP"]: 0}
+def generate_costs_ordered_dict(bs, user_instr, theta_dict):
+    instr_costs = {theta_dict["PUSH"]: 3, theta_dict["POP"]: 2, theta_dict["NOP"]: 0}
     for i in range(1, min(bs, max_k_dup + 1)):
-        instr_costs[theta_stack["DUP" + str(i)]] = 3
+        instr_costs[theta_dict["DUP" + str(i)]] = 3
     for i in range(1, min(bs, max_k_swap + 1)):
-        instr_costs[theta_stack["SWAP" + str(i)]] = 3
+        instr_costs[theta_dict["SWAP" + str(i)]] = 3
     for instr in user_instr:
-        if instr['commutative']:
-            instr_costs[theta_comm[instr['id']]] = instr['gas']
-        else:
-            instr_costs[theta_non_comm[instr['id']]] = instr['gas']
+        instr_costs[theta_dict[instr['id']]] = instr['gas']
     return OrderedDict(sorted(instr_costs.items(), key=lambda t: t[1]))
 
 

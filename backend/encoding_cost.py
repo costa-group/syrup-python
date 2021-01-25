@@ -1,5 +1,6 @@
 from encoding_utils import *
 from encoding_files import write_encoding
+from utils_bckend import generate_generic_push_instruction
 
 # Soft constraints
 
@@ -9,11 +10,23 @@ label_name = 'gas'
 # Bool name for encoding a previous solution
 previous_solution_var = 'b'
 
+
+def generate_previous_solution_statement(b0, theta_dict, instr_seq):
+    instr_seq_with_generic_push = list(map(generate_generic_push_instruction, instr_seq))
+    and_variables = []
+    for i, instr in enumerate(instr_seq_with_generic_push):
+        and_variables.append(add_eq(t(i), theta_dict[instr]))
+    for i in range(len(instr_seq_with_generic_push), b0):
+        and_variables.append(add_eq(t(i), theta_dict['NOP']))
+    write_encoding(add_assert(add_eq(previous_solution_var, add_and(and_variables))))
+
+
+
+
 # Generates the soft constraints contained in the paper.
-def paper_soft_constraints(b0, bs, user_instr, theta_stack, theta_comm, theta_non_comm, is_barcelogic=False,
-                           previous_solution_weight=-1):
+def paper_soft_constraints(b0, bs, user_instr, theta_dict, is_barcelogic=False, previous_solution_weight=-1):
     write_encoding("; Soft constraints from paper")
-    instr_costs = generate_costs_ordered_dict(bs, user_instr, theta_stack, theta_comm, theta_non_comm)
+    instr_costs = generate_costs_ordered_dict(bs, user_instr, theta_dict)
     disjoin_sets = generate_disjoint_sets_from_cost(instr_costs)
     previous_cost = 0
     or_variables = []
@@ -48,9 +61,9 @@ def paper_soft_constraints(b0, bs, user_instr, theta_stack, theta_comm, theta_no
 
 # Method for generating an alternative model for soft constraints. This method is similar to the previous one,
 # but instead it is based on inequalities and shorter constraints. See new paper for more details
-def alternative_soft_constraints(b0, bs, user_instr, theta_stack, theta_comm, theta_non_comm, is_barcelogic=False):
+def alternative_soft_constraints(b0, bs, user_instr, theta_dict, is_barcelogic=False):
     write_encoding("; Alternative soft constraints model")
-    instr_costs = generate_costs_ordered_dict(bs, user_instr, theta_stack, theta_comm, theta_non_comm)
+    instr_costs = generate_costs_ordered_dict(bs, user_instr, theta_dict)
 
     # For every instruction and every position in the sequence, we add a soft constraint
     for theta_instr, gas_cost in instr_costs.items():
