@@ -583,11 +583,6 @@ def get_involved_vars(instr,var):
     elif instr.find("msize")!=-1:
         var_list.append("msize")
         funct =  "msize"
-        
-    elif instr.find("gas")!=-1:
-        var_list.append("gas")
-        funct =  "gas"
-        
 
     elif instr.find("sha3(",0)!=-1:
         instr_new = instr.strip("\n")
@@ -649,10 +644,6 @@ def get_involved_vars(instr,var):
         var0 = var.strip()
         var_list.append(var0)
         funct = "extcodehash"
-        
-    elif instr.find("gaslimit",0)!=-1:
-        var_list.append("gaslimit")
-        funct = "gaslimit"
 
     elif instr.find("returndatasize",0)!=-1:
         var_list.append("returndatasize")
@@ -971,10 +962,18 @@ def get_involved_vars(instr,var):
         var_list.append("codesize")
         funct =  "codesize"
 
+    elif instr.find("gaslimit",0)!=-1:
+        var_list.append("gaslimit")
+        funct = "gaslimit"
+            
     elif instr.find("gasprice")!=-1:
         var_list.append("gasprice")
         funct =  "gasprice"
 
+    elif instr.find("gas")!=-1:
+        var_list.append("gas")
+        funct =  "gas"
+    
     elif instr.find("calldatasize")!=-1:
         var_list.append("calldatasize")
         funct =  "calldatasize"
@@ -2557,7 +2556,7 @@ def get_block_cost(opcodes_list,opcodes_guard):
         if op == "MULMOD":
             gas = 10
         else:
-            gas = opcodes.get_syrup_cost(op.strip())
+            gas = opcodes.get_ins_cost(op.strip())
         val+=gas
     return val
 
