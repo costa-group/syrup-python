@@ -2095,7 +2095,7 @@ def is_optimizable(opcode_instructions,instructions):
     #print (ins_aux)
     #print (ins)
 
-    if list(filter(lambda x: x.find("POP")==-1, ins_aux)) == []:
+    if ins_aux != [] and list(filter(lambda x: x.find("POP")==-1, ins_aux)) == []:
         return True
     
     if ins == []:
@@ -2113,6 +2113,10 @@ def translate_block(rule,instructions,opcodes,isolated=False):
     
     source_stack_idx = get_stack_variables(rule)   
 
+    print("MIRA")
+    print(instructions)
+    print(opcodes)
+    
     if not isolated: 
         if "nop(JUMPI)" in opcodes:
             guards_op = get_jumpi_opcodes(rule)
@@ -2137,7 +2141,6 @@ def translate_block(rule,instructions,opcodes,isolated=False):
         pops = list(filter(lambda x: x.find("nop(POP)")!=-1,opcodes))
         num_pops = len(pops)
         x = list(filter(lambda x: (x.find("POP")==-1) and (x.find("JUMPDEST")==-1) and (x.find("JUMP")==-1)and(x.find("JUMPI")==-1),opcodes))
-
         if x == [] and num_pops >0:
             #print ("ESTOY AQUII")
 
@@ -2834,7 +2837,8 @@ def smt_translate(rules,sname,contract_name,storage):
                     res = is_optimizable(opcodes,instructions)
                     
                     if res:
-
+                        if rule.get_rule_name() == "block2":
+                            print("EEEEEEEEEEEEEEEE")
                         translate_block(rule,instructions,opcodes)
                         
                                       
