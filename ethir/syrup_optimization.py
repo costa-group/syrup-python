@@ -2112,10 +2112,6 @@ def translate_block(rule,instructions,opcodes,isolated=False):
     global gas_t
     
     source_stack_idx = get_stack_variables(rule)   
-
-    print("MIRA")
-    print(instructions)
-    print(opcodes)
     
     if not isolated: 
         if "nop(JUMPI)" in opcodes:
@@ -3295,7 +3291,7 @@ def apply_cond_transformation(instr,user_def_instrs,tstack):
     global gas_saved_op
 
     opcode = instr["disasm"]
-
+    
     if opcode == "GT" or opcode == "SGT":
         if 0 == instr["inpt_sk"][1]:
             out_var = instr["outpt_sk"][0]
@@ -3387,6 +3383,9 @@ def apply_cond_transformation(instr,user_def_instrs,tstack):
 
                 print("EQ(1,ISZ(X))")
                 return True, [eq]
+
+            else:
+                return False, []
         else:
                 
             return False, []
