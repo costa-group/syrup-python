@@ -107,7 +107,7 @@ GCOST = {
     "Gextcode": 700,
     "Gextcodehash": 400,
     "Gbalance": 400,
-    "Gsload": 200,
+    "Gsload": 700,
     "Gjumpdest": 1,
     "Gsset": 20000,
     "Gsreset": 5000,
@@ -225,6 +225,8 @@ def get_ins_cost(opcode,params=None):
         return GCOST["Gblockhash"]
     elif opcode == "SSTORE":
         return 5000
+    elif opcode == "CRATE2":
+        return GCOST["Gcreate"]
     else:
         print ("NO ESTAA: "+str(opcode))
         print (opcode)
@@ -271,4 +273,7 @@ def get_syrup_cost(opcode,params=None):
         return 60
     elif opcode == "SHA3":
         return GCOST["Gsha3"]
+    elif opcode == "SSTORE":
+        return 5000
     return 0
+    
