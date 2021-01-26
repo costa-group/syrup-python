@@ -2783,7 +2783,7 @@ def smt_translate(rules,sname,contract_name,storage):
     int_not0 = [-1+2**256]#map(lambda x: -1+2**x, range(8,264,8))
 
     source_name =  sname
-    if cname!= None:
+    if contract_name!= None:
         cname = contract_name
     gas_check = 0
     
