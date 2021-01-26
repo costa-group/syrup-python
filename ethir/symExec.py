@@ -37,9 +37,9 @@ UNSIGNED_BOUND_NUMBER = 2**256 - 1
 CONSTANT_ONES_159 = BitVecVal((1 << 160) - 1, 256)
 
 Assertion = namedtuple('Assertion', ['pc', 'model'])
-syrup_path = "/home/pabgordi/tmp/costabs/blocks"
-costabs_path = "/home/pabgordi/tmp/costabs/"
-tmp_path = "/home/pabgordi/tmp/"
+syrup_path = "/tmp/costabs/blocks"
+costabs_path = "/tmp/costabs/"
+tmp_path = "/tmp/"
 
 
 class Parameter:
