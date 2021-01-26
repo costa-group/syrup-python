@@ -211,7 +211,7 @@ def analyze_bytecode(args_i = None):
         # if args.invalid:
         #     svc_options["invalid"]=args.invalid
         
-        result, exit_code = symExec.run(disasm_file=inp['disasm_file'],cfg = args.control_flow_graph,saco = args.saco,debug = args.debug,evm_version = evm_version_modifications,cfile = args.cfile,svc=svc_options,go = args.goto, syrup = args.syrup,source_name = args.source)
+        result, exit_code = symExec.run(disasm_file=inp['disasm_file'],cfg = args.control_flow_graph,saco = args.saco,debug = args.debug,evm_version = evm_version_modifications,cfile = args.cfile,svc=svc_options,go = args.goto, syrup = args.syrup,source_name = args.source, storage = args.storage)
         helper.rm_tmp_files()
     else:
         exit_code = -1
