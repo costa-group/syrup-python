@@ -37,9 +37,9 @@ UNSIGNED_BOUND_NUMBER = 2**256 - 1
 CONSTANT_ONES_159 = BitVecVal((1 << 160) - 1, 256)
 
 Assertion = namedtuple('Assertion', ['pc', 'model'])
-syrup_path = "/tmp/costabs/blocks"
-costabs_path = "/tmp/costabs/"
-tmp_path = "/tmp/"
+syrup_path = "/home/pabgordi/tmp/costabs/blocks"
+costabs_path = "/home/pabgordi/tmp/costabs/"
+tmp_path = "/home/pabgordi/tmp/"
 
 
 class Parameter:
@@ -2319,12 +2319,20 @@ def sym_exec_ins(params, block, instr, func_call,stack_first,instr_index):
                     value = stored_value
                     for i in range(31, -1, -1):
                         memory[stored_address + i] = value % 256
-                        value //= 256
+                        if isinstance(value,z3.BitVecRef):
+                            value /=256
+                        else:
+                            value //= 256
+
                 except:
                     value = stored_value
                     for i in range(31, -1, -1):
                         mem[str(stored_address + i)] = value % 256
-                        value //= 256
+                        
+                        if isinstance(value,z3.BitVecRef):
+                            value /=256
+                        else:
+                            value //= 256
             if isAllReal(stored_address, current_miu_i):
                 if six.PY2:
                     temp = int(math.ceil((stored_address + 32) / float(32)))
