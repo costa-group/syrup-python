@@ -2319,12 +2319,12 @@ def sym_exec_ins(params, block, instr, func_call,stack_first,instr_index):
                     value = stored_value
                     for i in range(31, -1, -1):
                         memory[stored_address + i] = value % 256
-                        value /= 256
+                        value //= 256
                 except:
                     value = stored_value
                     for i in range(31, -1, -1):
                         mem[str(stored_address + i)] = value % 256
-                        value /= 256
+                        value //= 256
             if isAllReal(stored_address, current_miu_i):
                 if six.PY2:
                     temp = int(math.ceil((stored_address + 32) / float(32)))
