@@ -28,7 +28,7 @@ def isSymbolic(value):
     return not isinstance(value, six.integer_types)
 
 def isReal(value):
-    return isinstance(value, six.integer_types)
+    return isinstance(value, six.integer_types) or isinstance(value,float)
 
 def isAllReal(*args):
     for element in args:
