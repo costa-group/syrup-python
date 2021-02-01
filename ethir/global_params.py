@@ -54,3 +54,8 @@ GENERATE_TEST_CASES = 0
 
 # Run Oyente in parallel
 PARALLEL = 0
+
+#Paths
+syrup_path = "/tmp/costabs/jsons"
+costabs_path = "/tmp/costabs/"
+tmp_path = "/tmp/"
