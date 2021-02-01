@@ -1704,7 +1704,7 @@ def generate_json(block_name,ss,ts,max_ss_idx1,gas,opcodes_seq,subblock = None):
     json_dict["tgt_ws"] = new_ts
     json_dict["user_instrs"] = new_user_defins
     json_dict["current_cost"] = gas
-    json_dict["init_info"] = opcodes_seq
+    # json_dict["init_info"] = opcodes_seq
     #append user_instrs
 
 
@@ -2310,7 +2310,6 @@ def translate_block(rule,instructions,opcodes,isolated=False):
     print ("GENERATING ENCONDING")
 
 
-#    get_encoding_init_block()
     generate_encoding(instructions,t_vars,source_stack)
     
     build_userdef_instructions()
@@ -2328,11 +2327,11 @@ def translate_block(rule,instructions,opcodes,isolated=False):
         # print("NUEVOS")
         # print(new_opcodes)
         # print(rule.get_instructions())
-        index, fin = find_sublist(rule.get_instructions(),new_opcodes)
+        # index, fin = find_sublist(rule.get_instructions(),new_opcodes)
         # print(index)
         # print(fin)
 
-        init_info = get_encoding_init_block(rule.get_instructions()[index:fin+1],source_stack)
+        # init_info = get_encoding_init_block(rule.get_instructions()[index:fin+1],source_stack)
         
         generate_json(rule.get_rule_name(),source_stack,t_vars,source_stack_idx-1,gas, init_info)
 
@@ -2460,8 +2459,8 @@ def translate_subblock(rule,instrs,sstack,tstack,sstack_idx,idx,next_block):
             #print (tstack,new_tstack)
 
             new_opcodes = compute_opcodes2write(opcodes,0)
-            index, fin = find_sublist(instructions,new_opcodes)
-            init_info = get_encoding_init_block(instructions[index:fin+1],sstack)
+            # index, fin = find_sublist(instructions,new_opcodes)
+            # init_info = get_encoding_init_block(instructions[index:fin+1],sstack)
             
             generate_json(rule.get_rule_name(),sstack,new_tstack,sstack_idx,gas,init_info,subblock=idx)
             write_instruction_block(rule.get_rule_name(),new_opcodes,subblock=idx)
@@ -2635,8 +2634,8 @@ def translate_last_subblock(rule,block,sstack,sstack_idx,idx,isolated):
             #print (sstack_idx)
             #print (sstack)
             new_opcodes = compute_opcodes2write(opcodes,num_guard)
-            index, fin = find_sublist(block,new_opcodes)
-            init_info = get_encoding_init_block(block[index:fin+1],sstack)
+            # index, fin = find_sublist(block,new_opcodes)
+            # init_info = get_encoding_init_block(block[index:fin+1],sstack)
             
             generate_json(rule.get_rule_name(),sstack,tstack,sstack_idx,gas,init_info,subblock=idx)
             write_instruction_block(rule.get_rule_name(),new_opcodes,subblock=idx)
