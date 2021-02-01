@@ -1,6 +1,6 @@
 from rbr_rule import RBRRule
 import json
-from utils import is_integer,all_integers,all_symbolic
+from utils import is_integer,all_integers,all_symbolic, find_sublist
 import  opcodes
 import os
 from timeit import default_timer as dtimer
@@ -78,6 +78,9 @@ def init_globals():
     global user_def_counter
     user_def_counter = {}
 
+    global already_defined_userdef
+    already_defined_userdef = []
+    
     global max_instr_size
     max_instr_size = 0
 
@@ -239,17 +242,17 @@ def contained_in_source_stack(v,instructions,source_stack):
 
     return contained
 
-def search_for_value(var, instructions,source_stack):
+def search_for_value(var, instructions,source_stack,evaluate = True):
     global s_counter
     global s_dict
 
-    search_for_value_aux(var,instructions,source_stack,0)
+    search_for_value_aux(var,instructions,source_stack,0,evaluate)
 
     # print s_dict
     # print u_dict
     # print "???????????????????????????"
     
-def search_for_value_aux(var, instructions,source_stack,level):
+def search_for_value_aux(var, instructions,source_stack,level,evaluate = True):
     global s_counter
     global s_dict
     global u_counter
@@ -295,7 +298,7 @@ def search_for_value_aux(var, instructions,source_stack,level):
             
         else:
             if new_vars[0] not in zero_ary:
-                search_for_value_aux(new_vars[0],instructions[i:],source_stack,level)
+                search_for_value_aux(new_vars[0],instructions[i:],source_stack,level,evaluate)
                 val = s_dict[new_vars[0]]
             else:
                 val = new_vars[0]
@@ -310,11 +313,11 @@ def search_for_value_aux(var, instructions,source_stack,level):
 
         for v in new_vars:
 
-            search_for_value_aux(v,instructions[i:],source_stack,level)
+            search_for_value_aux(v,instructions[i:],source_stack,level,evaluate)
     
             values[v] = s_dict[v]
 
-        exp_join = rebuild_expression(new_vars,funct,values,level)
+        exp_join = rebuild_expression(new_vars,funct,values,level,evaluate)
         r = exp_join[0]
         exp = (exp_join[1],exp_join[2])
 
@@ -1208,21 +1211,26 @@ def compute_ternary(expression):
         return False, expression
 
 
-def rebuild_expression(vars_input,funct,values,level):
+def rebuild_expression(vars_input,funct,values,level,evaluate = True):
 
     if len(vars_input) == 2:
         v0 = values[vars_input[0]]
         v1 = values[vars_input[1]]
         expression = (v0, v1, funct)
-        
-        r, expression = compute_binary(expression,level)
+        if evaluate:
+            r, expression = compute_binary(expression,level)
+        else:
+            r = False
         arity = 2
     elif len(vars_input) == 3: #len == 3
         v0 = values[vars_input[0]]
         v1 = values[vars_input[1]]
         v2 = values[vars_input[2]]
         expression = (v0,v1,v2,funct)
-        r, expression = compute_ternary(expression)
+        if evaluate:
+            r, expression = compute_ternary(expression)
+        else:
+            r = False
         arity = 3
 
     else:
@@ -1270,10 +1278,75 @@ def create_new_svar():
 
     return var
 
+#Here instructions = instrs+nops
+def get_encoding_init_block(instructions,source_stack):
+    global s_dict
+    global u_dict
+
+    old_sdict = dict(s_dict)
+    old_u_dict = dict(u_dict)
+
+    i = 0
+    opcodes = []
+    push_values = []
+    
+    # print("MIRA")
+    # print(instructions)
+
+    while(i<len(instructions)):
+        if instructions[i].startswith("nop("):
+            instr = instructions[i][4:-1].strip()
+            if instr.startswith("DUP") or instr.startswith("SWAP") or instr.startswith("PUSH") or instr.startswith("POP"):
+                opcodes.append(instr)
+                if instr.startswith("PUSH"):
+                    value = instructions[i-1].split("=")[-1].strip()
+                    push_values.append(value)
+            else:
+                #non-interpreted function
+                var = instructions[i-1].split("=")[0].strip()
+
+                instructions_without_nop = list(filter(lambda x: not x.startswith("nop("), instructions[:i]))
+                instructions_reverse = instructions_without_nop[::-1]
+                # print("EMPIEZO EL NUEVO")  
+                search_for_value(var,instructions_reverse, source_stack, False)
+                opcodes.append((s_dict[var],u_dict[s_dict[var]]))
+                # print(u_dict[s_dict[var]])
+        i+=1
+
+
+    new_opcodes = []
+    init_user_def = []
+    for i in range(len(opcodes)):
+        
+        if isinstance(opcodes[i],tuple):
+            instruction = opcodes[i]
+
+            u_var = instruction[0]
+            args_exp = instruction[1][0]
+            arity_exp = instruction[1][1]
+
+            user_def = build_initblock_userdef(u_var,args_exp,arity_exp)
+            init_user_def+=user_def
+            for e in user_def:
+                new_opcodes.append(e["id"])
+        else:
+            new_opcodes.append(opcodes[i])
+
+    init_info = {}
+    init_info["opcodes_seq"] = new_opcodes
+    init_info["non_inter"] = init_user_def
+    init_info["push_vals"] = list(map(lambda x: int(x),push_values))
+
+    return init_info
+  
+    
 def generate_encoding(instructions,variables,source_stack):
     global s_dict
     global u_dict
     global variable_content
+
+    print("*************************************")
+    print(instructions)
     
     instructions_reverse = instructions[::-1]
     u_dict = {}
@@ -1631,7 +1704,7 @@ def generate_json(block_name,ss,ts,max_ss_idx1,gas,opcodes_seq,subblock = None):
     json_dict["tgt_ws"] = new_ts
     json_dict["user_instrs"] = new_user_defins
     json_dict["current_cost"] = gas
-    json_dict["disasm_seq"] = list(map(lambda x: x[4:-1],opcodes_seq)) #deleting nop(_)
+    json_dict["init_info"] = opcodes_seq
     #append user_instrs
 
 
@@ -1684,11 +1757,65 @@ def optimized_json(inpt_vars,ss,ts,remove_vars):
         else:
             end = True
         i-=1
+
+
+
+def build_initblock_userdef(u_var,args_exp,arity_exp):
+    if arity_exp ==0 or arity_exp == 1:
+        funct = args_exp[1]
+        args = args_exp[0]
+
+        is_new, obj = generate_userdefname(u_var,funct,[args],arity_exp)
         
+        return [obj]
+            
+    elif arity_exp == 2:
+        funct = args_exp[2]
+        args = [args_exp[0],args_exp[1]]
+        is_new, obj = generate_userdefname(u_var,funct,args,arity_exp)
+        return [obj]
+    
+    elif arity_exp == 3:
+        funct = args_exp[3]
+
+        if funct == "+" or funct == "*":
+            
+            new_uvar = create_new_svar()
+            args01 = [args_exp[0],args_exp[1]]
+            is_new, obj = generate_userdefname(new_uvar,funct,args01,arity_exp)
+            
+            funct = "%"
+            if not is_new:
+                u_var_aux = obj["outpt_sk"][0]
+            else:
+                u_var_aux = new_uvar
+                
+            args = [u_var_aux,args_exp[2]]
+
+            is_new, obj1 = generate_userdefname(u_var,funct,args,arity_exp)
+            
+            return [obj, obj1]
+        else:
+
+            args = [args_exp[0],args_exp[1],args_exp[2]]
+            is_new, obj = generate_userdefname(u_var,funct,args,arity_exp)
+            
+            return [obj]
+    else:
+        funct = args_exp[-1]
+        args = []
+        for v in args_exp[:-1]:
+            args.append(v)
+            
+        is_new, obj = generate_userdefname(u_var,funct,args,arity_exp)
+
+        return [obj]
+
 def build_userdef_instructions():
     global user_defins
-
-    already_defined = []
+    global already_defined_userdef
+    
+    already_defined_userdef = []
     
     for u_var in u_dict.keys():
         exp = u_dict[u_var]
@@ -1699,7 +1826,7 @@ def build_userdef_instructions():
             funct = args_exp[1]
             args = args_exp[0]
             
-            is_new, obj = generate_userdefname(u_var,funct,[args],already_defined,arity_exp)
+            is_new, obj = generate_userdefname(u_var,funct,[args],arity_exp)
 
             if not is_new and funct not in ["gas","timestamp","returndatasize"]:
                 #print ("NO ES NUEVO")
@@ -1713,7 +1840,7 @@ def build_userdef_instructions():
         elif arity_exp == 2:
             funct = args_exp[2]
             args = [args_exp[0],args_exp[1]]
-            is_new, obj = generate_userdefname(u_var,funct,args,already_defined,arity_exp)
+            is_new, obj = generate_userdefname(u_var,funct,args,arity_exp)
 
             if not is_new:
                 #print ("NO ES NUEVO")
@@ -1731,7 +1858,7 @@ def build_userdef_instructions():
             
                 new_uvar = create_new_svar()
                 args01 = [args_exp[0],args_exp[1]]
-                is_new, obj = generate_userdefname(new_uvar,funct,args01,already_defined,arity_exp)
+                is_new, obj = generate_userdefname(new_uvar,funct,args01,arity_exp)
 
                 if not is_new:
                     modified_svariable(new_uvar, obj["outpt_sk"][0])
@@ -1747,7 +1874,7 @@ def build_userdef_instructions():
                 
                 args = [u_var_aux,args_exp[2]]
 
-                is_new, obj = generate_userdefname(u_var,funct,args,already_defined,arity_exp)
+                is_new, obj = generate_userdefname(u_var,funct,args,arity_exp)
 
                 if not is_new:
                     modified_svariable(new_uvar, obj["outpt_sk"][0])
@@ -1758,7 +1885,7 @@ def build_userdef_instructions():
             else:
 
                 args = [args_exp[0],args_exp[1],args_exp[2]]
-                is_new, obj = generate_userdefname(u_var,funct,args,already_defined,arity_exp)
+                is_new, obj = generate_userdefname(u_var,funct,args,arity_exp)
 
                 if not is_new:
                     modified_svariable(u_var, obj["outpt_sk"][0])
@@ -1771,7 +1898,7 @@ def build_userdef_instructions():
             for v in args_exp[:-1]:
                 args.append(v)
 
-            is_new, obj = generate_userdefname(u_var,funct,args,already_defined,arity_exp)
+            is_new, obj = generate_userdefname(u_var,funct,args,arity_exp)
 
             if not is_new:
                 #print ("NO ES NUEVO")
@@ -1781,8 +1908,9 @@ def build_userdef_instructions():
 
             else:
                 user_defins.append(obj)
-def generate_userdefname(u_var,funct,args,already_defined,arity):
+def generate_userdefname(u_var,funct,args,arity):
     global user_def_counter
+    global already_defined_userdef
     
     if funct.find("+") != -1:
         instr_name = "ADD"
@@ -1946,11 +2074,11 @@ def generate_userdefname(u_var,funct,args,already_defined,arity):
 
     #TODO: Add more opcodes
     
-    if instr_name in already_defined:
+    if instr_name in already_defined_userdef:
         defined = check_inputs(instr_name,args)
     else:
         defined = -1
-        already_defined.append(instr_name)
+        already_defined_userdef.append(instr_name)
 
     if defined == -1:
         obj = {}
@@ -2019,8 +2147,16 @@ def modified_svariable(old_uvar, new_uvar):
             new_val = val[:pos]+new_uvar+val[pos_br+1:]
             u_dict[u_var] = new_val
     
-def check_inputs(instr_name,args):
+def check_inputs(instr_name,args_aux):
 
+    args = []
+    for a in args_aux:
+        if is_integer(a) !=-1:
+            args.append(int(a))
+        else:
+            args.append(a)
+            
+    
     for elem in user_defins:
         name = elem["disasm"]
         if name == instr_name:
@@ -2036,14 +2172,15 @@ def check_inputs(instr_name,args):
                 i = 0
                 equals = True
                 while (i <len(input_variables) and equals):
+                    
                     if args[i] !=input_variables[i]:
                         equals = False
                     i+=1
 
                 if equals:
                     return elem
-                else:
-                    return -1
+                # else:
+                #     return -1
     return -1
 
 
@@ -2171,7 +2308,9 @@ def translate_block(rule,instructions,opcodes,isolated=False):
     source_stack = generate_source_stack_variables(source_stack_idx)
     get_s_counter(source_stack,t_vars)
     print ("GENERATING ENCONDING")
-    
+
+
+#    get_encoding_init_block()
     generate_encoding(instructions,t_vars,source_stack)
     
     build_userdef_instructions()
@@ -2185,7 +2324,17 @@ def translate_block(rule,instructions,opcodes,isolated=False):
         #print (gas_t)
         
         new_opcodes = compute_opcodes2write(opcodes,num_guard)
-        generate_json(rule.get_rule_name(),source_stack,t_vars,source_stack_idx-1,gas, new_opcodes)
+
+        # print("NUEVOS")
+        # print(new_opcodes)
+        # print(rule.get_instructions())
+        index, fin = find_sublist(rule.get_instructions(),new_opcodes)
+        # print(index)
+        # print(fin)
+
+        init_info = get_encoding_init_block(rule.get_instructions()[index:fin+1],source_stack)
+        
+        generate_json(rule.get_rule_name(),source_stack,t_vars,source_stack_idx-1,gas, init_info)
 
         write_instruction_block(rule.get_rule_name(),new_opcodes)
 
@@ -2311,7 +2460,10 @@ def translate_subblock(rule,instrs,sstack,tstack,sstack_idx,idx,next_block):
             #print (tstack,new_tstack)
 
             new_opcodes = compute_opcodes2write(opcodes,0)
-            generate_json(rule.get_rule_name(),sstack,new_tstack,sstack_idx,gas,new_opcodes,subblock=idx)
+            index, fin = find_sublist(instructions,new_opcodes)
+            init_info = get_encoding_init_block(instructions[index:fin+1],sstack)
+            
+            generate_json(rule.get_rule_name(),sstack,new_tstack,sstack_idx,gas,init_info,subblock=idx)
             write_instruction_block(rule.get_rule_name(),new_opcodes,subblock=idx)
         return new_nexts
     else:
@@ -2483,7 +2635,10 @@ def translate_last_subblock(rule,block,sstack,sstack_idx,idx,isolated):
             #print (sstack_idx)
             #print (sstack)
             new_opcodes = compute_opcodes2write(opcodes,num_guard)
-            generate_json(rule.get_rule_name(),sstack,tstack,sstack_idx,gas,new_opcodes,subblock=idx)
+            index, fin = find_sublist(block,new_opcodes)
+            init_info = get_encoding_init_block(block[index:fin+1],sstack)
+            
+            generate_json(rule.get_rule_name(),sstack,tstack,sstack_idx,gas,init_info,subblock=idx)
             write_instruction_block(rule.get_rule_name(),new_opcodes,subblock=idx)
     
 def get_new_source_stack(instr,nop_instr,idx):
