@@ -63,7 +63,7 @@ def init():
     gas_final_solution = tmp_costabs + "/gas.txt"
 
     global results_dir
-    results_dir = project_path + "/results/prueba/"
+    results_dir = project_path + "/results/prueba/barcelogic_" + str(tout) + "s/"
 
     global syrup_full_execution_path
     syrup_full_execution_path = project_path + "/syrup_full_execution.py"
