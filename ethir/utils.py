@@ -922,3 +922,40 @@ def distinct_ebso(a,b):
             return True
         else:
             return False
+
+''' 
+search_lsit contains the complete sequence of instructions that
+appears in the corresponding rbr block (instrs+opcodes) 
+
+pattern contains only the opcodes sequence
+
+It returns the init and the end index of the pattern
+'''
+def find_sublist(search_list, pattern):
+    cursor = 0
+    init = 0
+    fin = 0
+    first = True
+    found = []
+    j = 0
+    for i in search_list:
+        if i.startswith("nop("):
+            if i == pattern[cursor]:
+                if first:
+                    init = search_list.index(i)
+                    first = False
+                cursor += 1
+                if cursor == len(pattern):
+                    found.append(pattern)
+                    fin = search_list.index(i,j)
+                    cursor = 0
+            else:
+                first = True
+                cursor = 0
+        j+=1
+
+    if search_list[init][4:-1].startswith("SWAP"):
+        init = init-3
+    else:
+        init = init-1
+    return init,fin
