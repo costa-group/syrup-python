@@ -17,9 +17,9 @@ from functools import reduce
 #from z3.z3util import get_vars
 
 from dot_tree import Tree, build_tree
-
-costabs_path = "/tmp/costabs/"
-tmp_path = "/tmp/"
+from global_params import costabs_path, tmp_path
+# costabs_path = "/tmp/costabs/"
+# tmp_path = "/tmp/"
 
 def ceil32(x):
     return x if x % 32 == 0 else x + 32 - (x % 32)

@@ -4,11 +4,7 @@ from utils import is_integer,all_integers,all_symbolic, find_sublist
 import  opcodes
 import os
 from timeit import default_timer as dtimer
-
-
-syrup_path = "/tmp/costabs/jsons"
-costabs_path = "/tmp/costabs/"
-tmp_path = "/tmp/"
+from global_params import syrup_path, costabs_path, tmp_path
 
 global visited
 visited = []
@@ -2332,7 +2328,7 @@ def translate_block(rule,instructions,opcodes,isolated=False):
         # print(fin)
 
         # init_info = get_encoding_init_block(rule.get_instructions()[index:fin+1],source_stack)
-        
+        init_info = {}
         generate_json(rule.get_rule_name(),source_stack,t_vars,source_stack_idx-1,gas, init_info)
 
         write_instruction_block(rule.get_rule_name(),new_opcodes)
@@ -2461,7 +2457,7 @@ def translate_subblock(rule,instrs,sstack,tstack,sstack_idx,idx,next_block):
             new_opcodes = compute_opcodes2write(opcodes,0)
             # index, fin = find_sublist(instructions,new_opcodes)
             # init_info = get_encoding_init_block(instructions[index:fin+1],sstack)
-            
+            init_info = {}
             generate_json(rule.get_rule_name(),sstack,new_tstack,sstack_idx,gas,init_info,subblock=idx)
             write_instruction_block(rule.get_rule_name(),new_opcodes,subblock=idx)
         return new_nexts
@@ -2636,7 +2632,7 @@ def translate_last_subblock(rule,block,sstack,sstack_idx,idx,isolated):
             new_opcodes = compute_opcodes2write(opcodes,num_guard)
             # index, fin = find_sublist(block,new_opcodes)
             # init_info = get_encoding_init_block(block[index:fin+1],sstack)
-            
+            init_info = {}
             generate_json(rule.get_rule_name(),sstack,tstack,sstack_idx,gas,init_info,subblock=idx)
             write_instruction_block(rule.get_rule_name(),new_opcodes,subblock=idx)
     

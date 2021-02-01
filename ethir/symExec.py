@@ -24,6 +24,7 @@ from basicblock import BasicBlock
 #                                          EXCEPTION, PICKLE_PATH)
 # from vulnerability import CallStack, TimeDependency, MoneyConcurrency, Reentrancy, AssertionFailure, ParityMultisigBug2
 import global_params
+from global_params import syrup_path, costabs_path, tmp_path
 
 import rbr
 from utils import *#cfg_dot, write_cfg, update_map, get_public_fields, getLevel, update_sstore_map,correct_map_fields1, get_push_value, get_initial_block_address, check_graph_consistency, find_first_closing_parentheses, check_if_same_stack
@@ -37,9 +38,6 @@ UNSIGNED_BOUND_NUMBER = 2**256 - 1
 CONSTANT_ONES_159 = BitVecVal((1 << 160) - 1, 256)
 
 Assertion = namedtuple('Assertion', ['pc', 'model'])
-syrup_path = "/tmp/costabs/blocks"
-costabs_path = "/tmp/costabs/"
-tmp_path = "/tmp/"
 
 
 class Parameter:

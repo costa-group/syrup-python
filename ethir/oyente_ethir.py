@@ -15,10 +15,12 @@ from timeit import default_timer as dtimer
 from utils import run_command, process_hashes, process_isolate_block
 from input_helper import InputHelper
 import traceback
+from global_params import syrup_path, costabs_path, tmp_path
 
-syrup_path = "/tmp/costabs/jsons/"
-costabs_path = "/tmp/costabs/"
-tmp_path = "/tmp/"
+
+# syrup_path = "/tmp/costabs/jsons/"
+# costabs_path = "/tmp/costabs/"
+# tmp_path = "/tmp/"
 
 def cmd_exists(cmd):
     return subprocess.call("type " + cmd, shell=True,

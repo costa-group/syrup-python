@@ -13,9 +13,11 @@ from graph_scc import get_entry_scc
 import traceback
 
 from syrup_optimization import smt_translate_isolate
+from global_params import costabs_path, tmp_path
 
-costabs_path = "/tmp/costabs/" 
-tmp_path = "/tmp/"
+
+# costabs_path = "/tmp/costabs/" 
+# tmp_path = "/tmp/"
 
 '''
 It initialize the globals variables. 

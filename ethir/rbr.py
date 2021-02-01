@@ -14,8 +14,9 @@ import traceback
 
 from syrup_optimization import smt_translate
 
-costabs_path = "/tmp/costabs/" 
-tmp_path = "/tmp/"
+from global_params import costabs_path, tmp_path
+# costabs_path = "/tmp/costabs/" 
+# tmp_path = "/tmp/"
 
 '''
 It initialize the globals variables. 
