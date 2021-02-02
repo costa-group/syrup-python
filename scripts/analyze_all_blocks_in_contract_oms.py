@@ -76,7 +76,7 @@ def init():
     final_disasm_blk_path = tmp_costabs + "/block.disasm_blk"
 
     global syrup_full_execution_flags
-    syrup_full_execution_flags = " -isb -s " + final_disasm_blk_path
+    syrup_full_execution_flags = " -isb -storage -s " + final_disasm_blk_path
 
 
 def run_command(cmd):
