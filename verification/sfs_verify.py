@@ -17,9 +17,9 @@ uninterpreted functions, and source and target stack.
 
 def are_equals(json_orig, json_opt):
 
-    print("COMPARA")
-    print(json_orig)
-    print(json_opt)
+    # print("COMPARA")
+    # print(json_orig)
+    # print(json_opt)
 
 
     src_orig = json_orig["src_ws"]
@@ -39,7 +39,7 @@ def are_equals(json_orig, json_opt):
     #The uninterpreted fucntions are compared within the target stacks
     
     if (src_st and tgt_st):
-        print(True)
+        # print(True)
         return True
     else:
         return False
