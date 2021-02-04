@@ -1328,6 +1328,8 @@ def get_encoding_init_block(instructions,source_stack):
         else:
             new_opcodes.append(opcodes[i])
 
+    # new_opcodes = evaluate_constants(new_opcodes,init_user_def)
+            
     init_info = {}
     init_info["opcodes_seq"] = new_opcodes
     init_info["non_inter"] = init_user_def
@@ -1335,7 +1337,14 @@ def get_encoding_init_block(instructions,source_stack):
 
     return init_info
   
-    
+
+def simplify_constants(opcodes_seq,user_def):
+    for u in user_def:
+        inpt = u["inpt_sk"]
+        r, elems = all_integers(inpt)
+        if r:
+            result = evaluate(elems)
+            
 def generate_encoding(instructions,variables,source_stack):
     global s_dict
     global u_dict
@@ -1700,7 +1709,7 @@ def generate_json(block_name,ss,ts,max_ss_idx1,gas,opcodes_seq,subblock = None):
     json_dict["tgt_ws"] = new_ts
     json_dict["user_instrs"] = new_user_defins
     json_dict["current_cost"] = gas
-    # json_dict["init_info"] = opcodes_seq
+    json_dict["init_info"] = opcodes_seq
     #append user_instrs
 
 
@@ -2128,19 +2137,24 @@ def modified_svariable(old_uvar, new_uvar):
     global s_dict
     global u_dict
 
-    #print (old_uvar)
-    #print (new_uvar)
-    
+    print(user_defins)
+    print (old_uvar)
+    print (new_uvar)
+
+    print(u_dict)
     for s_var in s_dict.keys():
+        print(s_dict[s_var])
         if str(s_dict[s_var]).find(old_uvar)!=-1:
             s_dict[s_var] = new_uvar
 
     for u_var in u_dict.keys():
-        pos = u_dict[u_var].find(old_uvar)
-        if pos !=-1:
-            pos_br = u_dict[u_var].find(")",pos)
-            val = u_dict[u_var]
-            new_val = val[:pos]+new_uvar+val[pos_br+1:]
+        pos = old_uvar in u_dict[u_var][0]#.find(old_uvar)
+        if pos:
+            elems = list(u_dict[u_var][0])
+            pos_var = elems.index(old_uvar)
+            elems[pos_var] = new_uvar
+            new_val = (tuple(elems),u_dict[u_var][1])
+            print(new_val)
             u_dict[u_var] = new_val
     
 def check_inputs(instr_name,args_aux):
@@ -2309,7 +2323,8 @@ def translate_block(rule,instructions,opcodes,isolated=False):
     generate_encoding(instructions,t_vars,source_stack)
     
     build_userdef_instructions()
-    print (user_defins)
+    # print (user_defins)
+    # print("POR AQUI")
     gas = get_block_cost(opcodes,len(guards_op))
     max_stack_size = max_idx_used(instructions,t_vars)
     
@@ -2323,14 +2338,13 @@ def translate_block(rule,instructions,opcodes,isolated=False):
         # print("NUEVOS")
         # print(new_opcodes)
         # print(rule.get_instructions())
-        # index, fin = find_sublist(rule.get_instructions(),new_opcodes)
+        index, fin = find_sublist(rule.get_instructions(),new_opcodes)
         # print(index)
         # print(fin)
 
         # init_info = get_encoding_init_block(rule.get_instructions()[index:fin+1],source_stack)
         init_info = {}
         generate_json(rule.get_rule_name(),source_stack,t_vars,source_stack_idx-1,gas, init_info)
-
         write_instruction_block(rule.get_rule_name(),new_opcodes)
 
 
