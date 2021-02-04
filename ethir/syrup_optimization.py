@@ -1709,7 +1709,7 @@ def generate_json(block_name,ss,ts,max_ss_idx1,gas,opcodes_seq,subblock = None):
     json_dict["tgt_ws"] = new_ts
     json_dict["user_instrs"] = new_user_defins
     json_dict["current_cost"] = gas
-    json_dict["init_info"] = opcodes_seq
+    #json_dict["init_info"] = opcodes_seq
     #append user_instrs
 
 
@@ -2137,13 +2137,13 @@ def modified_svariable(old_uvar, new_uvar):
     global s_dict
     global u_dict
 
-    print(user_defins)
-    print (old_uvar)
-    print (new_uvar)
+    # print(user_defins)
+    # print (old_uvar)
+    # print (new_uvar)
 
-    print(u_dict)
+    # print(u_dict)
     for s_var in s_dict.keys():
-        print(s_dict[s_var])
+        #print(s_dict[s_var])
         if str(s_dict[s_var]).find(old_uvar)!=-1:
             s_dict[s_var] = new_uvar
 
@@ -2154,7 +2154,7 @@ def modified_svariable(old_uvar, new_uvar):
             pos_var = elems.index(old_uvar)
             elems[pos_var] = new_uvar
             new_val = (tuple(elems),u_dict[u_var][1])
-            print(new_val)
+            #print(new_val)
             u_dict[u_var] = new_val
     
 def check_inputs(instr_name,args_aux):
@@ -2398,15 +2398,21 @@ def generate_subblocks(rule,list_subblocks,isolated = False):
         #We update the source stack for the new block
             source_stack, source_stack_idx = get_new_source_stack(last_instr,nop_instr,ts_idx)
         else:
+            # print("**")
+            # print(rule.get_rule_name())
+            # print(new_nexts)
             new_block = new_nexts[0]
+            #print(new_block)
             new_idxstack= new_nexts[1] #it returns the last index of sstore
+            #print(new_idxstack)
             list_subblocks[i+1] = new_block
             source_stack_idx = new_idxstack
             seq = range(source_stack_idx-1,-1,-1)
             source_stack = list(map(lambda x: "s("+str(x)+")",seq))
-            #print (block)
-            #print (new_block)
-
+            # print(source_stack)
+            # print (block)
+            # print (new_block)
+            # print("xxxxxxxxxxxxxxxxxx")
             
         i+=1
 
@@ -2417,6 +2423,11 @@ def generate_subblocks(rule,list_subblocks,isolated = False):
     if source_stack == []:
         source_stack_idx = -1
     block = instrs[2:]
+    # print("BLOCK")
+    # print(block)
+    # print(source_stack)
+    # print(source_stack_idx)
+    # print(i)
     if block != []:
         #print ("VAMOS A VER")
         #print (source_stack_idx)
@@ -2463,6 +2474,9 @@ def translate_subblock(rule,instrs,sstack,tstack,sstack_idx,idx,next_block):
             #print ("VEEENGA")
             new_tstack,new_nexts = optimize_splitpop_block(tstack,sstack,next_block,opcodes)
             if new_nexts != []:
+                # print("GOGOGO")
+                # print(new_nexts)
+                # print(rule.get_rule_name())
                 pops2remove = new_nexts[2]
                 gas = gas+2*pops2remove
                 max_instr_size+=pops2remove
@@ -2482,11 +2496,12 @@ def translate_subblock(rule,instrs,sstack,tstack,sstack_idx,idx,next_block):
 
 def optimize_splitpop_block(tstack,source_stack,next_block,opcodes):
 
-    #print ("EMPIEZA")
-    #print (tstack)
-    #print (source_stack)
-    #print (next_block)
-    #print (opcodes)
+    # print("OPTIMIZE SPLITPOP")
+    # print ("EMPIEZA")
+    # print (tstack)
+    # print (source_stack)
+    # print (next_block)
+    # print (opcodes)
     
     i = 0
     target_stack = compute_target_stack(tstack)
@@ -2616,22 +2631,25 @@ def translate_last_subblock(rule,block,sstack,sstack_idx,idx,isolated):
             x = list(filter(lambda x: (x.find("POP")==-1) and (x.find("JUMPDEST")==-1) and (x.find("JUMP")==-1)and(x.find("JUMPI")==-1),opcodes))
 
             if x == [] and num_pops >0:
-                #print ("ESTOY AQUII")
-                #print (sstack_idx)
-                #print (num_pops)
+                # print ("ESTOY AQUII")
+                # print (sstack_idx)
+                # print (num_pops)
                 t_vars_idx = sstack_idx-num_pops+1
+                if t_vars_idx == sstack_idx and num_pops>0:
+                    t_vars_idx-=1
                 seq = range(0,t_vars_idx)
                 tstack = list(map(lambda x: "s("+str(x)+")",seq))[::-1]
+                
             else:
             
                 tstack = generate_vars_target_stack(num_guard,instructions[-1],opcodes)[::-1]
         else:
             tstack = generate_target_stack_idx(sstack_idx+1,opcodes)[::-1]
         get_s_counter(sstack,tstack)
-        #print ("GENERATING ENCONDING")
-        #print (instructions)
-        #print (tstack)
-        #print (sstack)
+        # print ("GENERATING ENCONDING")
+        # print (instructions)
+        # print (tstack)
+        # print (sstack)
         generate_encoding(instructions,tstack,sstack)
     
         build_userdef_instructions()
@@ -2647,6 +2665,11 @@ def translate_last_subblock(rule,block,sstack,sstack_idx,idx,isolated):
             # index, fin = find_sublist(block,new_opcodes)
             # init_info = get_encoding_init_block(block[index:fin+1],sstack)
             init_info = {}
+            # print("NEW OPCODES")
+            # print(new_opcodes)
+            # print(sstack)
+            # print(tstack)
+            # print(sstack_idx)
             generate_json(rule.get_rule_name(),sstack,tstack,sstack_idx,gas,init_info,subblock=idx)
             write_instruction_block(rule.get_rule_name(),new_opcodes,subblock=idx)
     
@@ -4340,6 +4363,10 @@ def get_evm_block(instructions):
         f = open(bl_path+"/block_"+str(b)+".bl","w")
         f.write(blocks[b])
         f.close()
+
+
+# def correct_pops_jsons(json):
+#     if json 
         
 def get_sfs_dict():
     return blocks_json_dict
