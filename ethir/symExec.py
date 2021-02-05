@@ -1121,15 +1121,15 @@ def get_all_blocks_with_same_stack(successor, stack):
         list_stacks = vertices[found_successor].get_stacks()
         
         # If there's no stack in the node, we must check if our stack is empty, or doesn't contain jump values info.
-        if list_stacks == [[]]:
-            if list(filter(lambda x: isinstance(x,tuple) and (x[0] in vertices) and x[0]!=0,stack)) == [] and len(stack) == 0:
+        # if list_stacks == [[]]:
+        #     if list(filter(lambda x: isinstance(x,tuple) and (x[0] in vertices) and x[0]!=0,stack)) == [] and len(stack) == 0:
+        #         same_stack_successors.append(found_successor)
+        # else:
+        # Otherwise, we check every path to see if they're esentially the same
+        for found_stack in list_stacks:
+            if check_if_same_stack(found_stack,stack,vertices):
                 same_stack_successors.append(found_successor)
-        else:
-            # Otherwise, we check every path to see if they're esentially the same
-            for found_stack in list_stacks:
-                if check_if_same_stack(found_stack,stack,vertices):
-                    same_stack_successors.append(found_successor)
-                    break
+                break
     return same_stack_successors
 
 # Given a block, its successor, and another successor already visited that shares same stack,
