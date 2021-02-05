@@ -1350,9 +1350,9 @@ def generate_encoding(instructions,variables,source_stack):
     global u_dict
     global variable_content
 
-    print("*************************************")
-    print(instructions)
-    
+    # print("*************************************")
+    # print(instructions)
+    # print(variables)
     instructions_reverse = instructions[::-1]
     u_dict = {}
     variable_content = {}
@@ -2328,7 +2328,7 @@ def translate_block(rule,instructions,opcodes,isolated=False):
     gas = get_block_cost(opcodes,len(guards_op))
     max_stack_size = max_idx_used(instructions,t_vars)
     
-    if  gas!=0:
+    if  gas!=0 and not is_identity_map():
         gas_t+=get_cost(original_opcodes)
         #print ("AQUI")
         #print (gas_t)
@@ -2469,7 +2469,7 @@ def translate_subblock(rule,instrs,sstack,tstack,sstack_idx,idx,next_block):
         #print ("**********")
         gas = get_block_cost(opcodes,0)
         max_stack_size = max_idx_used(instructions,tstack)
-        if max_stack_size!=0 and gas !=0:
+        if max_stack_size!=0 and gas !=0 and not is_identity_map():
             compute_gast = True
             #print ("VEEENGA")
             new_tstack,new_nexts = optimize_splitpop_block(tstack,sstack,next_block,opcodes)
@@ -2656,7 +2656,7 @@ def translate_last_subblock(rule,block,sstack,sstack_idx,idx,isolated):
         #print (user_defins)
         gas = get_block_cost(opcodes,len(guards_op))
         max_stack_size = max_idx_used(instructions,tstack)
-        if gas!=0:
+        if gas!=0 and not is_identity_map():
             compute_gast = True
             #print ("MIRA")
             #print (sstack_idx)
@@ -4442,3 +4442,10 @@ def are_independent(instructionA, instructionB, dependences):
     #     else:
     #         return True    
             
+
+def is_identity_map():
+    for v in variable_content:
+        if v != variable_content[v]:
+            return False
+
+    return True
