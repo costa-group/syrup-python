@@ -858,17 +858,12 @@ def sym_exec_block(params, block, pre_block, depth, func_call,level,path):
     vertices[block].add_stack(list(stack))
     vertices[block].add_path(path)
 
-    print("BLOCK")
-    print(block)
     if debug_info:
         print ("\nBLOCK "+ str(block))
         print ("PATH")
         print (path)
         print ("STACK")
         print (stack)
-
-    print("STACK 0")
-    print(stack)
         
     update_stack_heigh(block,len(stack),0)
     Edge = namedtuple("Edge", ["v1", "v2"]) # Factory Function for tuples is used as dictionary key
@@ -997,9 +992,6 @@ def sym_exec_block(params, block, pre_block, depth, func_call,level,path):
     # Mark that this basic block in the visited blocks
     visited.append(block)
     depth += 1
-
-    print("STACK1: ")
-    print(stack)
     
     update_stack_heigh(block,len(stack),1)
     vertices[block].add_path(path)
