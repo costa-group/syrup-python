@@ -858,6 +858,8 @@ def sym_exec_block(params, block, pre_block, depth, func_call,level,path):
     vertices[block].add_stack(list(stack))
     vertices[block].add_path(path)
 
+    print("BLOCK")
+    print(block)
     if debug_info:
         print ("\nBLOCK "+ str(block))
         print ("PATH")
@@ -865,7 +867,9 @@ def sym_exec_block(params, block, pre_block, depth, func_call,level,path):
         print ("STACK")
         print (stack)
 
-
+    print("STACK 0")
+    print(stack)
+        
     update_stack_heigh(block,len(stack),0)
     Edge = namedtuple("Edge", ["v1", "v2"]) # Factory Function for tuples is used as dictionary key
     
@@ -994,6 +998,9 @@ def sym_exec_block(params, block, pre_block, depth, func_call,level,path):
     visited.append(block)
     depth += 1
 
+    print("STACK1: ")
+    print(stack)
+    
     update_stack_heigh(block,len(stack),1)
     vertices[block].add_path(path)
     
@@ -1112,10 +1119,10 @@ def get_all_blocks_with_same_stack(successor, stack):
     
     for found_successor in all_successor_copies:
         list_stacks = vertices[found_successor].get_stacks()
-
+        
         # If there's no stack in the node, we must check if our stack is empty, or doesn't contain jump values info.
         if list_stacks == [[]]:
-            if list(filter(lambda x: isinstance(x,tuple) and (x[0] in vertices) and x[0]!=0,stack)) == []:
+            if list(filter(lambda x: isinstance(x,tuple) and (x[0] in vertices) and x[0]!=0,stack)) == [] and len(stack) == 0:
                 same_stack_successors.append(found_successor)
         else:
             # Otherwise, we check every path to see if they're esentially the same
@@ -2999,12 +3006,13 @@ def analyze_next_block(block, successor, stack, path, func_call, depth, current_
     global vertices
     global blocks_to_create
 
+        
     if successor in visited_blocks:
         # We filter all nodes with same beginning, and check if there's one of those
         # nodes with same stack. Notice that one block may contain several stacks
-
+        
         same_stack_successors = get_all_blocks_with_same_stack(successor, stack)
-
+        
         if len(same_stack_successors) > 0:
             update_matching_successor(successor, same_stack_successors[0], block, jump_type)
         else:
