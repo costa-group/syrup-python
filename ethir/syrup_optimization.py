@@ -3809,7 +3809,7 @@ def apply_cond_transformation(instr,user_def_instrs,tstack):
         xor_op = list(filter(lambda x: out_pt in x["inpt_sk"] and x["disasm"] == "XOR", user_def_instrs))
         isz_op = list(filter(lambda x: out_pt in x["inpt_sk"] and x["disasm"] == "ISZERO", user_def_instrs))
         
-        if len(or_op)==1:
+        if len(xor_op)==1:
             xor_instr = xor_op[0]
             out_pt2 = xor_instr["outpt_sk"][0]
             if out_pt == xor_instr["inpt_sk"][1]: #xor(x,xor(x,y)) = y, xor(x,xor(y,x)) = y, xor(xor(x,y),x) = y, xor(xor(y,x),x) = y
