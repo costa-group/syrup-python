@@ -1637,9 +1637,13 @@ def sym_exec_ins(params, block, instr, func_call,stack_first,instr_index):
                     computed = 0
             else:
 
-                computed = "If(UGT("+str(first)+", "+str(second)+", 1, 0,))"
+                try:
+                    computed = If(UGT(first, second), BitVecVal(1, 256), BitVecVal(0, 256))
+                except:
+                    computed = "If(UGT("+str(first)+", "+str(second)+", 1, 0,))"
+                #     exit()
             #computed = simplify(computed) if is_expr(computed) else computed
-            stack.insert(0, str(computed))
+            stack.insert(0, computed)
         else:
             raise ValueError('STACK underflow')
     elif opcode == "SLT":  # Not fully faithful to signed comparison
@@ -1760,7 +1764,7 @@ def sym_exec_ins(params, block, instr, func_call,stack_first,instr_index):
 
             first_aux = get_push_value(first)
             second_aux = get_push_value(second)
-
+            
             computed = first_aux | second_aux
 
             if computed == first_aux:
