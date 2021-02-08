@@ -6,6 +6,8 @@ import shlex
 import subprocess
 import re
 import json
+import traceback
+
 import pandas as pd
 import sys
 import resource
@@ -77,6 +79,12 @@ def init():
     global syrup_full_execution_flags
     syrup_full_execution_flags = " -isb -storage -s " + final_disasm_blk_path
 
+    global log_path
+    log_path = project_path + "/logs"
+
+    global log_file
+    log_file = log_path + "/log_barcelogic.log"
+
 
 def run_command(cmd):
     FNULL = open(os.devnull, 'w')
@@ -110,6 +118,11 @@ if __name__=="__main__":
     init()
     pathlib.Path(tmp_costabs).mkdir(parents=True, exist_ok=True)
     pathlib.Path(results_dir).mkdir(parents=True, exist_ok=True)
+    pathlib.Path(log_path).mkdir(parents=True, exist_ok=True)
+
+    file_to_rem = pathlib.Path(log_file)
+    file_to_rem.unlink(missing_ok=True)
+
     for contract_path in [f.path for f in os.scandir(contracts_dir_path) if f.is_dir()]:
         rows_list = []
         for file in glob.glob(contract_path + "/*.json"):
@@ -170,11 +183,22 @@ if __name__=="__main__":
                 with open(gas_final_solution, 'r') as f:
                     file_results['real_gas'] = f.read()
 
-                run_command(syrup_full_execution_path + " " + syrup_full_execution_flags)
+                try:
 
-                with open(final_json_path) as path:
-                    data2 = json.load(path)
-                    file_results['result_is_correct'] = are_equals(data, data2)
+                    run_command(syrup_full_execution_path + " " + syrup_full_execution_flags)
+
+                    with open(final_json_path) as path:
+                        data2 = json.load(path)
+                        file_results['result_is_correct'] = are_equals(data, data2)
+
+                except Exception:
+
+                    with open(log_file, "a+") as f:
+                        error_message = traceback.format_exc()
+                        print("File " + file, file=f)
+                        print("Error message: " + error_message, file=f)
+                        print("\n\n", file=f)
+                    continue
 
             rows_list.append(file_results)
 
