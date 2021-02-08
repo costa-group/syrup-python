@@ -1627,7 +1627,7 @@ def sym_exec_ins(params, block, instr, func_call,stack_first,instr_index):
 
             first = get_push_value(first)
             second = get_push_value(second)
-            
+
             if isAllReal(first, second):
                 first = to_unsigned(first)
                 second = to_unsigned(second)
@@ -1636,7 +1636,12 @@ def sym_exec_ins(params, block, instr, func_call,stack_first,instr_index):
                 else:
                     computed = 0
             else:
-                computed = If(UGT(first, second), BitVecVal(1, 256), BitVecVal(0, 256))
+
+                try:
+                    computed = If(UGT(first, second), BitVecVal(1, 256), BitVecVal(0, 256))
+                except:
+                    computed = "If(UGT("+str(first)+", "+str(second)+", 1, 0,))"
+                #     exit()
             #computed = simplify(computed) if is_expr(computed) else computed
             stack.insert(0, computed)
         else:
@@ -1740,8 +1745,6 @@ def sym_exec_ins(params, block, instr, func_call,stack_first,instr_index):
             if isReal(second_aux):
                 second_aux = int(second_aux)
 
-            
-            
             computed = first_aux & second_aux
 
             if computed == first_aux:
@@ -2107,12 +2110,12 @@ def sym_exec_ins(params, block, instr, func_call,stack_first,instr_index):
 
                 temp = ((mem_location + no_bytes) / 32) + 1
                 current_miu_i = to_symbolic(current_miu_i)
-                expression = current_miu_i < temp
-                # solver.push()
-                # solver.add(expression)
-                if MSIZE:
-                    # if check_sat(solver) != unsat:
-                    current_miu_i = If(expression, temp, current_miu_i)
+                # expression = current_miu_i < temp
+                # # solver.push()
+                # # solver.add(expression)
+                # if MSIZE:
+                #     # if check_sat(solver) != unsat:
+                #     current_miu_i = If(expression, temp, current_miu_i)
                 #solver.pop()
                 mem.clear() # very conservative
                 mem[str(mem_location)] = new_var
@@ -2196,13 +2199,13 @@ def sym_exec_ins(params, block, instr, func_call,stack_first,instr_index):
 
                 temp = ((mem_location + no_bytes) / 32) + 1
                 current_miu_i = to_symbolic(current_miu_i)
-                expression = current_miu_i < temp
-                # solver.push()
-                # solver.add(expression)
-                if MSIZE:
-                    # if check_sat(solver) != unsat:
-                    current_miu_i = If(expression, temp, current_miu_i)
-                #solver.pop()
+                # expression = current_miu_i < temp
+                # # solver.push()
+                # # solver.add(expression)
+                # if MSIZE:
+                #     # if check_sat(solver) != unsat:
+                #     current_miu_i = If(expression, temp, current_miu_i)
+                # #solver.pop()
                 mem.clear() # very conservative
                 mem[str(mem_location)] = new_var
             global_state["miu_i"] = current_miu_i
@@ -2271,14 +2274,14 @@ def sym_exec_ins(params, block, instr, func_call,stack_first,instr_index):
             else:
                 temp = ((address + 31) / 32) + 1
                 current_miu_i = to_symbolic(current_miu_i)
-                expression = current_miu_i < temp
-                # solver.push()
-                # solver.add(expression)
-                if MSIZE:
-                    # if check_sat(solver) != unsat:
-                        # this means that it is possibly that current_miu_i < temp
-                    current_miu_i = If(expression,temp,current_miu_i)
-                #solver.pop()
+                # expression = current_miu_i < temp
+                # # solver.push()
+                # # solver.add(expression)
+                # if MSIZE:
+                #     # if check_sat(solver) != unsat:
+                #         # this means that it is possibly that current_miu_i < temp
+                #     current_miu_i = If(expression,temp,current_miu_i)
+                # #solver.pop()
                 new_var_name = gen.gen_mem_var(address)
                 if new_var_name in path_conditions_and_vars:
                     new_var = path_conditions_and_vars[new_var_name]
@@ -2340,13 +2343,13 @@ def sym_exec_ins(params, block, instr, func_call,stack_first,instr_index):
                 mem[stored_address] = stored_value  # note that the stored_value could be symbolic
             else:
                 temp = ((stored_address + 31) / 32) + 1
-                expression = current_miu_i < temp
-                # solver.push()
-                # solver.add(expression)
-                if MSIZE:
-#                    if check_sat(solver) != unsat:
-                        # this means that it is possibly that current_miu_i < temp
-                    current_miu_i = If(expression,temp,current_miu_i)
+#                 expression = current_miu_i < temp
+#                 # solver.push()
+#                 # solver.add(expression)
+#                 if MSIZE:
+# #                    if check_sat(solver) != unsat:
+#                         # this means that it is possibly that current_miu_i < temp
+#                     current_miu_i = If(expression,temp,current_miu_i)
                 #solver.pop()
                 mem.clear()  # very conservative
                 mem[str(stored_address)] = stored_value
@@ -2380,13 +2383,13 @@ def sym_exec_ins(params, block, instr, func_call,stack_first,instr_index):
                 temp = (stored_address / 32) + 1
                 if isReal(current_miu_i):
                     current_miu_i = BitVecVal(current_miu_i, 256)
-                expression = current_miu_i < temp
-                # solver.push()
-                # solver.add(expression)
-                if MSIZE:
-                #    if check_sat(solver) != unsat:
-                        # this means that it is possibly that current_miu_i < temp
-                    current_miu_i = If(expression,temp,current_miu_i)
+                # expression = current_miu_i < temp
+                # # solver.push()
+                # # solver.add(expression)
+                # if MSIZE:
+                # #    if check_sat(solver) != unsat:
+                #         # this means that it is possibly that current_miu_i < temp
+                #     current_miu_i = If(expression,temp,current_miu_i)
                 #solver.pop()
                 mem.clear()  # very conservative
                 mem[str(stored_address)] = stored_value

@@ -81,12 +81,12 @@ class InputHelper:
                 inputs.append({'disasm_file': disasm_file})
         else:
             self.solc_version = self._get_solidity_version()
-
+            
             contracts = self._get_compiled_contracts()
 
             if not self.runtime:
                 contracts_init = self._get_compiled_contracts_init(contracts)
-
+                
             empty = self._prepare_disasm_files_for_analysis(contracts)
 
             if not self.runtime:
@@ -104,6 +104,7 @@ class InputHelper:
             for contract, _ in contracts:
                 c_source, cname = contract.split(':')
                 c_source = re.sub(self.root_path, "", c_source)
+
                 if self.input_type == InputHelper.SOLIDITY:
                     source_map = SourceMap(contract, self.source, 'solidity', self.root_path,self.solc_version)
                 else:
@@ -167,8 +168,11 @@ class InputHelper:
         
         options = ""
 
-        options = self._get_optimize_options()
-        
+        if self.opt_options["optimize"]:
+            options = self._get_optimize_options()
+        else:
+            options = ""
+            
         cmd = solc+" --bin-runtime "+options+" %s" % self.source
 
         out = run_command(cmd)
@@ -410,9 +414,6 @@ class InputHelper:
         v7 = len(list(filter(lambda x: x.find("0.7")!=-1,pragmas)))
         v8 = len(list(filter(lambda x: x.find("0.8")!=-1,pragmas)))
         m = max([v4,v5,v6,v7,v8])
-
-        print("MIRA")
-        print(m)
         
         if m == v4:
             return "v4"
