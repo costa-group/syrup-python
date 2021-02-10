@@ -466,7 +466,7 @@ def translateOpcodes10(opcode, index_variables,cond):
         v0, updated_variables = get_consume_variable(index_variables)
         v1, updated_variables = get_consume_variable(updated_variables)
         v2, updated_variables = get_new_variable(updated_variables)
-        instr = v2+" = byte(" + v1 + " , " + v0 + ")"
+        instr = v2+" = byte(" + v0 + " , " + v1 + ")"
 
     elif opcode == "SHL":
         v0, updated_variables = get_consume_variable(index_variables)
