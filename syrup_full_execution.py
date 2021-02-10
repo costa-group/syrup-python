@@ -189,7 +189,7 @@ def main():
             generate_solution(block_name)
 
             
-    if args.verify:
+    if args.verify and not args.write_only:
         verify_sfs(args.source, sfs_dict)
 
 if __name__=="__main__":
