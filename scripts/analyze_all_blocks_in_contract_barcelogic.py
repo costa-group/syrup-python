@@ -123,8 +123,15 @@ if __name__=="__main__":
     file_to_rem = pathlib.Path(log_file)
     file_to_rem.unlink(missing_ok=True)
 
+    already_analyzed_contracts = glob.glob(results_dir + "/*.csv")
+
     for contract_path in [f.path for f in os.scandir(contracts_dir_path) if f.is_dir()]:
         rows_list = []
+        csv_file = results_dir + contract_path.split('/')[-1] + "_results_barcelogic.csv"
+
+        if csv_file in already_analyzed_contracts:
+            continue
+
         for file in glob.glob(contract_path + "/*.json"):
             file_results = {}
             block_id = file.split('/')[-1]
@@ -207,5 +214,4 @@ if __name__=="__main__":
                                               'solver_time_in_sec', 'target_disasm', 'init_progr_len','final_progr_len',
                                               'number_of_necessary_uninterpreted_instructions',
                                               'number_of_necessary_push', 'result_is_correct'])
-        csv_file = results_dir + contract_path.split('/')[-1] + "_results_barcelogic.csv"
         df.to_csv(csv_file)
