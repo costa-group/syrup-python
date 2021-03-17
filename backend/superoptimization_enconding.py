@@ -9,6 +9,7 @@ from encoding_cost import paper_soft_constraints, label_name, alternative_soft_c
 from encoding_instructions import instructions_constraints
 from encoding_redundant import *
 from encoding_files import write_encoding, write_opcode_map, write_instruction_map, write_gas_map
+from default_encoding import activate_default_encoding
 
 
 # Method to generate redundant constraints according to flags (at least once is included by default)
@@ -122,6 +123,10 @@ def generate_smtlib_encoding(b0, bs, usr_instr, variables, initial_stack, final_
     dependency_graph, first_position_instr_appears_dict, first_position_instr_cannot_appear_dict = \
         generate_instruction_dicts(b0, usr_instr, final_stack, flags)
     theta_dict = dict(theta_stack, **theta_comm, **theta_non_comm)
+
+    # Before generating the encoding, we activate the default encoding if its corresponding flag is activated
+    if flags['default-encoding']:
+        flags = activate_default_encoding(initial_stack, final_stack, usr_instr, b0, flags)
 
     write_encoding(set_logic('QF_LIA'))
     generate_configuration_statements(solver_name)

@@ -141,11 +141,12 @@ def main():
     parser.add_argument("-instruction-order", help='add a constraint representing the order among instructions',
                     action='store_true', dest='instruction_order')
     parser.add_argument("-no-output-before-pop", help='add a constraint representing the fact that the previous instruction'
-                                                  'of a pop can only be a instruction that does not generate an output',
+                                                  'of a pop can only be a instruction that does not produce an element',
                     action='store_true', dest='no_output_before_pop')
     parser.add_argument("-initial-solution", dest='initial_solution', action='store_true',
                     help="Consider the instructions of blocks without optimizing as part of the encoding")
-
+    parser.add_argument("-disable-default-encoding", dest='default_encoding', action='store_false',
+                    help="Disable the constraints added for the default encoding")
     args = parser.parse_args()
 
     if not has_dependencies_installed():
