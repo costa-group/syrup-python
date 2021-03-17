@@ -443,7 +443,7 @@ class InputHelper:
         if compiler_opt["optimize"] and run==-1:
             opt = "--optimize"
         elif run !=-1:
-            opt = "--optimize-run "+str(run)
+            opt = "--optimize-runs "+str(run)
 
         if yul and (self.solc_version != "v4" and self.solc_version != "v5"):
             opt+=" --no-optimize-yul"
