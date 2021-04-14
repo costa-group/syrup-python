@@ -5,6 +5,7 @@ from utils_verify import *
 import rbr_isolate_block
 from utils import process_isolate_block
 from syrup_optimization import get_sfs_dict
+from timeit import default_timer as dtimer
 
 costabs_path = "/tmp/costabs/"
 solutions_path = costabs_path + "solutions/"
@@ -172,21 +173,31 @@ def verify_sfs(source, sfs_dict):
         if not os.path.exists(solutions_path):
             print("[ERROR] Path "+solutions_path+" does not exist.")
         else:
+            init_time = dtimer()
+            
+            keys_dict = sfs_dict.keys()
             solution_files = list(filter(lambda x: x.find("disasm_opt")!=-1,os.listdir(solutions_path)))
-            print(solution_files)
             for f in solution_files:
+
+                if "syrup_contract" in keys_dict:
+                    contract = "syrup_contract"
+                else:
+                    contract = get_contract_name(f)
+                    
                 block_id = get_block_id(f)
                 if os.path.getsize(solutions_path+f)!=0:
                     if len(solution_files) == 1: #analyze json directly
-                        json_obj = sfs_dict
+                        try:
+                            json_obj = sfs_dict[contract][block_id]
+                        except:
+                            json_obj = sfs_dict
                         block_id = f
                     else:
-                        json_obj = sfs_dict[block_id]
+                        print(contract)
+                        json_obj = sfs_dict[contract][block_id]
                     input_stack = len(json_obj["src_ws"])
                     gas = json_obj["current_cost"]
-                    print("**********")
-                    print("COMIENZA VERIFY: "+block_id)
-                    print(input_stack)
+
                     x, y = process_isolate_block(solutions_path+f, input_stack)
 
                     block_data = {}
@@ -206,25 +217,35 @@ def verify_sfs(source, sfs_dict):
                         cname = cname_aux.strip().split(".")[0]
     
                         exit_code = rbr_isolate_block.evm2rbr_compiler(contract_name = cname, syrup = True, block = block_data)
-                        json_opt = get_sfs_dict()
+                        json_opt_c = get_sfs_dict()
                         print("++++++++++++++")
-                        print(json_opt)
+                        print(json_opt_c)
 
-                        if len(json_opt)>1:
+                        if len(json_opt_c)>1:
                             print("[ERROR] Something fails with the optimized block.")
                         else:
-
+                            json_opt = json_opt_c["syrup_contract"]
                             result = are_equals(json_obj,json_opt[next(iter(json_opt.keys()))])
 
                             if result:
-                                result = "Block "+block_id+" :VERIFIED" 
-                                report+=result+"\n"
+                                result = "Block "+block_id+" :VERIFIED"
+                            else:
+                                result = "Block "+block_id+" :NO VERIFIED"
+                            report+=result+"\n"
                     
                 else:
                     report += "File for "+block_id+" is empty.\n"
 
             with open(costabs_path + "report_verification.txt", 'w') as f:
+                print(report)
                 f.write(report)
+
+            end_time = dtimer()
+            
+            print("*************************************************************")
+            print("Verification time: "+str(end_time-init_time)+"s")
+            print("*************************************************************")
+
                 
     else:
         print("There are not solutions generated. They cannot be verified.")
