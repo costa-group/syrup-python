@@ -11,7 +11,7 @@ import sys
 import resource
 sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))+"/backend")
 from encoding_utils import generate_phi_dict
-
+from timeit import default_timer as timer
 sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))+"/verification")
 from sfs_verify import are_equals
 sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))+"/scripts")
@@ -159,7 +159,6 @@ if __name__=="__main__":
                 # Sometimes, solution reached is not good enough
                 file_results['target_gas_cost'] = min(target_gas_cost, file_results['source_gas_cost'])
                 file_results['shown_optimal'] = shown_optimal
-                file_results['saved_gas'] = file_results['source_gas_cost'] - file_results['target_gas_cost']
 
                 with open(solver_output_file, 'w') as f:
                     f.write(solution)
@@ -183,6 +182,7 @@ if __name__=="__main__":
 
                 with open(gas_final_solution, 'r') as f:
                     file_results['real_gas'] = f.read()
+                    file_results['saved_gas'] = int(file_results['real_gas']) - file_results['target_gas_cost']
 
                 try:
 
@@ -190,8 +190,10 @@ if __name__=="__main__":
 
                     with open(final_json_path) as path:
                         data2 = json.load(path)
+                        start = timer()
                         file_results['result_is_correct'] = are_equals(data, data2)
-
+                        end = timer()
+                        file_results['verifier_time'] = end-start
                 except Exception:
 
                     with open(log_file, "a+") as f:
@@ -208,5 +210,5 @@ if __name__=="__main__":
                                               'solver_time_in_sec', 'target_disasm', 'init_progr_len',
                                               'final_progr_len',
                                               'number_of_necessary_uninterpreted_instructions',
-                                              'number_of_necessary_push', 'result_is_correct'])
+                                              'number_of_necessary_push', 'result_is_correct', 'verifier_time'])
         df.to_csv(csv_file)
