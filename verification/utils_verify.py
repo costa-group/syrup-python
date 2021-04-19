@@ -15,6 +15,12 @@ def get_block_id(file_name):
     print(block_id)
     return block_id
 
+def get_contract_name(file_name):
+    elems = file_name.split("_")
+    if elems[2].startswith("block"):
+        return elems[1]
+    else:
+        raise Exception("Check contract name")
 
 def is_integer(num):
     try:

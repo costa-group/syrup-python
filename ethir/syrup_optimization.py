@@ -47,6 +47,9 @@ gas_saved_op = 0
 global blocks_json_dict
 blocks_json_dict = {}
 
+global sfs_contracts
+sfs_contracts = {}
+
 global split_sto
 split_sto = False
 
@@ -2644,7 +2647,7 @@ def translate_last_subblock(rule,block,sstack,sstack_idx,idx,isolated):
             
                 tstack = generate_vars_target_stack(num_guard,instructions[-1],opcodes)[::-1]
         else:
-            tstack = generate_target_stack_idx(sstack_idx+1,opcodes)[::-1]
+            tstack = generate_target_stack_idx(sstack_idx,opcodes)[::-1]
         get_s_counter(sstack,tstack)
         # print ("GENERATING ENCONDING")
         # print (instructions)
@@ -2949,6 +2952,7 @@ def smt_translate(rules,sname,contract_name,storage):
     global gas_saved_op
     global visited
     global cname
+    global sfs_contracts
     
     visited = []
     init_globals()
@@ -3053,10 +3057,11 @@ def smt_translate(rules,sname,contract_name,storage):
     print ("GAS TOTAL: "+str(gas_t))
     print ("CHECK: "+str(gas_check))
     print ("GAS TRANSFORM: "+str(saved_push*3+gas_saved_op))
-    
+    print("GAS SAVED BY PUSH:"+str(saved_push*3))
 
     # for f in info_deploy:
     #     print f
+    sfs_contracts[cname] = blocks_json_dict
     end = dtimer()
     print("Blocks Generation SYRUP: "+str(end-begin)+"s")
 
@@ -3067,10 +3072,12 @@ def smt_translate_isolate(rule,name,storage):
     global int_not0
     global source_name
     global blocks_json_dict
+    global sfs_contracts
     
     visited = []
     init_globals()
-
+    sfs_contracts = {}
+    
     if storage:
         add_storage2split()
     
@@ -3121,6 +3128,7 @@ def smt_translate_isolate(rule,name,storage):
     end = dtimer()
     # for f in info_deploy:
     #     print f
+    sfs_contracts["syrup_contract"] = blocks_json_dict
     end = dtimer()
     print("Blocks Generation SYRUP: "+str(end-begin)+"s")
 
@@ -4369,7 +4377,7 @@ def get_evm_block(instructions):
 #     if json 
         
 def get_sfs_dict():
-    return blocks_json_dict
+    return sfs_contracts
 
 
 #For updating sloads and mload variables
