@@ -191,7 +191,7 @@ if __name__=="__main__":
 
                 with open(gas_final_solution, 'r') as f:
                     file_results['real_gas'] = f.read()
-                    file_results['saved_gas'] = int(file_results['real_gas']) - file_results['target_gas_cost']
+                    file_results['saved_gas'] = int(file_results['real_gas']) - file_results['source_gas_cost']
                 try:
 
                     run_command(syrup_full_execution_path + " " + syrup_full_execution_flags)
