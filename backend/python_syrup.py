@@ -83,6 +83,8 @@ if __name__ == "__main__":
                     help="Consider the instructions of blocks without optimizing as part of the encoding")
     ap.add_argument("-disable-default-encoding", dest='default_encoding', action='store_false',
                     help="Disable the constraints added for the default encoding")
+    ap.add_argument("-number-instruction-gas-model", dest='number_instruction_gas_model', action='store_true',
+                    help="Soft constraints for optimizing the number of instructions instead of gas")
 
     args = vars(ap.parse_args())
     json_path = args['json_path']
@@ -95,7 +97,8 @@ if __name__ == "__main__":
     flags = {'at-most': args['at_most'], 'pushed-at-least': args['pushed_once'],
              'instruction-order': args['instruction_order'], 'no-output-before-pop': args['no_output_before_pop'],
              'inequality-gas-model': args['inequality_gas_model'], 'initial-solution': args['initial_solution'],
-             'default-encoding': args['default_encoding']}
+             'default-encoding': args['default_encoding'],
+             'number-instruction-gas-model': args['number_instruction_gas_model']}
 
     additional_info = {'tout': args['tout'], 'solver': solver, 'current_cost': current_cost, 'instr_seq': instr_seq}
     es = initialize_dir_and_streams(path,solver)

@@ -5,7 +5,8 @@
 from encoding_utils import *
 from encoding_initialize import initialize_variables, variables_assignment_constraint, \
     initial_stack_encoding, final_stack_encoding
-from encoding_cost import paper_soft_constraints, label_name, alternative_soft_constraints
+from encoding_cost import paper_soft_constraints, label_name, alternative_soft_constraints, \
+    number_instructions_soft_constraints
 from encoding_instructions import instructions_constraints
 from encoding_redundant import *
 from encoding_files import write_encoding, write_opcode_map, write_instruction_map, write_gas_map
@@ -61,10 +62,12 @@ def generate_soft_constraints(solver_name, b0, bs, usr_instr, theta_dict, flags,
     else:
         weight = -1
 
-    if not flags['inequality-gas-model']:
-        paper_soft_constraints(b0, bs, usr_instr, theta_dict, is_barcelogic, instr_seq, weight)
-    else:
+    if flags['inequality-gas-model']:
         alternative_soft_constraints(b0, bs, usr_instr, theta_dict, is_barcelogic)
+    elif flags['number-instruction-gas-model']:
+        number_instructions_soft_constraints(b0, theta_dict['NOP'], is_barcelogic)
+    else:
+        paper_soft_constraints(b0, bs, usr_instr, theta_dict, is_barcelogic, instr_seq, weight)
 
 
 def generate_cost_functions(solver_name):
