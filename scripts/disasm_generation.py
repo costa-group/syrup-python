@@ -91,7 +91,7 @@ def generate_disasm_sol(block_name, solver_output):
 
     total_gas = 0
 
-    for line in solver_output:
+    for line in solver_output.splitlines():
         for match in re.finditer(pattern1, line):
             instruction_position = int(match.group(1))
             instruction_theta = match.group(2)
