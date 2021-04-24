@@ -26,11 +26,10 @@ def generate_dict_with_instructions(theta_sequence, pushed_values):
 def generate_solution_dict(solver_output):
     pushed_values_decimal = {}
     theta_sol = {}
-
     pattern1 = re.compile("t_([0-9]*) ([0-9]*)")
     pattern2 = re.compile("a_([0-9]*) ([0-9]*)")
 
-    for line in solver_output:
+    for line in solver_output.splitlines():
         for match in re.finditer(pattern1, line):
             instruction_position = int(match.group(1))
             instruction_theta = match.group(2)
@@ -39,6 +38,5 @@ def generate_solution_dict(solver_output):
         for match in re.finditer(pattern2, line):
             instruction_position = int(match.group(1))
             pushed_value = match.group(2)
-            pushed_values_decimal[instruction_position] = pushed_value
-
+            pushed_values_decimal[instruction_position] = int(pushed_value)
     return generate_dict_with_instructions(theta_sol, pushed_values_decimal)
