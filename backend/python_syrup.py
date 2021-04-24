@@ -50,7 +50,8 @@ def execute_syrup_backend(args_i,json_file = None):
     b0, bs, user_instr, variables, initial_stack, final_stack, current_cost, instr_seq = parse_data(json_path)
     flags = {'at-most': args_i.at_most, 'pushed-at-least': args_i.pushed_once, 'instruction-order': args_i.instruction_order,
              'no-output-before-pop': args_i.no_output_before_pop, 'inequality-gas-model': args_i.inequality_gas_model,
-             'initial-solution': args_i.initial_solution, 'default-encoding': args_i.default_encoding}
+             'initial-solution': args_i.initial_solution, 'default-encoding': args_i.default_encoding,
+             'number-instruction-gas-model': args_i.number_instruction_gas_model}
     additional_info = {'tout': args_i.tout, 'solver': args_i.solver, 'current_cost': current_cost, 'instr_seq': instr_seq}
 
     generate_smtlib_encoding(b0, bs, user_instr, variables, initial_stack, final_stack, flags, additional_info)

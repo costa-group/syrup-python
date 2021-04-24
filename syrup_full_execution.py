@@ -153,6 +153,8 @@ def main():
                     help="Consider the instructions of blocks without optimizing as part of the encoding")
     parser.add_argument("-disable-default-encoding", dest='default_encoding', action='store_false',
                     help="Disable the constraints added for the default encoding")
+    parser.add_argument("-number-instruction-gas-model", dest='number_instruction_gas_model', action='store_true',
+                    help="Soft constraints for optimizing the number of instructions instead of gas")
     parser.add_argument("-disable-generation-log-file", dest='gen_log', action='store_false',
                         help="Disables the generation of a log file which contains "
                              "the solution generated for each block")
