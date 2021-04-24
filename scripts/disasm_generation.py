@@ -3,13 +3,7 @@ import re
 import json
 import collections
 
-
-
-
-
-
 tmp_costabs = "/tmp/costabs/"
-
 
 
 def init():
@@ -74,8 +68,9 @@ def generate_file_names(block_name):
     opcodes_final_solution = tmp_costabs+"solutions/"+block_name+"_optimized.evm"
     gas_final_solution = tmp_costabs + "solutions/" + block_name + "_real_gas.txt"
 
-def generate_disasm_sol(block_name):
-    
+
+# Generates all files contaning the information from the solver
+def generate_disasm_sol(block_name, solver_output):
 
     init()
     generate_file_names(block_name)
@@ -96,22 +91,21 @@ def generate_disasm_sol(block_name):
 
     total_gas = 0
 
-    with open(solution_file, 'r') as sol_file:
-        for line in sol_file:
-            for match in re.finditer(pattern1, line):
-                instruction_position = int(match.group(1))
-                instruction_theta = match.group(2)
+    for line in solver_output:
+        for match in re.finditer(pattern1, line):
+            instruction_position = int(match.group(1))
+            instruction_theta = match.group(2)
                 # Nops are excluded
-                if instruction_theta == '2':
-                    break
-                instr_sol[instruction_position] = instruction_theta_dict[instruction_theta]
-                opcode_sol[instruction_position] = opcodes_theta_dict[instruction_theta]
-                total_gas += gas_theta_dict[instruction_theta]
+            if instruction_theta == instruction_theta_dict['NOP']:
+                break
+            instr_sol[instruction_position] = instruction_theta_dict[instruction_theta]
+            opcode_sol[instruction_position] = opcodes_theta_dict[instruction_theta]
+            total_gas += gas_theta_dict[instruction_theta]
 
-            for match in re.finditer(pattern2, line):
-                instruction_position = int(match.group(1))
-                pushed_value = match.group(2)
-                pushed_values_decimal[instruction_position] = pushed_value
+        for match in re.finditer(pattern2, line):
+            instruction_position = int(match.group(1))
+            pushed_value = match.group(2)
+            pushed_values_decimal[instruction_position] = pushed_value
 
     # We need to change PUSH instructions and opcode to the corresponding PUSHx version
     instr_sol = dict(map(lambda pair: change_instr_push_type(pair[0], pair[1], pushed_values_decimal.get(pair[0], 0)), instr_sol.items()))
