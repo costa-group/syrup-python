@@ -35,7 +35,7 @@ def parse_data(json_path):
 
 
 #Executes the smt encoding generator from the main script
-def execute_syrup_backend(args_i,json_file = None):
+def execute_syrup_backend(args_i,json_file = None, previous_solution_dict = None):
     
     if json_file:
         json_path = json_file
@@ -52,7 +52,8 @@ def execute_syrup_backend(args_i,json_file = None):
              'no-output-before-pop': args_i.no_output_before_pop, 'inequality-gas-model': args_i.inequality_gas_model,
              'initial-solution': args_i.initial_solution, 'default-encoding': args_i.default_encoding,
              'number-instruction-gas-model': args_i.number_instruction_gas_model}
-    additional_info = {'tout': args_i.tout, 'solver': args_i.solver, 'current_cost': current_cost, 'instr_seq': instr_seq}
+    additional_info = {'tout': args_i.tout, 'solver': args_i.solver, 'current_cost': current_cost,
+                       'instr_seq': instr_seq, 'previous_solution': previous_solution_dict}
 
     generate_smtlib_encoding(b0, bs, user_instr, variables, initial_stack, final_stack, flags, additional_info)
 

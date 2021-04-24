@@ -95,8 +95,8 @@ def generate_disasm_sol(block_name, solver_output):
         for match in re.finditer(pattern1, line):
             instruction_position = int(match.group(1))
             instruction_theta = match.group(2)
-                # Nops are excluded
-            if instruction_theta == instruction_theta_dict['NOP']:
+                # Nops are excluded. theta(NOP) = 2
+            if instruction_theta == '2':
                 break
             instr_sol[instruction_position] = instruction_theta_dict[instruction_theta]
             opcode_sol[instruction_position] = opcodes_theta_dict[instruction_theta]
