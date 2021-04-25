@@ -115,8 +115,10 @@ def check_log_information(files, log_dict):
         try:
             execute_syrup_backend(args, file, log_dict[block_name])
         except KeyError:
+
+            # Maybe block wasn't optimized, so we don't consider this case to be
+            # an error per se.
             print("Log file does not contain info related to block " + block_name)
-            correct = False
             continue
 
         solver_output = generate_solution(block_name)
