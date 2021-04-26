@@ -73,3 +73,16 @@ def alternative_soft_constraints(b0, bs, user_instr, theta_dict, is_barcelogic=F
 
         for j in range(b0):
             write_encoding(add_assert_soft(add_not(add_eq(t(j), theta_instr)), gas_cost, label_name, is_barcelogic))
+
+
+# Method for generating the soft constraints in which the number of instructions is minimized.
+# As we want to minimize the number of instructions, it is equivalent to state that we want to maximize
+# the number of NOP instructions. Therefore, it can be easily encoded.
+# Note that this does not imply gas optimality, there are some examples that contradict this claim.
+# For instance, CALLVALUE CALLVALUE and CALLVALUE DUP1 share the same number of instructions, but the first one
+# is optimal whereas the second is not.
+def number_instructions_soft_constraints(b0, theta_nop, is_barcelogic):
+    write_encoding("; Soft constraints for optimizing the number of instructions")
+
+    for j in range(b0):
+        write_encoding(add_assert_soft(add_eq(t(j), theta_nop), 1, label_name, is_barcelogic))

@@ -14,6 +14,7 @@ from encoding_utils import generate_phi_dict
 from timeit import default_timer as timer
 sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))+"/verification")
 from sfs_verify import are_equals
+from solver_solution_verify import generate_solution_dict, check_solver_output_is_correct
 sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))+"/scripts")
 import traceback
 
@@ -84,6 +85,9 @@ def init():
     global log_file
     log_file = log_path + "/log_oms.log"
 
+    global block_log
+    block_log = tmp_costabs + "/block.log"
+
 
 def run_command(cmd):
     FNULL = open(os.devnull, 'w')
@@ -151,6 +155,16 @@ if __name__=="__main__":
                 file_results['shown_optimal'] = False
                 file_results['solver_time_in_sec'] = executed_time
             else:
+                # Checks solver log is correct
+                log_info = generate_solution_dict(solution)
+                with open(block_log, 'w') as path:
+                    json.dump(log_info, path)
+                os.remove(encoding_file)
+                run_command(syrup_path + " " + file + " -check-log-file " + block_log)
+                solver_output, verifier_time = run_and_measure_command(oms_path + " " + encoding_file)
+                verifier_time = round(verifier_time, 3)
+                file_results['solution_checked_by_solver'] = check_solver_output_is_correct(solver_output)
+                file_results['time_verify_solution_solver'] = verifier_time
 
                 file_results['no_model_found'] = False
                 file_results['solver_time_in_sec'] = executed_time
@@ -182,7 +196,7 @@ if __name__=="__main__":
 
                 with open(gas_final_solution, 'r') as f:
                     file_results['real_gas'] = f.read()
-                    file_results['saved_gas'] = int(file_results['real_gas']) - file_results['source_gas_cost']
+                    file_results['saved_gas'] = file_results['source_gas_cost'] - int(file_results['real_gas'])
 
                 try:
 
@@ -210,5 +224,6 @@ if __name__=="__main__":
                                               'solver_time_in_sec', 'target_disasm', 'init_progr_len',
                                               'final_progr_len',
                                               'number_of_necessary_uninterpreted_instructions',
-                                              'number_of_necessary_push', 'result_is_correct', 'verifier_time'])
+                                              'number_of_necessary_push', 'result_is_correct', 'verifier_time',
+                                              'solution_checked_by_solver', 'time_verify_solution_solver'])
         df.to_csv(csv_file)

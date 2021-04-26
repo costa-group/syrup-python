@@ -5,12 +5,13 @@
 from encoding_utils import *
 from encoding_initialize import initialize_variables, variables_assignment_constraint, \
     initial_stack_encoding, final_stack_encoding
-from encoding_cost import paper_soft_constraints, label_name, alternative_soft_constraints
+from encoding_cost import paper_soft_constraints, label_name, alternative_soft_constraints, \
+    number_instructions_soft_constraints
 from encoding_instructions import instructions_constraints
 from encoding_redundant import *
 from encoding_files import write_encoding, write_opcode_map, write_instruction_map, write_gas_map
 from default_encoding import activate_default_encoding
-
+from encoding_reconstruct_solution import generate_encoding_from_log_json_dict
 
 # Method to generate redundant constraints according to flags (at least once is included by default)
 def generate_redundant_constraints(flags, b0, user_instr, theta_stack, theta_comm, theta_non_comm, final_stack,
@@ -61,10 +62,12 @@ def generate_soft_constraints(solver_name, b0, bs, usr_instr, theta_dict, flags,
     else:
         weight = -1
 
-    if not flags['inequality-gas-model']:
-        paper_soft_constraints(b0, bs, usr_instr, theta_dict, is_barcelogic, instr_seq, weight)
-    else:
+    if flags['inequality-gas-model']:
         alternative_soft_constraints(b0, bs, usr_instr, theta_dict, is_barcelogic)
+    elif flags['number-instruction-gas-model']:
+        number_instructions_soft_constraints(b0, theta_dict['NOP'], is_barcelogic)
+    else:
+        paper_soft_constraints(b0, bs, usr_instr, theta_dict, is_barcelogic, instr_seq, weight)
 
 
 def generate_cost_functions(solver_name):
@@ -142,6 +145,8 @@ def generate_smtlib_encoding(b0, bs, usr_instr, variables, initial_stack, final_
                                    first_position_instr_cannot_appear_dict, theta_dict)
     generate_soft_constraints(solver_name, b0, bs, usr_instr, theta_dict, flags, current_cost, instr_seq)
     generate_cost_functions(solver_name)
+    if additional_info['previous_solution'] is not None:
+        generate_encoding_from_log_json_dict(additional_info['previous_solution'])
     write_encoding(check_sat())
     generate_final_statements(solver_name)
     # get_model()
