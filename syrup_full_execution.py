@@ -52,9 +52,6 @@ def init():
 
     global tout
     tout = 10
-
-    global log_file
-    log_file = "blocks_log.log"
     
     
 def run_command(cmd):
@@ -211,7 +208,6 @@ def main():
 
         check_log_information(files, log_dict)
         return
-
     if not args.json:
     
         execute_ethir()
@@ -234,8 +230,8 @@ def main():
 
                     if args.gen_log:
                         log_info[block_name] = generate_solution_dict(solver_output)
-
             if args.gen_log:
+                log_file = args.source.split("/")[-1].split(".")[-2] + ".log"
                 with open(log_file, "w") as log_f:
                     json.dump(log_info, log_f)
 
