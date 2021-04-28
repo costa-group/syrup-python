@@ -123,8 +123,11 @@ if __name__=="__main__":
 
     already_analyzed_contracts = glob.glob(results_dir + "/*.csv")
 
+    log_size_in_bytes = []
+
     for contract_path in [f.path for f in os.scandir(contracts_dir_path) if f.is_dir()]:
         rows_list = []
+        log_dict = dict()
         csv_file = results_dir + contract_path.split('/')[-1] + "_results_oms.csv"
 
         if csv_file in already_analyzed_contracts:
@@ -157,6 +160,7 @@ if __name__=="__main__":
             else:
                 # Checks solver log is correct
                 log_info = generate_solution_dict(solution)
+                log_dict[block_id] = log_info
                 with open(block_log, 'w') as path:
                     json.dump(log_info, path)
                 os.remove(encoding_file)
@@ -219,6 +223,13 @@ if __name__=="__main__":
 
             rows_list.append(file_results)
 
+        contract_results = dict()
+        contract_results['contract_id'] = contract_path.split('/')[-1]
+        log_file = tmp_costabs + "/" + contract_path.split('/')[-1] + ".json"
+        with open(log_file, "w") as log_f:
+            json.dump(log_dict, log_f)
+        contract_results['log_size'] = os.path.getsize(log_file)
+        log_size_in_bytes.append(contract_results)
         df = pd.DataFrame(rows_list, columns=['block_id', 'target_gas_cost', 'real_gas',
                                               'shown_optimal', 'no_model_found', 'source_gas_cost', 'saved_gas',
                                               'solver_time_in_sec', 'target_disasm', 'init_progr_len',
@@ -227,3 +238,7 @@ if __name__=="__main__":
                                               'number_of_necessary_push', 'result_is_correct', 'verifier_time',
                                               'solution_checked_by_solver', 'time_verify_solution_solver'])
         df.to_csv(csv_file)
+
+    final_df = pd.DataFrame(log_size_in_bytes, columns=['contract_id', 'log_size'])
+    pathlib.Path(project_path+"/log_csv/").mkdir(parents=True, exist_ok=True)
+    final_df.to_csv(project_path+"/log_csv/log_size.csv")

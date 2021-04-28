@@ -231,7 +231,7 @@ def main():
                     if args.gen_log:
                         log_info[block_name] = generate_solution_dict(solver_output)
             if args.gen_log:
-                log_file = args.source.split("/")[-1].split(".")[-2] + ".log"
+                log_file = tmp_costabs + args.source.split("/")[-1].split(".")[-2] + ".log"
                 with open(log_file, "w") as log_f:
                     json.dump(log_info, log_f)
 
