@@ -78,6 +78,9 @@ def init_globals():
 
     global opcodesZ
     opcodesZ = ["RETURNDATACOPY","RETURNDATASIZE"]
+
+    global opcodesYul
+    opcodesYul = []
     
     global current_local_var
     current_local_var = 0
@@ -1124,6 +1127,10 @@ def translateOpcodesZ(opcode, index_variables,block):
 
     return instr, updated_variables
 
+
+def translateYulOpcodes(opcode, index_variables, block):
+    pass
+
 '''
 It checks if the list instr contains the element to generated a
 guard,i.e., just conditional statements, push and ended with a jump
@@ -1238,6 +1245,9 @@ def compile_instr(rule,evm_opcode,variables,list_jumps,cond,state_vars):
         rule.add_instr(value)
     elif opcode_name in opcodesZ:
         value, index_variables = translateOpcodesZ(opcode_name,variables,rule.get_Id())
+        rule.add_instr(value)
+    elif opcode_name in opcodesYul:
+        value, index_variables = translateYulOpcodes(opcode_name,variables,rule.get_Id())
         rule.add_instr(value)
     else:
         value = "Error. No opcode matchs"
@@ -1468,7 +1478,7 @@ It generates the rbr rules corresponding to a block from the CFG.
 index_variables points to the corresponding top stack index.
 The stack could be reconstructed as [s(ith)...s(0)].
 '''
-def compile_block(instrs,input_stack):
+def compile_block(instrs,input_stack,blockId):
     global rbr_blocks
     global top_index
     global new_fid
@@ -1479,7 +1489,10 @@ def compile_block(instrs,input_stack):
     finish = False
     
     index_variables = input_stack-1
-    block_id = 0
+    if blockId !=-1:
+        block_id = blockId
+    else:
+        block_id = 0
     rule = RBRRule(block_id, "block",False,all_state_vars)
     rule.set_index_input(input_stack)
     l_instr = instrs
@@ -1506,12 +1519,15 @@ for each smart contract.
 -rbr is a list containing instances of rbr_rule.
 -executions refers to the number of smart contract that has been translated. int.
 '''
-def write_rbr(rule,cname = None):
+def write_rbr(rule,block_id,cname = None):
     if "costabs" not in os.listdir(tmp_path):
         os.mkdir(costabs_path)
 
-    name = costabs_path+cname+".rbr"
-
+    if block_id !=-1:
+        name = costabs_path+cname+"block"+str(block_id)+".rbr"
+    else:
+        name = costabs_path+cname+".rbr"
+        
     with open(name,"w") as f:
         f.write(rule.rule2string()+"\n")
 
@@ -1581,7 +1597,7 @@ Main function that build the rbr representation from the CFG of a solidity file.
 -saco_rbr is True if it has to generate the RBR in SACO syntax.
 -exe refers to the number of smart contracts analyzed.
 '''
-def evm2rbr_compiler(contract_name = None, syrup = None,block = None, sto = False):
+def evm2rbr_compiler(contract_name = None, syrup = None,block = None, sto = False, block_id = -1):
     global rbr_blocks
     global syrup_flag
     
@@ -1590,15 +1606,17 @@ def evm2rbr_compiler(contract_name = None, syrup = None,block = None, sto = Fals
     begin = dtimer()
 
     syrup_flag = syrup
- 
+    
     try:
         instructions = block["instructions"]
         input_stack = int(block["input"])
-        print (input_stack)
-        rule = compile_block(instructions,input_stack)
+        # print(instructions)
+        # print(input_stack)
+        
+        rule = compile_block(instructions,input_stack,block_id)
 
             
-        write_rbr(rule,contract_name)
+        write_rbr(rule,block_id,contract_name)
         
         end = dtimer()
         ethir_time = end-begin
