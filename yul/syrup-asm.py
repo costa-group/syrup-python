@@ -2,12 +2,12 @@
 
 import os
 import sys
-print(sys.path.append(os.path.dirname(os.path.realpath(__file__))))
 sys.path.append(os.path.dirname(os.path.realpath(__file__))+"/../ethir")
+sys.path.append(os.path.dirname(os.path.realpath(__file__))+"/../backend")
+
 from parser_asm import parse_asm
 import rbr_isolate_block
 from syrup_optimization import get_sfs_dict
-sys.path.append(os.path.dirname(os.path.realpath(__file__))+"/../backend")
 from python_syrup import execute_syrup_backend
 
 
