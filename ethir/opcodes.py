@@ -92,6 +92,8 @@ opcodes = {
     "CALLSTATIC": [0xfd, 7, 1],
     "INVALID": [0xfe, 0, 0],  # Not an opcode use to cause an exception
     "SUICIDE": [0xff, 1, 0],
+    "ASSIGNINMUTABLE": [0x00,2,0], #Yul opcode
+    "PUSHTAG": [0x00,0,1], #Yul opcode
     "---END---": [0x00, 0, 0]
 }
 
@@ -167,6 +169,15 @@ def get_opcode(opcode):
     elif opcode == "RETURNDATACOPY":
         return [0x3e, 3, 0]
 
+    elif opcode.startswith("PUSH"):
+    # # check PUSHi
+    # for i in range(32):
+    #     if opcode == 'PUSH' + str(i + 1):
+        return [hex(0x60), 0, 1]
+
+    elif opcode.startswith("tag"):
+        return [hex(0x00), 0, 0]
+    
     # check PUSHi
     for i in range(32):
         if opcode == 'PUSH' + str(i + 1):
