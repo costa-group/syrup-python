@@ -12,7 +12,7 @@ visited = []
 terminate_block = ["ASSERTFAIL","RETURN","REVERT","SUICIDE","STOP"]
 
 global split_block
-split_block = ["LOG0","LOG1","LOG2","LOG3","LOG4","MSTORE","CALLDATACOPY","CODECOPY","EXTCODECOPY","RETURNDATACOPY","MSTORE8","CALL","STATICCALL","DELEGATECALL","CREATE","CREATE2"]
+split_block = ["LOG0","LOG1","LOG2","LOG3","LOG4","MSTORE","CALLDATACOPY","CODECOPY","EXTCODECOPY","RETURNDATACOPY","MSTORE8","CALL","STATICCALL","DELEGATECALL","CREATE","CREATE2","ASSIGNINMUTABLE"]
 
 pre_defined_functions = ["PUSH","POP","SWAP","DUP"]
 
@@ -191,9 +191,9 @@ def get_stack_variables(rule):
 def generate_target_stack_idx(input_elems,list_opcodes):
     init_val = 0
 
-    # print ("TARGET STACK")
-    # print (input_elems)
-    # print (list_opcodes)
+    print ("TARGET STACK")
+    print (input_elems)
+    print (list_opcodes)
     
     for op in list_opcodes:
         opcode = op[4:-1].strip()
@@ -202,11 +202,8 @@ def generate_target_stack_idx(input_elems,list_opcodes):
         else:
             vals = opcodes.get_opcode(opcode)
         init_val = init_val-vals[1]+vals[2]
-
-    # print("***/*/******/*/")
-    # print(init_val)
-        
-    seq = range(0,input_elems+init_val) if input_elems !=-1 else range(0,input_elems+init_val+1) 
+    
+    seq = range(0,input_elems+init_val) # if input_elems !=-1 else range(0,input_elems+init_val+1)
     target_vars = list(map(lambda x: "s("+str(x)+")",seq))
     return target_vars
     
@@ -1106,6 +1103,16 @@ def get_involved_vars(instr,var):
 
         funct = "staticcall"
 
+    elif instr.startswith("pushtag("):
+        instr_new = instr.strip("\n")
+        pos = instr_new.find("pushtag(")
+        arg0 = instr[pos+8:-1]
+        var0 = arg0.strip()
+        var_list.append(var0)
+
+
+        funct = "pushtag"
+
     else:
         var_list.append(instr)
         funct = ""
@@ -1841,6 +1848,7 @@ def build_userdef_instructions():
             
             is_new, obj = generate_userdefname(u_var,funct,[args],arity_exp)
 
+            
             if not is_new and funct not in ["gas","timestamp","returndatasize"]:
                 #print ("NO ES NUEVO")
                 #print (funct)
@@ -2085,6 +2093,12 @@ def generate_userdefname(u_var,funct,args,arity):
     elif funct.find("call")!=-1:
         instr_name = "CALL"
 
+    #Yul opcodes
+    
+    elif funct.find("pushtag")!=-1:
+        instr_name = "PUSHTAG"
+
+        
     #TODO: Add more opcodes
     
     if instr_name in already_defined_userdef:
@@ -2109,7 +2123,7 @@ def generate_userdefname(u_var,funct,args,arity):
                 args_aux.append(val)
             else:
                 args_aux.append(e)
-            
+                
         obj["id"] = name
         obj["opcode"] = process_opcode(str(opcodes.get_opcode(instr_name)[0]))
         obj["disasm"] = instr_name
@@ -2652,7 +2666,8 @@ def translate_last_subblock(rule,block,sstack,sstack_idx,idx,isolated):
                 
                 tstack = generate_vars_target_stack(num_guard,instructions[-1],opcodes)[::-1]
         else:
-            tstack = generate_target_stack_idx(sstack_idx,opcodes)[::-1]
+            
+            tstack = generate_target_stack_idx(sstack_idx+1,opcodes)[::-1]
         get_s_counter(sstack,tstack)
         # print ("GENERATING ENCONDING")
         # print (instructions)

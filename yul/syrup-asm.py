@@ -17,7 +17,7 @@ def generate_sfs_block(bytecodes, stack_size,cname,blockId):
         op = b.getDisasm()
 
         if op.startswith("PUSH") and op.find("tag")==-1:
-            op = op+" "+b.getValue()
+            op = op+" 0x"+b.getValue()
 
         elif op.startswith("PUSH"):
             op = "PUSHTAG"+" "+b.getValue()
