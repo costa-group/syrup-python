@@ -88,9 +88,9 @@ def execute_ethir():
 
 
 # Calls syrup and computes the solution. Returns the raw output from the corresponding solver
-def generate_solution(block_name):
+def generate_solution(block_name, solver):
     #encoding_file = encoding_path+"encoding_Z3.smt2"
-    encoding_file = encoding_path+block_name+"_"+args.solver+".smt2"
+    encoding_file = encoding_path+block_name+"_"+ solver+ ".smt2"
     
     exec_command = get_solver_to_execute(encoding_file)
 
@@ -118,7 +118,7 @@ def check_log_information(files, log_dict):
             print("Log file does not contain info related to block " + block_name)
             continue
 
-        solver_output = generate_solution(block_name)
+        solver_output = generate_solution(block_name, args.solver)
         if not check_solver_output_is_correct(solver_output):
             print("Failed to verify block " + block_name)
             correct = False
@@ -225,7 +225,7 @@ def main():
 
                     block_name = f.split("/")[-1].rstrip(".json")
 
-                    solver_output = generate_solution(block_name)
+                    solver_output = generate_solution(block_name, args.solver)
                     generate_files_for_solution(block_name, solver_output)
 
                     if args.gen_log:
@@ -244,7 +244,7 @@ def main():
         if not args.write_only:
 
             block_name = args.source.split("/")[-1].rstrip(".json")
-            generate_solution(block_name)
+            generate_solution(block_name, args.solver)
 
     if args.verify and not args.write_only:
         verify_sfs(args.source, sfs_dict)

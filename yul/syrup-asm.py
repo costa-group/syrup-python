@@ -9,6 +9,8 @@ import rbr_isolate_block
 from syrup_optimization import get_sfs_dict
 sys.path.append(os.path.dirname(os.path.realpath(__file__))+"/../backend")
 from python_syrup import execute_syrup_backend
+sys.path.append(os.path.dirname(os.path.realpath(__file__))+"/../syrup_full_execution.py")
+from syrup_full_execution import generate_solution
 
 def generate_sfs_block(bytecodes, stack_size,cname,blockId):
 
@@ -38,14 +40,18 @@ def generate_sfs_block(bytecodes, stack_size,cname,blockId):
 
     sfs_dict = get_sfs_dict()
 
+    # No optimization is made if sfs_dict['syrup_contract'] == {}
+    if sfs_dict['syrup_contract'] == {}:
+        return
+
     # In order to obtain the dict in the format for syrup, we have
     # to access the values of the values, as first key corresponds to the
     # contract and the second to current block.
-    print(blockId)
-    sfs_block = sfs_dict['syrup_contract']
-    print(sfs_block)
-    execute_syrup_backend(None, sfs_block, block_name=blockId)
-
+    block_name = list(sfs_dict['syrup_contract'].keys())[0]
+    sfs_block = sfs_dict['syrup_contract'][block_name]
+    # print(sfs_block)
+    execute_syrup_backend(None, sfs_block, block_name=block_name)
+    solution = generate_solution(block_name, "oms")
 
 
 def optimize_asm(file_name):
