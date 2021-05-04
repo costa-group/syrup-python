@@ -191,9 +191,9 @@ def get_stack_variables(rule):
 def generate_target_stack_idx(input_elems,list_opcodes):
     init_val = 0
 
-    #print ("TARGET STACK")
-    #print (input_elems)
-    #print (list_opcodes)
+    # print ("TARGET STACK")
+    # print (input_elems)
+    # print (list_opcodes)
     
     for op in list_opcodes:
         opcode = op[4:-1].strip()
@@ -203,7 +203,10 @@ def generate_target_stack_idx(input_elems,list_opcodes):
             vals = opcodes.get_opcode(opcode)
         init_val = init_val-vals[1]+vals[2]
 
-    seq = range(0,input_elems+init_val)
+    # print("***/*/******/*/")
+    # print(init_val)
+        
+    seq = range(0,input_elems+init_val) if input_elems !=-1 else range(0,input_elems+init_val+1) 
     target_vars = list(map(lambda x: "s("+str(x)+")",seq))
     return target_vars
     
@@ -1649,8 +1652,10 @@ def generate_json(block_name,ss,ts,max_ss_idx1,gas,opcodes_seq,subblock = None):
     #print (user_defins)
    
     new_user_defins,new_ts = apply_all_simp_rules(user_defins,vars_list,new_ts)
+    # print("A VEEEER")
+    # print(block_name)
     apply_all_comparison(new_user_defins,new_ts)
-
+    
     vars_list = recompute_vars_set(new_ss,new_ts,new_user_defins)
     
     total_inpt_vars = []
@@ -2601,7 +2606,7 @@ def translate_last_subblock(rule,block,sstack,sstack_idx,idx,isolated):
     global compute_gast
     
     init_globals()
-
+    
     if not isolated:
         if "nop(JUMPI)" in block:
             guards_op = get_jumpi_opcodes(rule)
@@ -2644,7 +2649,7 @@ def translate_last_subblock(rule,block,sstack,sstack_idx,idx,isolated):
                 tstack = list(map(lambda x: "s("+str(x)+")",seq))[::-1]
                 
             else:
-            
+                
                 tstack = generate_vars_target_stack(num_guard,instructions[-1],opcodes)[::-1]
         else:
             tstack = generate_target_stack_idx(sstack_idx,opcodes)[::-1]
@@ -3123,6 +3128,7 @@ def smt_translate_isolate(rule,name,storage):
             new_instructions = []
 
         subblocks = split_blocks(rule,r,new_instructions)
+        # print(subblocks)
         generate_subblocks(rule,subblocks,True)
 
     end = dtimer()
