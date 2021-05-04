@@ -80,7 +80,7 @@ def init_globals():
     opcodesZ = ["RETURNDATACOPY","RETURNDATASIZE"]
 
     global opcodesYul
-    opcodesYul = []
+    opcodesYul = ["PUSHTAG"]
     
     global current_local_var
     current_local_var = 0
@@ -1128,8 +1128,16 @@ def translateOpcodesZ(opcode, index_variables,block):
     return instr, updated_variables
 
 
-def translateYulOpcodes(opcode, index_variables, block):
-    pass
+def translateYulOpcodes(opcode, value, index_variables):
+    if opcode == "PUSHTAG":
+        v1,updated_variables = get_new_variable(index_variables)
+        try:
+            dec_value = int(value)
+        except:
+            dec_value = int(value,16)
+        instr = v1+" = pushtag(" + str(dec_value)+")"
+
+    return instr, updated_variables
 
 '''
 It checks if the list instr contains the element to generated a
@@ -1224,7 +1232,7 @@ def compile_instr(rule,evm_opcode,variables,list_jumps,cond,state_vars):
                 rule.add_instr(ins)
         else:
             rule.add_instr(value)
-    elif opcode_name[:4] in opcodes60:
+    elif opcode_name[:4] in opcodes60 and not isYulInstruction(opcode_name):
         value, index_variables = translateOpcodes60(opcode_name[:4], opcode_rest, variables)
         rule.add_instr(value)
     elif opcode_name[:3] in opcodes80:
@@ -1247,7 +1255,7 @@ def compile_instr(rule,evm_opcode,variables,list_jumps,cond,state_vars):
         value, index_variables = translateOpcodesZ(opcode_name,variables,rule.get_Id())
         rule.add_instr(value)
     elif opcode_name in opcodesYul:
-        value, index_variables = translateYulOpcodes(opcode_name,variables,rule.get_Id())
+        value, index_variables = translateYulOpcodes(opcode_name,opcode_rest,variables)
         rule.add_instr(value)
     else:
         value = "Error. No opcode matchs"
@@ -1258,6 +1266,12 @@ def compile_instr(rule,evm_opcode,variables,list_jumps,cond,state_vars):
     
     return index_variables
 
+
+def isYulInstruction(opcode):
+    if opcode.find("TAG") ==-1 and opcode.find("#") ==-1 and opcode.find("$")==-1:
+        return False
+    else:
+        return True
 
 '''
 It creates the call to next block when the type of the current one is falls_to.
