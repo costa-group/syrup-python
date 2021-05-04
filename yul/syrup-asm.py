@@ -2,15 +2,24 @@
 
 import os
 import sys
-print(sys.path.append(os.path.dirname(os.path.realpath(__file__))))
 sys.path.append(os.path.dirname(os.path.realpath(__file__))+"/../ethir")
+sys.path.append(os.path.dirname(os.path.realpath(__file__))+"/../backend")
+
 from parser_asm import parse_asm
 import rbr_isolate_block
 from syrup_optimization import get_sfs_dict
-sys.path.append(os.path.dirname(os.path.realpath(__file__))+"/../backend")
 from python_syrup import execute_syrup_backend
 sys.path.append(os.path.dirname(os.path.realpath(__file__))+"/../syrup_full_execution.py")
 from syrup_full_execution import generate_solution
+
+
+def isYulInstruction(opcode):
+    if opcode.find("tag") ==-1 and opcode.find("#") ==-1 and opcode.find("$")==-1:
+        return False
+    else:
+        return True
+
+
 
 def generate_sfs_block(bytecodes, stack_size,cname,blockId):
 
@@ -18,12 +27,19 @@ def generate_sfs_block(bytecodes, stack_size,cname,blockId):
     for b in bytecodes:
         op = b.getDisasm()
 
-        if op.startswith("PUSH") and op.find("tag")==-1:
+        if op.startswith("PUSH") and not isYulInstruction(op):
             op = op+" 0x"+b.getValue()
 
-        elif op.startswith("PUSH"):
-            op = "PUSHTAG"+" "+b.getValue()
-            
+        else:
+            if op.startswith("PUSH") and op.find("tag")!=-1:
+                op = "PUSHTAG"+" 0x"+b.getValue()
+
+            elif op.startswith("PUSH") and op.find("#[$]")!=-1:
+                op = "PUSH#[$]"+" 0x"+b.getValue()
+
+            elif op.startswith("PUSH") and op.find("[$]")!=-1:
+                op = "PUSH[$]"+" 0x"+b.getValue()
+
         instructions.append(op)
         
     block_ins = list(filter(lambda x: x not in ["JUMP","JUMPI","JUMPDEST","tag","INVALID"], instructions))
@@ -58,7 +74,13 @@ def optimize_asm(file_name):
     asm = parse_asm(file_name)
 
     for c in asm.getContracts():
+
         contract_name = c.getContractName().split("/")[-1]
+        init_code = c.getInitCode()
+
+        for block in init_code:
+            generate_sfs_block(block.getInstructions(),block.getSourceStack(),contract_name,block.getBlockId())
+        
         for identifier in c.getDataIds():
             blocks = c.getRunCodeOf(identifier)
             for block in blocks:

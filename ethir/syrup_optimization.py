@@ -12,7 +12,7 @@ visited = []
 terminate_block = ["ASSERTFAIL","RETURN","REVERT","SUICIDE","STOP"]
 
 global split_block
-split_block = ["LOG0","LOG1","LOG2","LOG3","LOG4","MSTORE","CALLDATACOPY","CODECOPY","EXTCODECOPY","RETURNDATACOPY","MSTORE8","CALL","STATICCALL","DELEGATECALL","CREATE","CREATE2","ASSIGNINMUTABLE"]
+split_block = ["LOG0","LOG1","LOG2","LOG3","LOG4","CALLDATACOPY","CODECOPY","EXTCODECOPY","RETURNDATACOPY","MSTORE8","CALL","STATICCALL","DELEGATECALL","CREATE","CREATE2","ASSIGNINMUTABLE"]
 
 pre_defined_functions = ["PUSH","POP","SWAP","DUP"]
 
@@ -1113,6 +1113,28 @@ def get_involved_vars(instr,var):
 
         funct = "pushtag"
 
+
+    elif instr.startswith("push#[$]("):
+        instr_new = instr.strip("\n")
+        pos = instr_new.find("push#[$](")
+        arg0 = instr[pos+9:-1]
+        var0 = arg0.strip()
+        var_list.append(var0)
+
+
+        funct = "push#[$]"
+
+    elif instr.startswith("push[$]("):
+        instr_new = instr.strip("\n")
+        pos = instr_new.find("push[$](")
+        arg0 = instr[pos+8:-1]
+        var0 = arg0.strip()
+        var_list.append(var0)
+
+
+        funct = "push[$]"
+
+        
     else:
         var_list.append(instr)
         funct = ""
@@ -2097,6 +2119,12 @@ def generate_userdefname(u_var,funct,args,arity):
     
     elif funct.find("pushtag")!=-1:
         instr_name = "PUSHTAG"
+
+    elif funct.find("push#[$]")!=-1:
+        instr_name = "PUSH#[$]"
+
+    elif funct.find("push[$]")!=-1:
+        instr_name = "PUSH[$]"
 
         
     #TODO: Add more opcodes

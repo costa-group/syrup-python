@@ -94,6 +94,8 @@ opcodes = {
     "SUICIDE": [0xff, 1, 0],
     "ASSIGNINMUTABLE": [0x00,2,0], #Yul opcode
     "PUSHTAG": [0x00,0,1], #Yul opcode
+    "PUSH#[$]": [0x00,0,1], #Yul opcode
+    "PUSH[$]": [0x00,0,1], #Yul opcode
     "---END---": [0x00, 0, 0]
 }
 
