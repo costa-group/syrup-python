@@ -7,6 +7,8 @@ sys.path.append(os.path.dirname(os.path.realpath(__file__))+"/../ethir")
 from parser_asm import parse_asm
 import rbr_isolate_block
 from syrup_optimization import get_sfs_dict
+sys.path.append(os.path.dirname(os.path.realpath(__file__))+"/../backend")
+from python_syrup import execute_syrup_backend
 
 def generate_sfs_block(bytecodes, stack_size,cname,blockId):
 
@@ -36,13 +38,21 @@ def generate_sfs_block(bytecodes, stack_size,cname,blockId):
 
     sfs_dict = get_sfs_dict()
 
+    # In order to obtain the dict in the format for syrup, we have
+    # to access the values of the values, as first key corresponds to the
+    # contract and the second to current block.
+    print(blockId)
+    sfs_block = sfs_dict['syrup_contract']
+    print(sfs_block)
+    execute_syrup_backend(None, sfs_block, block_name=blockId)
+
 
 
 def optimize_asm(file_name):
     asm = parse_asm(file_name)
 
     for c in asm.getContracts():
-        contract_name = c.getContractName()
+        contract_name = c.getContractName().split("/")[-1]
         for identifier in c.getDataIds():
             blocks = c.getRunCodeOf(identifier)
             for block in blocks:

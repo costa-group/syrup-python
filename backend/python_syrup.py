@@ -10,8 +10,13 @@ costabs_path = "/tmp/costabs/"
 
 
 def parse_data(json_path):
-    with open(json_path) as path:
-        data = json.load(path)
+    # We can pass either the path to a json file, or
+    # directly the dict that contains the SFS.
+    if type(json_path) == str:
+        with open(json_path) as path:
+            data = json.load(path)
+    else:
+        data = json_path
 
     # Note that b0 can be either max_progr_len
     # or init_progr_len
@@ -33,30 +38,55 @@ def parse_data(json_path):
     return b0, bs, user_instr, variables, initial_stack, final_stack, current_cost, instr_seq
 
 
-#Executes the smt encoding generator from the main script
-def execute_syrup_backend(args_i,json_file = None, previous_solution_dict = None):
-    
-    if json_file:
+def initialize_flags_and_additional_info(args_i, current_cost, instr_seq, previous_solution_dict):
+    if args_i is None:
+        flags = {'at-most': False, 'pushed-at-least': False,
+                 'instruction-order': False,
+                 'no-output-before-pop': False, 'inequality-gas-model': False,
+                 'initial-solution': False, 'default-encoding': False,
+                 'number-instruction-gas-model': False}
+        additional_info = {'tout': 10, 'solver': "oms", 'current_cost': current_cost,
+                           'instr_seq': instr_seq, 'previous_solution': previous_solution_dict}
+    else:
+        b0, bs, user_instr, variables, initial_stack, final_stack, current_cost, instr_seq = parse_data(json_path)
+        flags = {'at-most': args_i.at_most, 'pushed-at-least': args_i.pushed_once,
+                 'instruction-order': args_i.instruction_order,
+                 'no-output-before-pop': args_i.no_output_before_pop,
+                 'inequality-gas-model': args_i.inequality_gas_model,
+                 'initial-solution': args_i.initial_solution, 'default-encoding': args_i.default_encoding,
+                 'number-instruction-gas-model': args_i.number_instruction_gas_model}
+        additional_info = {'tout': args_i.tout, 'solver': args_i.solver, 'current_cost': current_cost,
+                           'instr_seq': instr_seq, 'previous_solution': previous_solution_dict}
+    return flags, additional_info
+
+
+# Executes the smt encoding generator from the main script
+def execute_syrup_backend(args_i,json_file = None, previous_solution_dict = None, block_name = None):
+    path = costabs_path
+
+    # Args_i is None if the function is called from syrup-asm. In this case
+    # we assume by default oms, and json_file already contains the sfs dict
+    if args_i is None:
+        es = initialize_dir_and_streams(path,"oms", block_name)
         json_path = json_file
     else:
-        json_path = args_i.source
+        if json_file:
+            json_path = json_file
+        else:
+            json_path = args_i.source
 
-    path = costabs_path
-    solver = args_i.solver
-
-    es = initialize_dir_and_streams(path,solver,json_path)
+        path = costabs_path
+        solver = args_i.solver
+        es = initialize_dir_and_streams(path, solver, json_path)
 
     b0, bs, user_instr, variables, initial_stack, final_stack, current_cost, instr_seq = parse_data(json_path)
-    flags = {'at-most': args_i.at_most, 'pushed-at-least': args_i.pushed_once, 'instruction-order': args_i.instruction_order,
-             'no-output-before-pop': args_i.no_output_before_pop, 'inequality-gas-model': args_i.inequality_gas_model,
-             'initial-solution': args_i.initial_solution, 'default-encoding': args_i.default_encoding,
-             'number-instruction-gas-model': args_i.number_instruction_gas_model}
-    additional_info = {'tout': args_i.tout, 'solver': args_i.solver, 'current_cost': current_cost,
-                       'instr_seq': instr_seq, 'previous_solution': previous_solution_dict}
+
+    flags, additional_info = initialize_flags_and_additional_info(args_i, current_cost, instr_seq, previous_solution_dict)
 
     generate_smtlib_encoding(b0, bs, user_instr, variables, initial_stack, final_stack, flags, additional_info)
 
     es.close()
+
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser(description='Backend of syrup tool')
