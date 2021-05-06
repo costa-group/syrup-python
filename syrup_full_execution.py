@@ -5,10 +5,8 @@ import sys
 sys.path.append(os.path.dirname(os.path.realpath(__file__))+"/ethir")
 sys.path.append(os.path.dirname(os.path.realpath(__file__))+"/backend")
 sys.path.append(os.path.dirname(os.path.realpath(__file__))+"/verification")
-sys.path.append(os.path.dirname(os.path.realpath(__file__))+"/scripts")
+sys.path.append(os.path.dirname(os.path.realpath(__file__))+"/solution_generation")
 import glob
-import shlex
-import subprocess
 import argparse
 from oyente_ethir import clean_dir, analyze_disasm_bytecode, analyze_bytecode, analyze_solidity, analyze_isolate_block, has_dependencies_installed
 from syrup_optimization import get_sfs_dict
@@ -17,6 +15,7 @@ from disasm_generation import generate_disasm_sol
 from sfs_verify import verify_sfs
 import json
 from solver_solution_verify import generate_solution_dict, check_solver_output_is_correct
+from solver_output_generation import obtain_solver_output
 
 def init():
     global project_path
@@ -24,13 +23,6 @@ def init():
 
     global ethir_syrup
     ethir_syrup = project_path + "/ethir"
-
-    global z3_exec
-    z3_exec = project_path + "/bin/z3"
-    global bclt_exec
-    bclt_exec = project_path + "/bin/barcelogic"
-    global oms_exec
-    oms_exec = project_path + "/bin/optimathsat"
 
     global disasm_generation_file
     disasm_generation_file = project_path + "/scripts/disasm_generation.py"
@@ -52,26 +44,6 @@ def init():
 
     global tout
     tout = 10
-    
-    
-def run_command(cmd):
-    FNULL = open(os.devnull, 'w')
-    solc_p = subprocess.Popen(shlex.split(cmd), stdout=subprocess.PIPE,
-                              stderr=FNULL)
-    return solc_p.communicate()[0].decode()
-
-def get_solver_to_execute(smt_file):
-    global args
-
-    if args.solver == "z3":
-        return z3_exec + " -smt2 " + smt_file
-    elif args.solver == "barcelogic":
-        if args.tout is None:
-            return bclt_exec + " -file " + smt_file
-        else:
-            return bclt_exec + " -file " + smt_file + " -tlimit " + str(tout)
-    else:
-        return oms_exec + " " + smt_file
 
 
 def execute_ethir():
@@ -85,20 +57,6 @@ def execute_ethir():
 
     else:
         analyze_solidity(args_i = args)
-
-
-# Calls syrup and computes the solution. Returns the raw output from the corresponding solver
-def generate_solution(block_name, solver):
-    #encoding_file = encoding_path+"encoding_Z3.smt2"
-    encoding_file = encoding_path+block_name+"_"+ solver+ ".smt2"
-    
-    exec_command = get_solver_to_execute(encoding_file)
-
-    print("Executing "+args.solver+" for file "+block_name)
-    solution = run_command(exec_command)
-
-    return solution
-    #run_command("mv " + instruction_file + " " + sol_dir + f.split('/')[-1].split('.')[0] + "_instructions.disasm-opt")
 
 
 def generate_files_for_solution(block_name, solver_output):
@@ -118,7 +76,7 @@ def check_log_information(files, log_dict):
             print("Log file does not contain info related to block " + block_name)
             continue
 
-        solver_output = generate_solution(block_name, args.solver)
+        solver_output = obtain_solver_output(block_name, args.solver, 1)
         if not check_solver_output_is_correct(solver_output):
             print("Failed to verify block " + block_name)
             correct = False
@@ -131,6 +89,7 @@ def check_log_information(files, log_dict):
 def main():
     global args
     global encoding_file
+    global tout
     
     parser = argparse.ArgumentParser()
     group = parser.add_mutually_exclusive_group(required=True)
@@ -187,6 +146,8 @@ def main():
     if not has_dependencies_installed():
         return
 
+    if args.tout is not None:
+        tout = args.tout
 
     init()    
     clean_dir()
@@ -225,7 +186,7 @@ def main():
 
                     block_name = f.split("/")[-1].rstrip(".json")
 
-                    solver_output = generate_solution(block_name, args.solver)
+                    solver_output = obtain_solver_output(block_name, args.solver, tout)
                     generate_files_for_solution(block_name, solver_output)
 
                     if args.gen_log:
@@ -244,7 +205,7 @@ def main():
         if not args.write_only:
 
             block_name = args.source.split("/")[-1].rstrip(".json")
-            generate_solution(block_name, args.solver)
+            obtain_solver_output(block_name, args.solver, tout)
 
     if args.verify and not args.write_only:
         verify_sfs(args.source, sfs_dict)

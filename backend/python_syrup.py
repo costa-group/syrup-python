@@ -48,7 +48,6 @@ def initialize_flags_and_additional_info(args_i, current_cost, instr_seq, previo
         additional_info = {'tout': 10, 'solver': "oms", 'current_cost': current_cost,
                            'instr_seq': instr_seq, 'previous_solution': previous_solution_dict}
     else:
-        b0, bs, user_instr, variables, initial_stack, final_stack, current_cost, instr_seq = parse_data(json_path)
         flags = {'at-most': args_i.at_most, 'pushed-at-least': args_i.pushed_once,
                  'instruction-order': args_i.instruction_order,
                  'no-output-before-pop': args_i.no_output_before_pop,
@@ -63,7 +62,6 @@ def initialize_flags_and_additional_info(args_i, current_cost, instr_seq, previo
 # Executes the smt encoding generator from the main script
 def execute_syrup_backend(args_i,json_file = None, previous_solution_dict = None, block_name = None):
     path = costabs_path
-
     # Args_i is None if the function is called from syrup-asm. In this case
     # we assume by default oms, and json_file already contains the sfs dict
     if args_i is None:
@@ -74,11 +72,13 @@ def execute_syrup_backend(args_i,json_file = None, previous_solution_dict = None
             json_path = json_file
         else:
             json_path = args_i.source
+            print(json_path)
 
         path = costabs_path
         solver = args_i.solver
         es = initialize_dir_and_streams(path, solver, json_path)
 
+    print(json_path)
     b0, bs, user_instr, variables, initial_stack, final_stack, current_cost, instr_seq = parse_data(json_path)
 
     flags, additional_info = initialize_flags_and_additional_info(args_i, current_cost, instr_seq, previous_solution_dict)

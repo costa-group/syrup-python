@@ -3,10 +3,11 @@ import re
 import json
 import collections
 
-tmp_costabs = "/tmp/costabs/"
-
 
 def init():
+    global tmp_costabs
+    tmp_costabs = "/tmp/costabs/"
+
     global instruction_json
     instruction_json = tmp_costabs + "smt_encoding/instruction.json"
 
