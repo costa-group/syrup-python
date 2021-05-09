@@ -2133,7 +2133,8 @@ def generate_userdefname(u_var,funct,args,arity):
         defined = check_inputs(instr_name,args)
     else:
         defined = -1
-        already_defined_userdef.append(instr_name)
+        if instr_name not in ["PUSHTAG","PUSH#[$]","PUSH[$]"]:
+            already_defined_userdef.append(instr_name)
 
     if defined == -1:
         obj = {}
@@ -2155,10 +2156,12 @@ def generate_userdefname(u_var,funct,args,arity):
         obj["id"] = name
         obj["opcode"] = process_opcode(str(opcodes.get_opcode(instr_name)[0]))
         obj["disasm"] = instr_name
-        obj["inpt_sk"] = [] if arity==0 else args_aux
+        obj["inpt_sk"] = [] if arity==0 or instr_name in ["PUSHTAG","PUSH#[$]","PUSH[$]"] else args_aux
         obj["outpt_sk"] = [u_var]
         obj["gas"] = opcodes.get_ins_cost(instr_name)
         obj["commutative"] = True if instr_name in commutative_bytecodes else False
+        if instr_name in ["PUSHTAG","PUSH#[$]","PUSH[$]"]:
+            obj["value"] = args_aux
         user_def_counter[instr_name]=idx+1
 
         new = True
