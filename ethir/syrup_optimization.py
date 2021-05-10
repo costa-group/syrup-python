@@ -3579,12 +3579,18 @@ def apply_cond_transformation(instr,user_def_instrs,tstack):
                 zero = is_zero[0]
                 zero2 = list(filter(lambda x: zero["outpt_sk"][0] in x["inpt_sk"] and x["disasm"] == "ISZERO",user_def_instrs))
                 if len(zero2) == 1 and zero["outpt_sk"][0] not in tstack:
-                    instr["outpt_sk"] = zero2[0]["outpt_sk"]
+                    # instr["outpt_sk"] = zero2[0]["outpt_sk"]
+                    old_var = instr["outpt_sk"]
+                    new_var = zero2[0]["outpt_sk"]
+                    instr["outpt_sk"] = new_var
+                    
                     discount_op+=2
 
                     gas_saved_op+=6
 
                     print("ISZ(ISZ(GT(X,Y)))")
+
+                    update_tstack_userdef(old_var[0], new_var[0],tstack, user_def_instrs)
                     
                     return True, [zero,zero2[0]]
                 else:
@@ -3607,12 +3613,18 @@ def apply_cond_transformation(instr,user_def_instrs,tstack):
             zero2 = list(filter(lambda x: zero["outpt_sk"][0] in x["inpt_sk"] and x["disasm"] == "ISZERO",user_def_instrs))
             if len(zero2) == 1 and zero["outpt_sk"][0] not in tstack:
              
-                instr["outpt_sk"] = zero2[0]["outpt_sk"]
+                # instr["outpt_sk"] = zero2[0]["outpt_sk"]
+                old_var = instr["outpt_sk"]
+                new_var = zero2[0]["outpt_sk"]
+                instr["outpt_sk"] = new_var
+
                 discount_op+=2
                 
                 gas_saved_op+=6
 
                 print("ISZ(ISZ(ISZ(X)))")
+
+                update_tstack_userdef(old_var[0], new_var[0],tstack, user_def_instrs)
                 
                 return True, [zero,zero2[0]]
             else:
@@ -3622,13 +3634,19 @@ def apply_cond_transformation(instr,user_def_instrs,tstack):
             eq = is_eq[0]
 
             if 1 in eq["inpt_sk"]:
-                instr["outpt_sk"] = eq["outpt_sk"]
+                old_var = instr["outpt_sk"]
+                new_var = eq["outpt_sk"]
+                # instr["outpt_sk"] = eq["outpt_sk"]
+                instr["outpt_sk"] = new_var
                 discount_op+=1
 
                 saved_push+=1
                 gas_saved_op+=3
 
                 print("EQ(1,ISZ(X))")
+
+                update_tstack_userdef(old_var[0], new_var[0],tstack, user_def_instrs)
+                
                 return True, [eq]
 
             else:
@@ -3678,12 +3696,18 @@ def apply_cond_transformation(instr,user_def_instrs,tstack):
                 zero = is_zero[0]
                 zero2 = list(filter(lambda x: zero["outpt_sk"][0] in x["inpt_sk"] and x["disasm"] == "ISZERO",user_def_instrs))
                 if len(zero2) == 1 and zero["outpt_sk"][0] not in tstack:
-                    instr["outpt_sk"] = zero2[0]["outpt_sk"]
+                    old_var = instr["outpt_sk"]
+                    new_var = zero2[0]["outpt_sk"]
+                    instr["outpt_sk"] = new_var
+
+                    # instr["outpt_sk"] = zero2[0]["outpt_sk"]
                     discount_op+=2
 
                     gas_saved_op+=6
 
                     print("ISZ(ISZ(LT(X,Y)))")
+
+                    update_tstack_userdef(old_var[0], new_var[0],tstack, user_def_instrs)
                     
                     return True, [zero,zero2[0]]
                 else:
@@ -3720,13 +3744,19 @@ def apply_cond_transformation(instr,user_def_instrs,tstack):
                 zero = is_zero[0]
                 zero2 = list(filter(lambda x: zero["outpt_sk"][0] in x["inpt_sk"] and x["disasm"] == "ISZERO",user_def_instrs))
                 if len(zero2) == 1 and zero["outpt_sk"][0] not in tstack:
-                    instr["outpt_sk"] = zero2[0]["outpt_sk"]
+
+                    old_var = instr["outpt_sk"]
+                    new_var = zero2[0]["outpt_sk"]
+                    instr["outpt_sk"] = new_var
+                    # instr["outpt_sk"] = zero2[0]["outpt_sk"]
                     discount_op+=2
 
                     gas_saved_op+=6
 
 
                     print("ISZ(ISZ(EQ(X,Y)))")
+
+                    update_tstack_userdef(old_var[0], new_var[0],tstack, user_def_instrs)
                     
                     return True, [zero,zero2[0]]
                 else:
@@ -3744,13 +3774,21 @@ def apply_cond_transformation(instr,user_def_instrs,tstack):
         if len(and_op)==1:
             and_instr = and_op[0]
             if (and_instr["inpt_sk"][1] in instr["inpt_sk"]) or (and_instr["inpt_sk"][0] in instr["inpt_sk"]):
-                instr["outpt_sk"] = and_instr["outpt_sk"]
+                # print(user_def_instrs)
+                # print("***************")
+                
+                old_var = instr["outpt_sk"]
+                new_var = and_instr["outpt_sk"]
+                instr["outpt_sk"] = new_var
+                # instr["outpt_sk"] = and_instr["outpt_sk"]
                 discount_op+=1
 
                 saved_push+=1
                 gas_saved_op+=3
 
                 print("AND(X,AND(X,Y))")
+
+                update_tstack_userdef(old_var[0], new_var[0],tstack, user_def_instrs)
                 
                 return True, [and_instr]
             else:
@@ -4019,13 +4057,31 @@ def apply_cond_transformation(instr,user_def_instrs,tstack):
         if len(and_op) == 1:
             and_instr = and_op[0]
             if -1+2**160 in and_instr["inpt_sk"]:
-                instr["outpt_sk"] = and_instr["outpt_sk"]
+                print(user_def_instrs)
+                print(instr)
+                print(and_instr)
+                print(-1+2**160)
+
+                old_var = instr["outpt_sk"]
+                new_var = and_instr["outpt_sk"]
+                instr["outpt_sk"] = new_var
                 discount_op+=1
 
                 saved_push+=1
                 gas_saved_op+=3
 
                 print("AND(ORIGIN,2^160-1)")
+
+                # print("PREVIOUS")
+                # print(old_var)
+                # print(new_var)
+                # print(tstack)
+                # print(user_def_instrs)
+                update_tstack_userdef(old_var[0], new_var[0],tstack, user_def_instrs)
+                # print("AFTER")
+                # print(tstack)
+                # print(tstack)
+                # print(user_def_instrs)
                 
                 return True,[and_instr]
             else:
@@ -4043,7 +4099,11 @@ def apply_cond_transformation(instr,user_def_instrs,tstack):
             isz_instr = isz_op[0]
             idx = user_def_counter.get("EQ",0)
             
-            instr["outpt_sk"] = isz_instr["outpt_sk"]
+            old_var = instr["outpt_sk"]
+            new_var = isz_instr["outpt_sk"]
+            instr["outpt_sk"] = new_var
+            
+            # instr["outpt_sk"] = isz_instr["outpt_sk"]
             instr["id"] = "EQ_"+str(idx)
             instr["opcode"] = "14"
             instr["disasm"] = "EQ"
@@ -4054,6 +4114,8 @@ def apply_cond_transformation(instr,user_def_instrs,tstack):
 
             print("ISZ(SUB(X,Y))")
 
+            update_tstack_userdef(old_var[0], new_var[0],tstack, user_def_instrs)
+            
             return True, [isz_instr]
                 
         else:
@@ -4067,7 +4129,9 @@ def apply_cond_transformation(instr,user_def_instrs,tstack):
             mul_instr = mul_op[0]
 
             if mul_instr["inpt_sk"][1] == out_pt:
-                instr["outpt_sk"] = mul_instr["outpt_sk"]
+                old_var = instr["outpt_sk"]
+                new_var = mul_instr["outpt_sk"]
+                instr["outpt_sk"] = new_var
                 instr["inpt_sk"][1] = mul_instr["inpt_sk"][0]
 
                 discount_op+=1
@@ -4075,11 +4139,16 @@ def apply_cond_transformation(instr,user_def_instrs,tstack):
                 saved_push+=1
 
                 print("MUL(X,SHL(Y,1)")
+
+                update_tstack_userdef(old_var[0], new_var[0],tstack, user_def_instrs)
                 
                 return True, [mul_instr]
 
             elif mul_instr["inpt_sk"][0] == out_pt:
-                instr["outpt_sk"] = mul_instr["outpt_sk"]
+                # instr["outpt_sk"] = mul_instr["outpt_sk"]
+                old_var = instr["outpt_sk"]
+                new_var = mul_instr["outpt_sk"]
+                instr["outpt_sk"] = new_var
                 instr["inpt_sk"][1] = mul_instr["inpt_sk"][1]
 
                 discount_op+=1
@@ -4087,6 +4156,8 @@ def apply_cond_transformation(instr,user_def_instrs,tstack):
                 saved_push+=1
 
                 print("MUL(SHL(X,1),Y)")
+
+                update_tstack_userdef(old_var[0], new_var[0],tstack, user_def_instrs)
                 
                 return True, [mul_instr]
 
@@ -4097,8 +4168,10 @@ def apply_cond_transformation(instr,user_def_instrs,tstack):
             div_instr = div_op[0]
 
             if div_instr["inpt_sk"][1] == out_pt:
-                
-                instr["outpt_sk"] = div_instr["outpt_sk"]
+                old_var = instr["outpt_sk"]
+                new_var = div_instr["outpt_sk"]
+                instr["outpt_sk"] = new_var
+                # instr["outpt_sk"] = div_instr["outpt_sk"]
                 instr["inpt_sk"][1] = div_instr["inpt_sk"][0]
 
                 idx = user_def_counter.get("SHR",0)
@@ -4114,6 +4187,9 @@ def apply_cond_transformation(instr,user_def_instrs,tstack):
                 saved_push+=1
 
                 print("DIV(X,SHL(Y,1))")
+
+                update_tstack_userdef(old_var[0], new_var[0],tstack, user_def_instrs)
+                
                 return True, [div_instr]
             
         else:
@@ -4128,7 +4204,11 @@ def apply_cond_transformation(instr,user_def_instrs,tstack):
         if len(bal_op) == 1:
             bal_instr = bal_op[0]
 
-            instr["outpt_sk"] = bal_instr["outpt_sk"]
+            old_var = instr["outpt_sk"]
+            new_var = bal_instr["outpt_sk"]
+            instr["outpt_sk"] = new_var
+            
+            # instr["outpt_sk"] = bal_instr["outpt_sk"]
 
             idx = user_def_counter.get("SELFBALANCE",0)
             
@@ -4141,18 +4221,27 @@ def apply_cond_transformation(instr,user_def_instrs,tstack):
             gas_saved_op+=397 #BALANCE 400 ADDRESS 2 SELFBALANCE 5
 
             print("BALANCE(ADDRESS)")
+
+            update_tstack_userdef(old_var[0], new_var[0],tstack, user_def_instrs)
+            
             return True,[bal_instr]
         
         elif len(and_op) == 1:
             and_instr = and_op[0]
             if -1+2**160 in and_instr["inpt_sk"]:
-                instr["outpt_sk"] = and_instr["outpt_sk"]
+                # instr["outpt_sk"] = and_instr["outpt_sk"]
+                old_var = instr["outpt_sk"]
+                new_var = and_instr["outpt_sk"]
+                instr["outpt_sk"] = new_var
+
                 discount_op+=1
 
                 saved_push+=1
                 gas_saved_op+=3
 
                 print("AND(ADDRESS,2^160)")
+
+                update_tstack_userdef(old_var[0], new_var[0],tstack, user_def_instrs)
                 
                 return True,[and_instr]
             else:
@@ -4216,9 +4305,10 @@ def apply_comparation_rules(user_def_instrs,tstack):
         #print (instr)
         
         r, d_instr = apply_cond_transformation(instr,user_def_instrs,tstack)
-        #print ("VEAMOS VEAMOS")
-        #print (r)
-        #print (d_instr)
+        # print ("VEAMOS VEAMOS")
+        # print (r)
+        # print (d_instr)
+        # print(user_def_instrs)
         if r:
             print("[RULE]: Simplification rule type 2: "+str(instr))
             print("[RULE]: Delete rules: "+str(d_instr))
@@ -4386,6 +4476,21 @@ def opt_sstore_sstore(rule):
             return False,[]
 
 
+
+def update_tstack_userdef(old_var, new_var,tstack, user_def_instrs):
+    i = 0
+    while(i<len(tstack)):
+        if tstack[i] == old_var:
+            tstack[i] = new_var
+        i+=1
+
+    for instr in user_def_instrs:
+        inp_st = instr["inpt_sk"]
+        if old_var in inp_st:
+            i = inp_st.index(old_var)
+            instr["inpt_sk"][i] = new_var
+    
+        
 def get_evm_block(instructions):
 
     str_b = ""
