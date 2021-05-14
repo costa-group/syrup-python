@@ -46,7 +46,7 @@ def init():
     sol_dir = project_path + "/sols/"
 
     global disasm_generation_file
-    disasm_generation_file = project_path + "/scripts/disasm_generation.py"
+    disasm_generation_file = project_path + "/solution_generation/disasm_generation.py"
     # Timeout in seconds"
 
     global oms_flags
@@ -135,7 +135,7 @@ if __name__=="__main__":
 
         for file in glob.glob(contract_path + "/*.json"):
             file_results = {}
-            block_id = file.split('/')[-1]
+            block_id = file.split('/')[-1].rstrip(".json")
             file_results['block_id'] = block_id
             with open(file) as path:
                 data = json.load(path)

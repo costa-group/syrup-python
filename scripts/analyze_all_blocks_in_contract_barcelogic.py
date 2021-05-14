@@ -139,7 +139,7 @@ if __name__=="__main__":
 
         for file in glob.glob(contract_path + "/*.json"):
             file_results = {}
-            block_id = file.split('/')[-1]
+            block_id = file.split('/')[-1].rstrip(".json")
             file_results['block_id'] = block_id
             with open(file) as path:
                 data = json.load(path)
