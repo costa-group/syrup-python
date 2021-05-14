@@ -1,15 +1,17 @@
 #!/usr/bin/env python3
 
-from superoptimization_enconding import generate_smtlib_encoding
-from utils_bckend import add_bars_to_string
+from superoptimization_enconding import generate_smtlib_encoding, generate_smtlib_encoding_appending
+from utils_bckend import add_bars_and_index_to_string
 import json
 import argparse
-from encoding_files import initialize_dir_and_streams
+from encoding_files import initialize_dir_and_streams, write_encoding
+from smtlib_utils import set_logic, check_sat
+import re
 
 costabs_path = "/tmp/costabs/"
 
 
-def parse_data(json_path):
+def parse_data(json_path, var_initial_idx=0):
     # We can pass either the path to a json file, or
     # directly the dict that contains the SFS.
     if type(json_path) == str:
@@ -27,12 +29,12 @@ def parse_data(json_path):
     user_instr = data['user_instrs']
 
     for instr in user_instr:
-        instr['outpt_sk'] = list(map(add_bars_to_string, instr['outpt_sk']))
-        instr['inpt_sk'] = list(map(add_bars_to_string, instr['inpt_sk']))
+        instr['outpt_sk'] = list(map(lambda x: add_bars_and_index_to_string(x, var_initial_idx), instr['outpt_sk']))
+        instr['inpt_sk'] = list(map(lambda x: add_bars_and_index_to_string(x, var_initial_idx), instr['inpt_sk']))
 
-    initial_stack = list(map(add_bars_to_string, data['src_ws']))
-    final_stack = list(map(add_bars_to_string, data['tgt_ws']))
-    variables = list(map(add_bars_to_string, data['vars']))
+    initial_stack = list(map(lambda x: add_bars_and_index_to_string(x, var_initial_idx), data['src_ws']))
+    final_stack = list(map(lambda x: add_bars_and_index_to_string(x, var_initial_idx), data['tgt_ws']))
+    variables = list(map(lambda x: add_bars_and_index_to_string(x, var_initial_idx), data['vars']))
     current_cost = data['current_cost']
     instr_seq = data.get('disasm_seq', [])
     return b0, bs, user_instr, variables, initial_stack, final_stack, current_cost, instr_seq
@@ -72,19 +74,47 @@ def execute_syrup_backend(args_i,json_file = None, previous_solution_dict = None
             json_path = json_file
         else:
             json_path = args_i.source
-            print(json_path)
 
         path = costabs_path
         solver = args_i.solver
         es = initialize_dir_and_streams(path, solver, json_path)
 
-    print(json_path)
     b0, bs, user_instr, variables, initial_stack, final_stack, current_cost, instr_seq = parse_data(json_path)
 
     flags, additional_info = initialize_flags_and_additional_info(args_i, current_cost, instr_seq, previous_solution_dict)
 
     generate_smtlib_encoding(b0, bs, user_instr, variables, initial_stack, final_stack, flags, additional_info)
 
+    es.close()
+
+
+def execute_syrup_backend_combined(json_files, previous_solution_dict, contract_name, solver):
+    next_empty_idx = 0
+    # Stores the number of previous stack variables to ensures there's no collision
+    next_var_idx = 0
+
+    es = initialize_dir_and_streams(costabs_path, solver, contract_name)
+
+    write_encoding(set_logic('QF_LIA'))
+
+    for json_path in json_files:
+        json_name = json_path.split("/")[-1].rstrip(".json")
+
+        # Blocks that aren't contained in the log_dict haven't been optimized, thus we skip them.
+        log_dict = previous_solution_dict.get(json_name, -1)
+        if log_dict == -1:
+            continue
+        b0, bs, user_instr, variables, initial_stack, final_stack, current_cost, instr_seq = parse_data(json_path,
+                                                                                                        next_var_idx)
+        generate_smtlib_encoding_appending(b0, bs, user_instr, variables, initial_stack, final_stack,
+                                           log_dict, next_empty_idx)
+        next_empty_idx += b0 + 1
+
+        # Next available index for assigning var values is equal to the maximum of previous ones
+        if variables:
+            next_var_idx = max(map(lambda x: int(re.search('\d+', x).group()), variables)) + 1
+
+    write_encoding(check_sat())
     es.close()
 
 

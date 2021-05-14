@@ -37,17 +37,17 @@ def _nop_encoding(j, bs, theta_nop):
     write_encoding(add_assert(add_implies(left_term, right_term)))
 
 
-def _fromnop_encoding(b0, theta_nop):
-    for j in range(b0-1):
+def _fromnop_encoding(b0, theta_nop, initial_idx):
+    for j in range(initial_idx, b0-1+initial_idx):
         left_term = add_eq(t(j), theta_nop)
         right_term = add_eq(t(j+1), theta_nop)
         write_encoding(add_assert(add_implies(left_term, right_term)))
 
 
-def _stack_constraints(b0, bs, theta):
+def _stack_constraints(b0, bs, theta, initial_idx=0):
     write_encoding("; Stack contraints")
-    _fromnop_encoding(b0, theta["NOP"])
-    for j in range(b0):
+    _fromnop_encoding(b0, theta["NOP"], initial_idx)
+    for j in range(initial_idx, b0 + initial_idx):
         _push_encoding(j, bs, theta["PUSH"])
         _pop_encoding(j, bs, theta["POP"])
         _nop_encoding(j, bs, theta["NOP"])
@@ -81,7 +81,7 @@ def _non_comm_function_encoding(j, bs, o, r, theta_f):
 
 
 def _non_comm_function_constraints(b0, bs, non_comm_user_instr, theta_non_comm, first_position_instr_appears_dict,
-                                   first_position_instr_cannot_appear_dict):
+                                   first_position_instr_cannot_appear_dict, initial_idx):
     write_encoding("; Non-commutative constraints")
     for instr in non_comm_user_instr:
         o = instr['inpt_sk']
@@ -92,21 +92,21 @@ def _non_comm_function_constraints(b0, bs, non_comm_user_instr, theta_non_comm, 
 
         # Only add the encoding for those positions that are possible. These
         # dicts can be empty, so we use get method to ensure that a correct value is taken.
-        initial_idx = first_position_instr_appears_dict.get(instr['id'], 0)
-        final_idx = first_position_instr_cannot_appear_dict.get(instr['id'], b0)
+        initial_possible_idx = first_position_instr_appears_dict.get(instr['id'], 0) + initial_idx
+        final_possible_idx = first_position_instr_cannot_appear_dict.get(instr['id'], b0) + initial_idx
 
         # Instructions cannot appear in [0, first_position), so we add a statement to consider this situation.
-        for j in range(0, initial_idx):
+        for j in range(initial_idx, initial_possible_idx):
             write_encoding(add_assert(add_not(add_eq(t(j), theta_f))))
 
         # Instructions can appear in [initial_idx, final_idx), as initial_idx refers to the first position
         # a instruction can appear and final_idx refers to the first position that instruction cannot appear.
         # Note that last value can be b0 if it can appear at any point.
-        for j in range(initial_idx, final_idx):
+        for j in range(initial_possible_idx, final_possible_idx):
             _non_comm_function_encoding(j, bs, o, r, theta_f)
 
         # Instructions cannot appear in [final_idx, b0), so we add a statement to consider this situation.
-        for j in range(final_idx, b0):
+        for j in range(final_possible_idx, b0+initial_idx):
             write_encoding(add_assert(add_not(add_eq(t(j), theta_f))))
 
 # Methods for generating constraints for commutative uninterpreted functions (Cc)
@@ -120,7 +120,7 @@ def _comm_function_encoding(j, bs, o0, o1, r, theta_f):
 
 
 def _comm_function_constraints(b0, bs, comm_user_instr, theta_comm, first_position_instr_appears_dict,
-                               first_position_instr_cannot_appear_dict):
+                               first_position_instr_cannot_appear_dict, initial_idx=0):
     write_encoding("; Commutative constraints")
     for instr in comm_user_instr:
         o0 = instr['inpt_sk'][0]
@@ -132,33 +132,35 @@ def _comm_function_constraints(b0, bs, comm_user_instr, theta_comm, first_positi
 
         # Only add the encoding for those positions that are possible. These
         # dicts can be empty, so we use get method to ensure that a correct value is taken.
-        initial_idx = first_position_instr_appears_dict.get(instr['id'], 0)
-        final_idx = first_position_instr_cannot_appear_dict.get(instr['id'], b0)
+        initial_possible_idx = first_position_instr_appears_dict.get(instr['id'], 0) + initial_idx
+        final_possible_idx = first_position_instr_cannot_appear_dict.get(instr['id'], b0) + initial_idx
 
         # Instructions cannot appear in [0, first_position), so we add a statement to consider this situation.
-        for j in range(0, initial_idx):
+        for j in range(initial_idx, initial_possible_idx):
             write_encoding(add_assert(add_not(add_eq(t(j), theta_f))))
 
         # Instructions can appear in [initial_idx, final_idx), as initial_idx refers to the first position
         # a instruction can appear and final_idx refers to the first position that instruction cannot appear.
         # Note that last value can be b0 if it can appear at any point.
-        for j in range(initial_idx, final_idx):
+        for j in range(initial_possible_idx, final_possible_idx):
             _comm_function_encoding(j, bs, o0, o1, r, theta_f)
 
         # Instructions cannot appear in [final_idx, b0), so we add a statement to consider this situation.
-        for j in range(final_idx, b0):
+        for j in range(final_possible_idx, b0+initial_idx):
             write_encoding(add_assert(add_not(add_eq(t(j), theta_f))))
 
 # Methods for generating constraints for finding the target program
 
 def instructions_constraints(b0, bs, comm_instr, non_comm_instr, theta_stack, theta_comm, theta_non_comm,
-                             first_position_instr_appears_dict, first_position_instr_cannot_appear_dict):
+                             first_position_instr_appears_dict, first_position_instr_cannot_appear_dict, initial_idx=0):
     mi = len(theta_stack) + len(theta_comm) + len(theta_non_comm)
     write_encoding("; Instructions constraints")
 
-    for j in range(b0):
+    for j in range(initial_idx, b0+initial_idx):
         write_encoding(add_assert(add_and(add_leq(0, t(j)), add_lt(t(j), mi))))
 
-    _stack_constraints(b0, bs, theta_stack)
-    _comm_function_constraints(b0, bs, comm_instr, theta_comm, first_position_instr_appears_dict, first_position_instr_cannot_appear_dict)
-    _non_comm_function_constraints(b0, bs, non_comm_instr, theta_non_comm, first_position_instr_appears_dict, first_position_instr_cannot_appear_dict)
+    _stack_constraints(b0, bs, theta_stack, initial_idx)
+    _comm_function_constraints(b0, bs, comm_instr, theta_comm, first_position_instr_appears_dict,
+                               first_position_instr_cannot_appear_dict, initial_idx)
+    _non_comm_function_constraints(b0, bs, non_comm_instr, theta_non_comm, first_position_instr_appears_dict,
+                                   first_position_instr_cannot_appear_dict, initial_idx)

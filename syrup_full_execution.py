@@ -10,12 +10,13 @@ import glob
 import argparse
 from oyente_ethir import clean_dir, analyze_disasm_bytecode, analyze_bytecode, analyze_solidity, analyze_isolate_block, has_dependencies_installed
 from syrup_optimization import get_sfs_dict
-from python_syrup import execute_syrup_backend
+from python_syrup import execute_syrup_backend, execute_syrup_backend_combined
 from disasm_generation import generate_disasm_sol
 from sfs_verify import verify_sfs
 import json
 from solver_solution_verify import generate_solution_dict, check_solver_output_is_correct
 from solver_output_generation import obtain_solver_output
+import re
 
 def init():
     global project_path
@@ -80,6 +81,19 @@ def check_log_information(files, log_dict):
         if not check_solver_output_is_correct(solver_output):
             print("Failed to verify block " + block_name)
             correct = False
+
+    if correct:
+        print("All blocks have been verified correctly with the corresponding solver")
+
+
+def new_check_log_information(files, log_dict, contract_name):
+    correct = True
+    execute_syrup_backend_combined(files, log_dict, contract_name, args.solver)
+    solver_output = obtain_solver_output(contract_name, args.solver, 1)
+    print(solver_output)
+    if not check_solver_output_is_correct(solver_output):
+        print("Failed to verify block " + contract_name)
+        correct = False
 
     if correct:
         print("All blocks have been verified correctly with the corresponding solver")
@@ -166,8 +180,7 @@ def main():
         else:
             execute_ethir()
             files = glob.glob(json_dir + "/*.json")
-
-        check_log_information(files, log_dict)
+        new_check_log_information(files, log_dict,  re.sub(".json|.sol", "", args.source.split("/")[-1]))
         return
     if not args.json:
     

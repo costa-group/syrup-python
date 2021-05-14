@@ -160,3 +160,19 @@ def generate_smtlib_encoding(b0, bs, usr_instr, variables, initial_stack, final_
     write_instruction_map(generate_instr_map(usr_instr, theta_stack, theta_comm, theta_non_comm))
     write_opcode_map(generate_disasm_map(usr_instr, theta_dict))
     write_gas_map(generate_costs_ordered_dict(bs, usr_instr, theta_dict))
+
+
+# Method to generate complete representation given
+def generate_smtlib_encoding_appending(b0, bs, usr_instr, variables, initial_stack, final_stack,
+                                       previous_solution, previous_idx):
+    theta_stack = generate_stack_theta(bs)
+    theta_comm, theta_non_comm = generate_uninterpreted_theta(usr_instr, len(theta_stack))
+    comm_instr, non_comm_instr = separe_usr_instr(usr_instr)
+
+    initialize_variables(variables, bs, b0, previous_idx)
+    variables_assignment_constraint(variables, previous_idx)
+    instructions_constraints(b0, bs, comm_instr, non_comm_instr, theta_stack, theta_comm, theta_non_comm,
+                             {}, {}, previous_idx)
+    initial_stack_encoding(initial_stack, bs, previous_idx)
+    final_stack_encoding(final_stack, bs, b0, previous_idx)
+    generate_encoding_from_log_json_dict(previous_solution, previous_idx)
