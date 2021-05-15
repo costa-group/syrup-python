@@ -1671,9 +1671,9 @@ def evm2rbr_compiler(contract_name = None, syrup = None,block = None, sto = Fals
         if len(e.args)>1:
             arg = e[1]
             if arg == 5:
-                raise Exception("Error in SACO trnaslation",5)
+                raise Exception("Error in SACO translation",5)
             elif arg == 6:
-                raise Exception("Error in C trnaslation",6)
+                raise Exception("Error in C translation",6)
         else:    
             raise Exception("Error in RBR generation",4)
             
@@ -1697,8 +1697,8 @@ def write_info_lines(rbr,source_map,contract_name):
 
                     for inst in rule.get_instructions(): 
                         if not('nop' in inst):
-                            continue;
-							
+                            continue
+
                         pc = int(nBq)+offset
                         
                         try:
@@ -1713,9 +1713,9 @@ def write_info_lines(rbr,source_map,contract_name):
                            continue;
 
                         if 'nop'in inst:
-                            offset = offset + get_inc_offset(inst);
+                            offset = offset + get_inc_offset(inst)
                                 
-                        cont_rbr = cont_rbr +1          
+                        cont_rbr = cont_rbr + 1
     f.close()
 
 
@@ -1724,4 +1724,4 @@ def get_inc_offset(op):
     if 'PUSH' in op: # nop(PUSH1)
         n=op[8:-1]
         return int(n)+1
-    return 1; 
+    return 1

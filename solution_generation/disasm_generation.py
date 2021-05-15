@@ -70,9 +70,10 @@ def generate_file_names(block_name):
     gas_final_solution = tmp_costabs + "solutions/" + block_name + "_real_gas.txt"
 
 
-# Generates all files contaning the information from the solver
-def generate_disasm_sol(block_name, solver_output):
-
+# Generates three structures containing all the info from the solver: the sequence of instructions
+# in plain text, the sequence of instructions converted to hexadecimal, the pushed values corresponding to push
+# opcodes and an int that contains the gas cost of this solution.
+def generate_info_from_solution(block_name, solver_output):
     init()
     generate_file_names(block_name)
     
@@ -115,6 +116,12 @@ def generate_disasm_sol(block_name, solver_output):
     # We order by position in the sequence in order to write them in the adequate order
     instr_sol = collections.OrderedDict(sorted(instr_sol.items(), key=lambda kv: kv[0]))
     opcode_sol = collections.OrderedDict(sorted(opcode_sol.items(), key=lambda kv: kv[0]))
+
+    return instr_sol, opcode_sol, pushed_values_decimal, total_gas
+
+
+def generate_disasm_sol(block_name, solver_output):
+    instr_sol, opcode_sol, pushed_values_decimal, total_gas = generate_info_from_solution(block_name, solver_output)
 
     with open(opcodes_final_solution, 'w') as opcodes_file:
         for position, opcode in opcode_sol.items():
