@@ -3,6 +3,7 @@ import json
 from utils import is_integer,all_integers,all_symbolic, find_sublist
 import  opcodes
 import os
+import math
 from timeit import default_timer as dtimer
 from global_params import syrup_path, costabs_path, tmp_path
 
@@ -1166,7 +1167,12 @@ def evaluate_expression(funct,val0,val1):
         return 1 if val0>val1 else 0
     elif funct == "lt":
         return 1 if val0 < val1 else 0
-
+    elif funct == "shr":
+        return math.floor(val1/(2**val0))
+    elif funct == "shl":
+        return (val1*(2**val0)) % (2**256)
+    elif funct == "sar":
+        return math.floor(val1/(2**val0))
 def evaluate_expression_ter(funct,val0,val1,val2):
     if funct == "+":
         aux = val0+val1
@@ -1188,8 +1194,8 @@ def compute_binary(expression,level):
     funct = expression[2]
 
     r, vals = all_integers([v0,v1])
-    
-    if r and funct in ["+","-","*","/","^","and","or","xor","%","eq","gt","lt"]:
+
+    if r and funct in ["+","-","*","/","^","and","or","xor","%","eq","gt","lt","shl","shr","sar"]:
         #print ("COMPUTE")
         exp_str = str(funct)+" "+str(vals[0])+" "+str(vals[1])+","+str(level)
         exp_str_comm = str(funct)+" "+str(vals[1])+" "+str(vals[0])+","+str(level)
@@ -2135,7 +2141,7 @@ def generate_userdefname(u_var,funct,args,arity):
         defined = -1
         if instr_name not in ["PUSHTAG","PUSH#[$]","PUSH[$]"]:
             already_defined_userdef.append(instr_name)
-
+            
     if defined == -1:
         obj = {}
 
@@ -3536,7 +3542,9 @@ def apply_cond_transformation(instr,user_def_instrs,tstack):
     global discount_op
     global saved_push
     global gas_saved_op
+    global user_def_counter
 
+    
     opcode = instr["disasm"]
     
     if opcode == "GT" or opcode == "SGT":
@@ -3568,6 +3576,8 @@ def apply_cond_transformation(instr,user_def_instrs,tstack):
             discount_op+=1
             saved_push+=2
 
+            user_def_counter["ISZERO"]=idx+1
+            
             print("GT(1,X)")
             return True, []
 
@@ -3686,6 +3696,8 @@ def apply_cond_transformation(instr,user_def_instrs,tstack):
 
             saved_push+=1
 
+            user_def_counter["ISZERO"]=idx+1
+            
             print("LT(X,1)")
             return True, []
         
@@ -3733,6 +3745,8 @@ def apply_cond_transformation(instr,user_def_instrs,tstack):
             saved_push+=1
 
             print("EQ(0,X)")
+
+            user_def_counter["ISZERO"]=idx+1
             
             return True, []
 
@@ -3960,6 +3974,7 @@ def apply_cond_transformation(instr,user_def_instrs,tstack):
             discount_op+=1
             gas_saved_op+=3
 
+            user_def_counter["EQ"]=idx+1
             print("ISZ(XOR(X,Y))")
             
             return True, [isz_instr]
@@ -4112,6 +4127,7 @@ def apply_cond_transformation(instr,user_def_instrs,tstack):
             discount_op+=1
             gas_saved_op+=3
 
+            user_def_counter["EQ"]=idx+1
             print("ISZ(SUB(X,Y))")
 
             update_tstack_userdef(old_var[0], new_var[0],tstack, user_def_instrs)
@@ -4186,6 +4202,7 @@ def apply_cond_transformation(instr,user_def_instrs,tstack):
                 gas_saved_op+=5
                 saved_push+=1
 
+                user_def_counter["SHR"]=idx+1
                 print("DIV(X,SHL(Y,1))")
 
                 update_tstack_userdef(old_var[0], new_var[0],tstack, user_def_instrs)
@@ -4220,6 +4237,7 @@ def apply_cond_transformation(instr,user_def_instrs,tstack):
             discount_op+=1
             gas_saved_op+=397 #BALANCE 400 ADDRESS 2 SELFBALANCE 5
 
+            user_def_counter["SELFBALANCE"]=idx+1
             print("BALANCE(ADDRESS)")
 
             update_tstack_userdef(old_var[0], new_var[0],tstack, user_def_instrs)
@@ -4263,6 +4281,7 @@ def apply_cond_transformation(instr,user_def_instrs,tstack):
             saved_push+=1
             gas_saved_op+=57
 
+            user_def_counter["ISZERO"]=idx+1
             print("EXP(0,X)")
             
             return True, []
@@ -4279,6 +4298,7 @@ def apply_cond_transformation(instr,user_def_instrs,tstack):
                 
             gas_saved_op+=57 #EXP-SHL
 
+            user_def_counter["SHL"]=idx+1
             print("EXP(2,X)")
             return True, []
 
