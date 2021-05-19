@@ -11,9 +11,9 @@ def generate_dict_with_instructions(theta_sequence, pushed_values):
         # 0 is theta("PUSH") see generate_stack_theta in encoding_utils
         if theta_value == 0:
             aj = int(pushed_values[pos])
+            json_dict[pos] = (theta_value, aj)
         else:
-            aj = -1
-        json_dict[pos] = (theta_value, aj)
+            json_dict[pos] = theta_value
 
         # 2 == theta("NOP")
         # As soon as we find the first nop, we return the sequence
