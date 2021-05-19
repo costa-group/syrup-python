@@ -2,18 +2,19 @@ import re
 
 
 # Given a sequence of theta opcodes tj and the corresponding aj, generates a dict for storing
-# pairs (tj, aj). If tj != theta(PUSH), then aj = -1. Note that we add at most one tj = theta(NOP),
-# as from that point the encoding guarantees that the remaining assignments in tj are also theta(NOP).
+# the important info. In case tj = 0, then current instruction is a push and we store -aj. Otherwise, we
+# store tj. This way, we identify with strictly positive numbers the theta values, and with 0 or negative
+# the pushed ones (as aj >= 0).
 def generate_dict_with_instructions(theta_sequence, pushed_values):
-    json_dict = dict()
+    json_dict = []
     ordered_theta_sequence = {k: v for k, v in sorted(theta_sequence.items(), key=lambda item: item[0])}
     for pos, theta_value in ordered_theta_sequence.items():
         # 0 is theta("PUSH") see generate_stack_theta in encoding_utils
         if theta_value == 0:
             aj = int(pushed_values[pos])
-            json_dict[pos] = (theta_value, aj)
+            json_dict.append(-aj)
         else:
-            json_dict[pos] = theta_value
+            json_dict.append(theta_value)
 
         # 2 == theta("NOP")
         # As soon as we find the first nop, we return the sequence
