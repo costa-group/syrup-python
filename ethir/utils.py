@@ -442,7 +442,7 @@ def cfg_dot(it,block_input,name = False,cloned = False):
         else:
             name = costabs_path+name+"_cloned.dot"
         
-    f = open(name,"wb")
+    f = open(name,"w")
     tree = build_tree(vert[0],[("st",0)],block_input)
     tree.generatedot(f)
     f.close()
