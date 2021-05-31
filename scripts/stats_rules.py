@@ -25,6 +25,10 @@ def main():
 
     content = ["Contract,normal-constant,normal-r1,normal-r2,opt-constant,opt-r1,opt-r2,higher-constant,higher-r1,higher-r2,higher"]#nooyul-constant,noyul-r1,noyul-r2
     for f in files:
+
+        if f not in os.listdir(opt_dir):
+            continue
+        
         f1 = open(normal_dir+"/"+f,"r")
         f2 = open(opt_dir+"/"+f,"r")
         #f3 = open(no_yul_dir+"/"+f,"r")
