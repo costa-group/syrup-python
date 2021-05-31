@@ -82,7 +82,7 @@ def main():
         else:
             mt = "OPT"
             
-        new_line = ",".join([f,n1,n2,n3,o1,o2,o3,m1,m2,m3,mt])#y1,y2,y3
+        new_line = ",".join([f,str(n1),str(n2),str(n3),str(o1),str(o2),str(o3),m1,m2,m3,mt])#y1,y2,y3
 
         content.append(new_line)
 
