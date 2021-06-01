@@ -15,8 +15,9 @@ def count_rules_type2(content):
 
 def main():
 
-    normal_dir = "../../results/ethir_OK/"
-    opt_dir = "../../results-opt/ethir_OK/"
+    normal_dir = "../../logs/"
+    opt_dir = "../../logs-optimize/"
+
     #no_yul_dir = "../logs-noyul"
 
 
