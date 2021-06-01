@@ -119,7 +119,7 @@ def main():
             max_g = "OPT"
 
             
-        new_line = ",".join([f,str(n1),str(n2),str(n3),str(o1),str(o2),str(o3),l1,l2,g1,g2,m1,m2,m3,mt,max_l,max_g])#y1,y2,y3
+        new_line = ",".join([f,str(n1),str(n2),str(n3),str(o1),str(o2),str(o3),str(l1),str(l2),str(g1),str(g2),m1,m2,m3,mt,max_l,max_g])#y1,y2,y3
 
         content.append(new_line)
 
