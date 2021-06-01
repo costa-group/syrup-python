@@ -13,6 +13,13 @@ def count_rules_type2(content):
     l = filter(lambda x: x.find("Simplification rule type 2")!=-1,content)
     return len(l)
 
+def count_op_len_and_gas(content):
+    l = filter(lambda x: x.find("OPT INFO")!=-1,content)
+    vals = map(lambda x: x.split(":")[-1].strip(),l)
+    lengths = map(lambda x: int(x.split(",")[0]),vals)
+    gas = map(lambda x: int(x.split(",")[1]),vals)
+
+    return sum(lengths),sum(gas)
 
 def main():
 
@@ -23,7 +30,7 @@ def main():
 
     files = os.listdir(normal_dir)
 
-    content = ["Contract,normal-constant,normal-r1,normal-r2,opt-constant,opt-r1,opt-r2,higher-constant,higher-r1,higher-r2,higher"]#nooyul-constant,noyul-r1,noyul-r2
+    content = ["Contract,normal-constant,normal-r1,normal-r2,opt-constant,opt-r1,opt-r2,lines-normal,lines-opt,gas-normal,gas-opt,higher-constant,higher-r1,higher-r2,higher,max-lines,max-gas"]#nooyul-constant,noyul-r1,noyul-r2
     for f in files:
 
         if f not in os.listdir(opt_dir):
@@ -40,15 +47,21 @@ def main():
         n1 = count_constant_expressions(lines_normal)
         n2 = count_rules_type1(lines_normal)
         n3 = count_rules_type2(lines_normal)
-
+        l1,g1 = count_op_len_and_gas(lines_normal)
+        
         o1 = count_constant_expressions(lines_opt)
         o2 = count_rules_type1(lines_opt)
         o3 = count_rules_type2(lines_opt)
-
+        l2,g2 = count_op_len_and_gas(lines_opt)
+        
         # y1 = count_contant_expressions(lines_noyul)
         # y2 = count_rules_type1(lines_noyul)
         # y3 = count_rules_type2(lines_noyul)
+        # l3,g3 = count_op_len_and_gas(lines_noyul)
 
+
+
+        
         m1 = max(n1,o1)#y1
 
         if m1 == n1:
@@ -85,8 +98,28 @@ def main():
 
         else:
             mt = "OPT"
+
+
+        max_l = max(l1,l2)#l3
+
+        if max_l == l1:
+            max_l = "NORMAL"
+        elif max_l == l3:
+            max_l = "NOYUL"
+        else:
+            max_l = "OPT"
+
+        max_g = max(g1,g2)#l3
+
+        if max_g == g1:
+            max_g = "NORMAL"
+        elif max_g == g3:
+            max_g = "NOYUL"
+        else:
+            max_g = "OPT"
+
             
-        new_line = ",".join([f,str(n1),str(n2),str(n3),str(o1),str(o2),str(o3),m1,m2,m3,mt])#y1,y2,y3
+        new_line = ",".join([f,str(n1),str(n2),str(n3),str(o1),str(o2),str(o3),l1,l2,g1,g2,m1,m2,m3,mt,max_l,max_g])#y1,y2,y3
 
         content.append(new_line)
 
