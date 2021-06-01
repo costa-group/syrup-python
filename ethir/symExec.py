@@ -28,7 +28,7 @@ from global_params import syrup_path, costabs_path, tmp_path
 
 import rbr
 from utils import *#cfg_dot, write_cfg, update_map, get_public_fields, getLevel, update_sstore_map,correct_map_fields1, get_push_value, get_initial_block_address, check_graph_consistency, find_first_closing_parentheses, check_if_same_stack
-from opcodes import get_opcode
+from opcodes import get_opcode,get_syrup_cost
 from graph_scc import Graph_SCC, get_entry_all,filter_nested_scc
 from pattern import look_for_string_pattern,check_sload_fragment_pattern,sstore_fragment
 
@@ -327,6 +327,11 @@ def build_cfg_and_analyze(evm_version):
         #     get_evm_block()
         construct_static_edges()
         #print_cfg()
+
+        l, g = compute_len_and_gas()
+        s_name = source_n.split("/")[-1].split(".")[0]
+        print("OPT INFO "+s_name+": "+str(l)+","+str(g))
+
         full_sym_exec()  # jump targets are constructed on the fly
 
     #print mapping_state_variables
@@ -842,6 +847,8 @@ def sym_exec_block(params, block, pre_block, depth, func_call,level,path):
     global stack_h
     global calldataload_values
     global jump_type
+    global len_sm
+    global gas
 
     visited = params.visited
     stack = params.stack
@@ -3533,3 +3540,16 @@ def remove_unnecesary_opcodes(idx, instructions):
         return (j,instructions[:idx+1])
     else:
         return ("",instructions)
+
+
+def compute_len_and_gas():
+    l = 0
+    g = 0
+    for b in vertices:
+        instructions = vertices[b].get_instructions()
+
+        l+=len(instructions)
+        for i in instructions:
+            g+=get_syrup_cost(i.strip())
+
+    return (l,g)
