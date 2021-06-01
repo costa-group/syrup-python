@@ -104,8 +104,8 @@ def main():
 
         if max_l == l1:
             max_l = "NORMAL"
-        elif max_l == l3:
-            max_l = "NOYUL"
+        # elif max_l == l3:
+        #     max_l = "NOYUL"
         else:
             max_l = "OPT"
 
@@ -113,8 +113,8 @@ def main():
 
         if max_g == g1:
             max_g = "NORMAL"
-        elif max_g == g3:
-            max_g = "NOYUL"
+        # elif max_g == g3:
+        #     max_g = "NOYUL"
         else:
             max_g = "OPT"
 
