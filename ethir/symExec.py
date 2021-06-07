@@ -331,7 +331,7 @@ def build_cfg_and_analyze(evm_version):
         l, g = compute_len_and_gas()
         s_name = source_n.split("/")[-1].split(".")[0]
         print("OPT INFO "+s_name+": "+str(l)+","+str(g))
-
+        print ("COMPLETE LIST "+s_name+": "+str(len(vertices)))
         full_sym_exec()  # jump targets are constructed on the fly
 
     #print mapping_state_variables
