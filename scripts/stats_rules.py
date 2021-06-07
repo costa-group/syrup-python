@@ -95,6 +95,10 @@ def main():
     files = os.listdir(normal_dir)
 
     content = ["Contract,normal-constant,normal-r1,normal-r2,opt-constant,opt-r1,opt-r2,lines-normal,lines-opt,gas-normal,gas-opt,higher-constant,higher-r1,higher-r2,higher,max-lines,max-gas"]#nooyul-constant,noyul-r1,noyul-r2
+
+
+    content_gas = ["Contract","normal-lines","opt-lines","normal-syrup-lines","opt-syrup-lines","normal-gas","opt-gas","normal-syrup-gas","opt-syrup-gas",]
+
     for f in files:
 
         if f not in os.listdir(opt_dir):
@@ -191,10 +195,18 @@ def main():
 
         content.append(new_line)
 
+
+        new_line2 = ",".join([f,str(l1),str(l2),str(ls_normal),str(ls_opt),str(g1),str(g2),str(gs_normal),str(gs_opt)])
+        content_gas.append(new_line2)
+        
     end_f = open("result_rules.csv","w")
 
     end_f.write("\n".join(content))
     end_f.close()
 
+    end_f1 = open("results_len_and_gas.csv","w")
+    end_f1.write("\n".join(content_gas))
+    end_f1.close()
+    
 if __name__ == '__main__':
     main()
