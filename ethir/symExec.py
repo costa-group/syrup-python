@@ -329,9 +329,9 @@ def build_cfg_and_analyze(evm_version):
         #print_cfg()
 
         l, g = compute_len_and_gas()
-        s_name = source_n.split("/")[-1].split(".")[0]
-        print("OPT INFO "+s_name+": "+str(l)+","+str(g))
-        print ("COMPLETE LIST "+s_name+": "+str(len(vertices)))
+        # s_name = source_n.split("/")[-1].split(".")[0]
+        # print("OPT INFO "+s_name+": "+str(l)+","+str(g))
+        # print ("COMPLETE LIST "+s_name+": "+str(len(vertices)))
         full_sym_exec()  # jump targets are constructed on the fly
 
     #print mapping_state_variables
@@ -1117,7 +1117,7 @@ def get_all_blocks_with_same_stack(successor, stack):
     same_stack_successors = []
     
     for found_successor in all_successor_copies:
-        list_stacks = vertices[found_successor].get_stacks()
+        list_stacks = list(vertices[found_successor].get_stacks())
         
         # If there's no stack in the node, we must check if our stack is empty, or doesn't contain jump values info.
         # if list_stacks == [[]]:
@@ -1182,7 +1182,7 @@ def copy_already_visited_node(successor, new_params, block, depth, func_call,cur
     # This maps have already been initialized for each block,
     # therefore we initilize them for new blocks, using info from successor (not neccesary)
     stack_h[new_successor_address] = [float("inf"),float("inf")]
-    calldataload_values[new_successor_address] = calldataload_values[successor]
+    calldataload_values[new_successor_address] = list(calldataload_values[successor])
 
     # Edges must be initialized to None, as it doesn't share the same list as the original node
     edges[new_successor_address] = []
@@ -3549,8 +3549,23 @@ def compute_len_and_gas():
     split_block = ["LOG0","LOG1","LOG2","LOG3","LOG4","CALLDATACOPY","CODECOPY","EXTCODECOPY","RETURNDATACOPY","MSTORE8","CALL","STATICCALL","DELEGATECALL","CREATE","CREATE2","ASSIGNINMUTABLE","JUMPDEST","JUMP","JUMPI","ASSERTFAIL","RETURN","REVERT","SUICIDE","STOP"]
 
     for b in vertices:
-        instructions = vertices[b].get_instructions()
+        instructions = list(vertices[b].get_instructions())
 
+        # print(b)
+        # print(instructions)
+
+
+        if "JUMPI " in instructions:
+            instructions.pop()
+            instructions.pop()
+            last = instructions.pop().strip()
+            while last in ["GT","ISZERO","EQ","LT","SGT","SLT"]:
+                last = instructions.pop().strip()
+                
+            instructions.append(last)
+            
+        # print(instructions)
+        # print("********************")
         for i in instructions:
             if i.strip() not in split_block:
                 l+=1
