@@ -76,11 +76,12 @@ def compute_file(lines):
         while (i<len(op)):
             nl+=1
             g+= opcodes.get_syrup_cost(op[i].strip())
-
-            i+=1
+            
             if op[i].startswith("PUSH"):
                 i+=1
 
+            i+=1
+            
     return (nl,g)
 
 
