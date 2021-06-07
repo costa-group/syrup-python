@@ -97,7 +97,7 @@ def main():
     content = ["Contract,normal-constant,normal-r1,normal-r2,opt-constant,opt-r1,opt-r2,lines-normal,lines-opt,gas-normal,gas-opt,higher-constant,higher-r1,higher-r2,higher,max-lines,max-gas"]#nooyul-constant,noyul-r1,noyul-r2
 
 
-    content_gas = ["Contract","normal-lines","opt-lines","normal-syrup-lines","opt-syrup-lines","normal-gas","opt-gas","normal-syrup-gas","opt-syrup-gas",]
+    content_gas = ["Contract,normal-lines,opt-lines,normal-syrup-lines,opt-syrup-lines,normal-gas,opt-gas,normal-syrup-gas,opt-syrup-gas"]
 
     for f in files:
 
