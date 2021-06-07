@@ -1,7 +1,7 @@
 import os
 import sys
 
-sys.path.append(os.path.dirname(os.path.realpath(__file__))+"../ethir")
+sys.path.append(os.path.dirname(os.path.realpath(__file__))+"/../ethir")
 
 import opcodes
 
@@ -99,8 +99,9 @@ def main():
         if f not in os.listdir(opt_dir):
             continue
 
-        ls_normal,gs_normal = compute_info_normal(f)
-        ls_opt, gs_opt = compute_info_opt(f)
+        sname = get_sol_name(f)
+        ls_normal,gs_normal = compute_info_normal(sname)
+        ls_opt, gs_opt = compute_info_opt(sname)
         
         f1 = open(normal_dir+"/"+f,"r")
         f2 = open(opt_dir+"/"+f,"r")
