@@ -37,6 +37,19 @@ def get_sol_name(filename):
     fl = filename.strip(".sol.log")
     return fl
 
+
+def count_blocks_disasm(list_blocks):
+
+    real_blocks = []
+    
+    for bl in list_blocks:
+        name = bl.split(".")[0]
+
+        if name not in real_blocks:
+            real_blocks.append(name)
+
+    return real_blocks
+
 def compute_previous_info(path,lines):
     disasm_files = os.listdir(path)
 
@@ -51,7 +64,7 @@ def compute_previous_info(path,lines):
 
 
     if len(disasm_f) == len(block_name):
-        blocks = len(disasm_f)
+        blocks = len(count_blocks_disasm(disasm_f))
     else:
         blocks = max(len(disasm_f),len(block_name))
             
