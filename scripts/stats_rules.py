@@ -29,6 +29,30 @@ def get_sol_name(filename):
     fl = filename.strip(".sol.log")
     return fl
 
+def compute_previous_info(path,lines):
+    disasm_files = os.listdir(path)
+
+    blocks_to_compute = []
+    
+    disasm_f = map(lambda x: x.strip(".disasm"),disasm_files)
+    block_name = map(lambda x: x.split(",")[1].strip("_input.json"), lines)
+    
+    for b in block_name:
+        if b not in disasm_f:
+            blocks_to_compute.append(b)
+
+    l = 0
+    g = 0
+    
+    for b in blocks_to_compute:
+        f = open(path+b+".disasm","r")
+        opcodes = f.readlines().split("\n")
+        l+=len(opcodes)
+        for op in opcodes:
+            g+= opcodes.get_syrup_cost(op.strip())
+
+    return l,g
+        
 
 def compute_info_normal(filename):
     csv_path = "../../most-called-per-contract/yul_normal/oms_10s/"
@@ -39,7 +63,11 @@ def compute_info_normal(filename):
     f = open(csv_path+filename+"_results_oms.csv","r")
 
     lines = f.readlines()[1::]
-    return compute_file(lines)
+
+    l,g = compute_previous_info("../../results/ethir_OK/"+filename+"/disasms/",lines)
+    l1, g1 = compute_file(lines)
+    
+    return l+l1,g+g1
     
 def compute_info_opt(filename):
     csv_path = "../../most-called-per-contract/yul_opt/oms_10s/"
@@ -51,7 +79,11 @@ def compute_info_opt(filename):
     f = open(csv_path+filename+"_results_oms.csv","r")
 
     lines = f.readlines()[1::]
-    return compute_file(lines)
+
+    l,g = compute_previous_info("../../results-opt/ethir_OK/"+filename+"/disasms/",lines)
+    l1, g1 = compute_file(lines)
+    
+    return l+l1,g+g1
 
 
 def compute_info_noyul(filename):
@@ -60,7 +92,12 @@ def compute_info_noyul(filename):
     f = open(csv_path+filename+"_results_oms.csv","r")
 
     lines = f.readlines()[1::]
-    return compute_file(lines)
+
+    l,g = compute_previous_info("../../results-noyul/ethir_OK/"+filename+"/disasms/",lines)
+    l1, g1 = compute_file(lines)
+    
+    return l+l1,g+g1
+
 
 
 def compute_file(lines):
