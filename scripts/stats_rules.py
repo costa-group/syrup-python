@@ -25,6 +25,14 @@ def count_op_len_and_gas(content):
 
     return sum(lengths),sum(gas)
 
+def count_number_of_blocks(content):
+    l = filter(lambda x: x.find("COMPLETE LIST")!=-1,content)
+    vals = map(lambda x: x.split(":")[-1].strip(),l)
+    blocks = map(lambda x: int(x),vals)
+
+    return sum(blocks)
+
+
 def get_sol_name(filename):
     fl = filename.strip(".sol.log")
     return fl
@@ -41,6 +49,12 @@ def compute_previous_info(path,lines):
         if b not in disasm_f:
             blocks_to_compute.append(b)
 
+
+    if len(disasm_f) == len(block_name):
+        blocks = len(disasm_f)
+    else:
+        blocks = max(len(disasm_f),len(block_name))
+            
     l = 0
     g = 0
     
@@ -51,7 +65,7 @@ def compute_previous_info(path,lines):
         for op in opcodes:
             g+= opcodes.get_syrup_cost(op.strip())
 
-    return l,g
+    return l,g,blocks
         
 
 def compute_info_normal(filename):
@@ -64,10 +78,10 @@ def compute_info_normal(filename):
 
     lines = f.readlines()[1::]
 
-    l,g = compute_previous_info("../../results/ethir_OK/"+filename+"/disasms/",lines)
+    l,g,b = compute_previous_info("../../results/ethir_OK/"+filename+"/disasms/",lines)
     l1, g1 = compute_file(lines)
     
-    return l+l1,g+g1
+    return l+l1,g+g1,b
     
 def compute_info_opt(filename):
     csv_path = "../../most-called-per-contract/yul_opt/oms_10s/"
@@ -80,10 +94,10 @@ def compute_info_opt(filename):
 
     lines = f.readlines()[1::]
 
-    l,g = compute_previous_info("../../results-opt/ethir_OK/"+filename+"/disasms/",lines)
+    l,g,b = compute_previous_info("../../results-opt/ethir_OK/"+filename+"/disasms/",lines)
     l1, g1 = compute_file(lines)
     
-    return l+l1,g+g1
+    return l+l1,g+g1,b
 
 
 def compute_info_noyul(filename):
@@ -93,10 +107,10 @@ def compute_info_noyul(filename):
 
     lines = f.readlines()[1::]
 
-    l,g = compute_previous_info("../../results-noyul/ethir_OK/"+filename+"/disasms/",lines)
+    l,g,b = compute_previous_info("../../results-noyul/ethir_OK/"+filename+"/disasms/",lines)
     l1, g1 = compute_file(lines)
     
-    return l+l1,g+g1
+    return l+l1,g+g1,b
 
 
 
@@ -142,8 +156,8 @@ def main():
             continue
 
         sname = get_sol_name(f)
-        ls_normal,gs_normal = compute_info_normal(sname)
-        ls_opt, gs_opt = compute_info_opt(sname)
+        ls_normal,gs_normal, bl_normal = compute_info_normal(sname)
+        ls_opt, gs_opt, bl_opt = compute_info_opt(sname)
         
         f1 = open(normal_dir+"/"+f,"r")
         f2 = open(opt_dir+"/"+f,"r")
@@ -157,17 +171,20 @@ def main():
         n2 = count_rules_type1(lines_normal)
         n3 = count_rules_type2(lines_normal)
         l1,g1 = count_op_len_and_gas(lines_normal)
+        b1 = count_number_of_blocks(lines_normal)
+
         
         o1 = count_constant_expressions(lines_opt)
         o2 = count_rules_type1(lines_opt)
         o3 = count_rules_type2(lines_opt)
         l2,g2 = count_op_len_and_gas(lines_opt)
-        
+        b2 = count_number_of_blocks(lines_opt)
+
         # y1 = count_contant_expressions(lines_noyul)
         # y2 = count_rules_type1(lines_noyul)
         # y3 = count_rules_type2(lines_noyul)
         # l3,g3 = count_op_len_and_gas(lines_noyul)
-
+        #b3 = count_number_of_blocks(lines_noyul)
 
 
         
@@ -234,6 +251,8 @@ def main():
 
 
         new_line2 = ",".join([f,str(l1),str(l2),str(ls_normal),str(ls_opt),str(g1),str(g2),str(gs_normal),str(gs_opt)])
+        new_line2+="\n"+"****************************************************\n"
+        new_line2+=str(b1)+","+str(bl_normal)+","+str(b2)+","+str(bl_opt)
         content_gas.append(new_line2)
         
     end_f = open("result_rules.csv","w")
