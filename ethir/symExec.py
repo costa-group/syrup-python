@@ -3545,11 +3545,15 @@ def remove_unnecesary_opcodes(idx, instructions):
 def compute_len_and_gas():
     l = 0
     g = 0
+
+    split_block = ["LOG0","LOG1","LOG2","LOG3","LOG4","CALLDATACOPY","CODECOPY","EXTCODECOPY","RETURNDATACOPY","MSTORE8","CALL","STATICCALL","DELEGATECALL","CREATE","CREATE2","ASSIGNINMUTABLE","JUMPDEST","JUMP","JUMPI"]
+
     for b in vertices:
         instructions = vertices[b].get_instructions()
 
-        l+=len(instructions)
         for i in instructions:
-            g+=get_syrup_cost(i.strip())
-
+            if i.strip() not in split_block:
+                l+=1
+                g+=get_syrup_cost(i.strip())
+            
     return (l,g)
