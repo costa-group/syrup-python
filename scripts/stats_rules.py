@@ -64,7 +64,7 @@ def compute_info_noyul(filename):
 
 
 def compute_file(lines):
-    l = 0
+    nl = 0
     g = 0
     for l in lines:
         elems = l.split(",")
@@ -74,14 +74,14 @@ def compute_file(lines):
 
         i = 0
         while (i<len(op)):
-            l+=1
+            nl+=1
             g+= opcodes.get_syrup_cost(op[i].strip())
 
             i+=1
             if op[i].startswith("PUSH"):
                 i+=1
 
-    return (l,g)
+    return (nl,g)
 
 
 def main():
