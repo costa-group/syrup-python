@@ -1,5 +1,9 @@
 import os
+import sys
 
+sys.path.append(os.path.dirname(os.path.realpath(__file__))+"../ethir")
+
+import opcodes
 
 def count_constant_expressions(content):
     l = filter(lambda x: x.find("Evaluate expression")!=-1,content)
@@ -21,6 +25,65 @@ def count_op_len_and_gas(content):
 
     return sum(lengths),sum(gas)
 
+def get_sol_name(filename):
+    fl = filename.strip(".sol.log")
+    return fl
+
+
+def compute_info_normal(filename):
+    csv_path = "../../most-called-per-contract/yul_normal/oms_10s/"
+
+    # csv_path = "../../results-3105-per-contract/contracts45-normal/oms_10s/"
+    # csv_path = "../../results-3105-per-contract/contracts678-normal/oms_10s/"
+    
+    f = open(csv_path+filename+"_results_oms.csv","r")
+
+    lines = f.readlines()[1::]
+    return compute_file(lines)
+    
+def compute_info_opt(filename):
+    csv_path = "../../most-called-per-contract/yul_opt/oms_10s/"
+
+    # csv_path = "../../results-3105-per-contract/contracts45-opt/oms_10s/"
+    # csv_path = "../../results-3105-per-contract/contracts678-opt/oms_10s/"
+
+    
+    f = open(csv_path+filename+"_results_oms.csv","r")
+
+    lines = f.readlines()[1::]
+    return compute_file(lines)
+
+
+def compute_info_noyul(filename):
+    csv_path = "../../results-3105-per-contract/contracts678-noyul/oms_10s/"
+
+    f = open(csv_path+filename+"_results_oms.csv","r")
+
+    lines = f.readlines()[1::]
+    return compute_file(lines)
+
+
+def compute_file(lines):
+    l = 0
+    g = 0
+    for l in lines:
+        elems = l.split(",")
+        list_op = elems[9]
+
+        op = list_op.split()
+
+        i = 0
+        while (i<len(op)):
+            l+=1
+            g+= opcodes.get_syrup_cost(op[i].strip())
+
+            i+=1
+            if op[i].startswith("PUSH"):
+                i+=1
+
+    return (l,g)
+
+
 def main():
 
     normal_dir = "../../logs/"
@@ -35,6 +98,9 @@ def main():
 
         if f not in os.listdir(opt_dir):
             continue
+
+        ls_normal,gs_normal = compute_info_normal(f)
+        ls_opt, gs_opt = compute_info_opt(f)
         
         f1 = open(normal_dir+"/"+f,"r")
         f2 = open(opt_dir+"/"+f,"r")
