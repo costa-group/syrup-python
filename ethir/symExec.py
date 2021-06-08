@@ -3546,7 +3546,7 @@ def compute_len_and_gas():
     l = 0
     g = 0
 
-    split_block = ["LOG0","LOG1","LOG2","LOG3","LOG4","CALLDATACOPY","CODECOPY","EXTCODECOPY","RETURNDATACOPY","MSTORE8","CALL","STATICCALL","DELEGATECALL","CREATE","CREATE2","ASSIGNINMUTABLE","JUMPDEST","JUMP","JUMPI","ASSERTFAIL","RETURN","REVERT","SUICIDE","STOP"]
+    split_block = ["LOG0","LOG1","LOG2","LOG3","LOG4","CALLDATACOPY","CODECOPY","EXTCODECOPY","RETURNDATACOPY","MSTORE8","CALL","STATICCALL","DELEGATECALL","CREATE","CREATE2","ASSIGNINMUTABLE","JUMPDEST","JUMP","JUMPI","ASSERTFAIL","RETURN","REVERT","SUICIDE","STOP","MSTORE","SSTORE"]
 
     for b in vertices:
         instructions = list(vertices[b].get_instructions())
@@ -3568,8 +3568,9 @@ def compute_len_and_gas():
         # print("********************")
         for i in instructions:
             if i.strip() not in split_block:
+                print(i.strip())
                 l+=1
                 g+=get_syrup_cost(i.strip())
-            else:
-                print(i.strip())
+            # else:
+            #     print(i.strip())x
     return (l,g)
