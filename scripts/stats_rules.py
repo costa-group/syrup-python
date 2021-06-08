@@ -263,7 +263,10 @@ def main():
         content.append(new_line)
 
 
-        new_line2 = ",".join([f,str(l1),str(l2),str(ls_normal),str(ls_opt),str(g1),str(g2),str(gs_normal),str(gs_opt)])
+        p1 = (g1-gs_normal)*100.0/g1
+        p2 = (g2-gs_opt)*100.0/g2
+        
+        new_line2 = ",".join([f,str(l1),str(l2),str(ls_normal),str(ls_opt),str(g1),str(g2),str(gs_normal),str(gs_opt),str(p1),str(p2)])
         new_line2+="\n"+"****************************************************\n"
         new_line2+=str(b1)+","+str(bl_normal)+","+str(b2)+","+str(bl_opt)
         content_gas.append(new_line2)
