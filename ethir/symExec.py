@@ -3568,7 +3568,7 @@ def compute_len_and_gas():
         # print("********************")
         for i in instructions:
             if i.strip() not in split_block:
-                print(i.strip())
+                # print(i.strip())
                 l+=1
                 g+=get_syrup_cost(i.strip())
             # else:
