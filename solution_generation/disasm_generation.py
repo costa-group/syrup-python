@@ -2,11 +2,12 @@
 import re
 import json
 import collections
+import pathlib
 
 
 def init():
     global tmp_costabs
-    tmp_costabs = "/tmp/costabs/"
+    tmp_costabs = "/tmp/gasol/"
 
     global instruction_json
     instruction_json = tmp_costabs + "smt_encoding/instruction.json"
@@ -65,9 +66,9 @@ def generate_file_names(block_name):
     opcodes_json = tmp_costabs+"smt_encoding/"+block_name+"_opcode.json"
     gas_json = tmp_costabs+"smt_encoding/"+block_name+"_gas.json"
 
-    instruction_final_solution = tmp_costabs+"solutions/"+block_name+"_optimized.disasm_opt"
-    opcodes_final_solution = tmp_costabs+"solutions/"+block_name+"_optimized.evm"
-    gas_final_solution = tmp_costabs + "solutions/" + block_name + "_real_gas.txt"
+    instruction_final_solution = tmp_costabs+"solutions/disasm/"+block_name+"_optimized.disasm_opt"
+    opcodes_final_solution = tmp_costabs+"solutions/evm/"+block_name+"_optimized.evm"
+    gas_final_solution = tmp_costabs + "solutions/total_gas/" + block_name + "_real_gas.txt"
 
 
 # Generates three structures containing all the info from the solver: the sequence of instructions
@@ -123,9 +124,14 @@ def generate_info_from_solution(block_name, solver_output):
 def generate_disasm_sol(block_name, solver_output):
     instr_sol, opcode_sol, pushed_values_decimal, total_gas = generate_info_from_solution(block_name, solver_output)
 
+    pathlib.Path(tmp_costabs + "solutions/total_gas/").mkdir(parents=True, exist_ok=True)
+    pathlib.Path(tmp_costabs + "solutions/disasm/").mkdir(parents=True, exist_ok=True)
+    pathlib.Path(tmp_costabs + "solutions/evm/").mkdir(parents=True, exist_ok=True)
+
+
     with open(opcodes_final_solution, 'w') as opcodes_file:
         for position, opcode in opcode_sol.items():
-            push_match = re.match(re.compile('PUSH([0-9]*)'), instr_sol[position])
+            push_match = re.match(re.compile('PUSH([0-9]+)'), instr_sol[position])
             if push_match:
                 opcodes_file.write(opcode + hex(int(pushed_values_decimal[position]))[2:])
             else:

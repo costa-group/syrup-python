@@ -28,7 +28,7 @@ def init():
     global disasm_generation_file
     disasm_generation_file = project_path + "/scripts/disasm_generation.py"
     global tmp_costabs
-    tmp_costabs = "/tmp/costabs/"
+    tmp_costabs = "/tmp/gasol/"
     global json_dir
     json_dir = tmp_costabs + "jsons/"
     global sol_dir
@@ -166,7 +166,7 @@ def main():
     init()    
     clean_dir()
     
-    if "costabs" not in os.listdir("/tmp/"):
+    if "gasol" not in os.listdir("/tmp/"):
         os.mkdir(tmp_costabs)
 
     os.mkdir(tmp_costabs+"solutions")

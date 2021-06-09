@@ -7,7 +7,7 @@ from utils import process_isolate_block
 from syrup_optimization import get_sfs_dict
 from timeit import default_timer as dtimer
 
-costabs_path = "/tmp/costabs/"
+costabs_path = "/tmp/gasol/"
 solutions_path = costabs_path + "solutions/"
 
 
