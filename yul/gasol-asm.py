@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-
+import argparse
 import os
 import sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))+"/backend")
@@ -13,7 +13,7 @@ from syrup_optimization import get_sfs_dict
 from python_syrup import execute_syrup_backend
 sys.path.append(os.path.dirname(os.path.realpath(__file__))+"/../syrup_full_execution.py")
 from solver_output_generation import obtain_solver_output
-from disasm_generation import generate_info_from_solution
+from disasm_generation import generate_info_from_solution, generate_disasm_sol
 from solver_solution_verify import check_solver_output_is_correct
 
 def isYulInstruction(opcode):
@@ -82,6 +82,7 @@ def optimize_asm_block(block, contract_name):
     bytecodes = block.getInstructions()
     stack_size = block.getSourceStack()
     block_id = block.getBlockId()
+    print("Block id:", block_id)
 
     solver_output, block_name, current_cost = optimize_block(bytecodes, stack_size, contract_name, block_id)
 
@@ -91,12 +92,18 @@ def optimize_asm_block(block, contract_name):
 
     instruction_output, _, pushed_output, total_gas = generate_info_from_solution(block_name, solver_output)
 
+    generate_disasm_sol(block_name, solver_output)
+
+    return []
+
     # Found solution does not improve the previous one, so we return the same block
-    if total_gas >= current_cost:
-        return block
+    # print(total_gas, current_cost)
+    #if total_gas >= current_cost:
+    #    return block
     # TODO: generate new block from instruction output + pushed_output
-    else:
-        pass
+    #else:
+    #    print("LLEGUE!")
+    #    return block
 
 
 def optimize_asm(file_name):
@@ -123,5 +130,7 @@ def optimize_asm(file_name):
 
 
 if __name__ == '__main__':
+    ap = argparse.ArgumentParser(description='Backend of gasol tool')
+    ap.add_argument('json_path', help='Path to json file that contains the SFS')
     file_name = "salida"
     optimize_asm(file_name)
