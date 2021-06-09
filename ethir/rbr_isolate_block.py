@@ -13,7 +13,7 @@ from graph_scc import get_entry_scc
 import traceback
 
 from syrup_optimization import smt_translate_isolate
-from global_params import costabs_path, tmp_path
+from global_params import costabs_path, tmp_path, costabs_folder
 
 
 # costabs_path = "/tmp/costabs/" 
@@ -1550,7 +1550,7 @@ for each smart contract.
 -executions refers to the number of smart contract that has been translated. int.
 '''
 def write_rbr(rule,block_id,cname = None):
-    if "costabs" not in os.listdir(tmp_path):
+    if costabs_folder not in os.listdir(tmp_path):
         os.mkdir(costabs_path)
 
     if block_id !=-1:

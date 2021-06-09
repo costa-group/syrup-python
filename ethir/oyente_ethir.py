@@ -15,7 +15,8 @@ from timeit import default_timer as dtimer
 from utils import run_command, process_hashes, process_isolate_block
 from input_helper import InputHelper
 import traceback
-from global_params import syrup_path, costabs_path, tmp_path
+from global_params import syrup_path, costabs_path, tmp_path, costabs_folder
+import shutil
 
 
 # syrup_path = "/tmp/costabs/jsons/"
@@ -76,35 +77,27 @@ def has_dependencies_installed():
     return True
 
 def clean_dir():
-    ext = ["rbr","cfg","txt","config","dot","csv","c","pl","log","sol","bl","disasm","json"]
-    if "costabs" in os.listdir(tmp_path):
+    # ext = ["rbr","cfg","txt","config","dot","csv","c","pl","log","sol","bl","disasm","json"]
+    ext = ["rbr", "cfg", "txt", "config", "dot", "csv", "c", "pl", "sol", "bl", "disasm", "json"]
+    if costabs_folder in os.listdir(tmp_path):
         for elem in os.listdir(costabs_path):
             last = elem.split(".")[-1]
             if last in ext:
                 os.remove(costabs_path+elem)
 
-
         if "jsons" in os.listdir(costabs_path):
-            for e in os.listdir(syrup_path):
-                os.remove(syrup_path+"/"+e)
-            os.rmdir(syrup_path)
+            shutil.rmtree(costabs_path + "jsons")
 
         if "disasms" in os.listdir(costabs_path):
-            for e in os.listdir(costabs_path+"/disasms"):
-                os.remove(costabs_path+"/disasms/"+e)
-            os.rmdir(costabs_path+"/disasms")
+            shutil.rmtree(costabs_path + "disasms")
 
         if "smt_encoding" in os.listdir(costabs_path):
-            for e in os.listdir(costabs_path+"/smt_encoding"):
-                os.remove(costabs_path+"/smt_encoding/"+e)
-            os.rmdir(costabs_path+"/smt_encoding")
+            shutil.rmtree(costabs_path + "smt_encoding")
 
         if "solutions" in os.listdir(costabs_path):
-            for e in os.listdir(costabs_path+"/solutions"):
-                os.remove(costabs_path+"/solutions/"+e)
-            os.rmdir(costabs_path+"/solutions")
-            
-            
+            shutil.rmtree(costabs_path + "solutions")
+
+
 '''
 The flag -i has to be used with the flag -v
 '''            

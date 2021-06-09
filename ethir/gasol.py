@@ -2,9 +2,8 @@
 from rbr_rule import RBRRule
 import os
 from utils import compute_ccomponent
-# CONSTANTS
-costabs_path = "/tmp/costabs/" 
-tmp_path = "/tmp/"
+from global_params import syrup_path, costabs_path, tmp_path, costabs_folder
+
 
 def print_methods(rbr,source_map,contract_name) :
     
@@ -99,7 +98,7 @@ def get_optimize_method (block,source_map,fields,fields_written):
     source = source[:lastBracePos] + '\n     {1}\n' + source[lastBracePos:]
 
     returnPos = source.find("return ")
-    if returnPos <> -1 :
+    if returnPos != -1 :
         splitRes = source.split("return ")
 
         res = splitRes[0]
@@ -209,7 +208,7 @@ def clean_fields_array(array_fields,fields):
         del fields[a]
 
 def write_file(optimized,cname = None):
-    if "costabs" not in os.listdir(tmp_path):
+    if costabs_folder not in os.listdir(tmp_path):
         os.mkdir(costabs_path)
 
     name = costabs_path+cname[0:-4]+"_opt.sol"
@@ -219,7 +218,7 @@ def write_file(optimized,cname = None):
     f.close()
 
 def write_message_file(cname = None,t_msg=None, af= None):
-    if "costabs" not in os.listdir(tmp_path):
+    if costabs_folder not in os.listdir(tmp_path):
         os.mkdir(costabs_path)
 
     if cname == None:

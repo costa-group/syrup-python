@@ -56,6 +56,7 @@ GENERATE_TEST_CASES = 0
 PARALLEL = 0
 
 #Paths
-syrup_path = "/tmp/costabs/jsons"
-costabs_path = "/tmp/costabs/"
 tmp_path = "/tmp/"
+costabs_path = "/tmp/gasol/"
+syrup_path = "/tmp/gasol/jsons"
+costabs_folder = "gasol"

@@ -31,6 +31,7 @@ from utils import *#cfg_dot, write_cfg, update_map, get_public_fields, getLevel,
 from opcodes import get_opcode
 from graph_scc import Graph_SCC, get_entry_all,filter_nested_scc
 from pattern import look_for_string_pattern,check_sload_fragment_pattern,sstore_fragment
+from global_params import costabs_folder
 
 log = logging.getLogger(__name__)
 
@@ -3240,7 +3241,7 @@ def component_of_aux(block,visited):
     return visited
             
 def generate_saco_config_file(cname):
-    if "costabs" not in os.listdir(tmp_path):
+    if costabs_folder not in os.listdir(tmp_path):
         os.mkdir(costabs_path)
         
     if cname == None:
@@ -3279,7 +3280,7 @@ def process_argument_function(arg):
 def generate_verify_config_file(cname):
     to_write = []
     remove_getters_has_invalid()
-    if "costabs" not in os.listdir(tmp_path):
+    if costabs_folder not in os.listdir(tmp_path):
         os.mkdir(costabs_path)
         
     if cname == None:
@@ -3503,7 +3504,7 @@ def get_evm_block():
             str_b = str_b+op_val+num
         blocks[b] = str_b
 
-    if "costabs" not in os.listdir(tmp_path):
+    if costabs_folder not in os.listdir(tmp_path):
         os.mkdir(costabs_path)
     if "jsons" not in os.listdir(costabs_path):
         os.mkdir(syrup_path)

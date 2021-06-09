@@ -5,7 +5,7 @@ import  opcodes
 import os
 import math
 from timeit import default_timer as dtimer
-from global_params import syrup_path, costabs_path, tmp_path
+from global_params import syrup_path, costabs_path, tmp_path, costabs_folder
 
 global visited
 visited = []
@@ -4538,7 +4538,7 @@ def get_evm_block(instructions):
         str_b = str_b+op_val+num
     blocks[b] = str_b
 
-    if "costabs" not in os.listdir(tmp_path):
+    if costabs_folder not in os.listdir(tmp_path):
         os.mkdir(costabs_path)
     if "blocks" not in os.listdir(costabs_path):
         os.mkdir(syrup_path)
