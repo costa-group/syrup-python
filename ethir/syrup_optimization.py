@@ -2704,7 +2704,7 @@ def translate_last_subblock(rule,block,sstack,sstack_idx,idx,isolated):
                 tstack = generate_vars_target_stack(num_guard,instructions[-1],opcodes)[::-1]
         else:
             
-            tstack = generate_target_stack_idx(sstack_idx+1,opcodes)[::-1]
+            tstack = generate_target_stack_idx(len(sstack),opcodes)[::-1]
         get_s_counter(sstack,tstack)
         # print ("GENERATING ENCONDING")
         # print (instructions)

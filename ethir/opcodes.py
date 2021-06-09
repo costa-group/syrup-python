@@ -90,6 +90,7 @@ opcodes = {
     "STATEROOT": [0xfb, 1, 1],
     "TXEXECGAS": [0xfc, 0, 1],
     "CALLSTATIC": [0xfd, 7, 1],
+    "KECCAK256": [0x20, 2, 1],
     "INVALID": [0xfe, 0, 0],  # Not an opcode use to cause an exception
     "SUICIDE": [0xff, 1, 0],
     "ASSIGNINMUTABLE": [0x00,2,0], #Yul opcode
@@ -223,6 +224,8 @@ def get_ins_cost(opcode,params=None):
         return GCOST["Gjumpdest"]
     elif opcode == "SHA3":
         return GCOST["Gsha3"]
+    elif opcode == "KECCAK256":
+        return GCOST["Gsha3"]
     elif opcode == "CREATE":
         return GCOST["Gcreate"]
     elif opcode in ("CALL", "CALLCODE","DELEGATECALL","STATICCALL"):
@@ -288,5 +291,7 @@ def get_syrup_cost(opcode,params=None):
         return GCOST["Gsha3"]
     elif opcode == "SSTORE":
         return 5000
+    elif opcode == "KECCAK256":
+        return GCOST["Gsha3"]
     return 0
     

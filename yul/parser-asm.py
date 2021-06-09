@@ -10,7 +10,7 @@ def buildAsmBytecode(instruction):
     begin = instruction["begin"]
     end = instruction["end"]
     name = instruction["name"]
-    source = instruction["source"]
+    source = instruction.get("source", -1)
     value = instruction.get("value", None)
 
     asm_bytecode = AsmBytecode(begin,end,source,name,value)

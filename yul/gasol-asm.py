@@ -17,7 +17,8 @@ from disasm_generation import generate_info_from_solution, generate_disasm_sol
 from solver_solution_verify import check_solver_output_is_correct
 
 def isYulInstruction(opcode):
-    if opcode.find("tag") ==-1 and opcode.find("#") ==-1 and opcode.find("$")==-1:
+    if opcode.find("tag") ==-1 and opcode.find("#") ==-1 and opcode.find("$") ==-1 \
+            and opcode.find("data") ==-1 and opcode.find("DEPLOY") ==-1:
         return False
     else:
         return True
@@ -44,6 +45,10 @@ def optimize_block(bytecodes, stack_size, cname, block_id):
 
             elif op.startswith("PUSH") and op.find("[$]")!=-1:
                 op = "PUSH[$]"+" 0x"+b.getValue()
+
+            elif op.startswith("PUSH"):
+                # Fixme: add ALL PUSH variants: PUSH data, PUSH DEPLOYADDRESS
+                op = "PUSHTAG" + " 0x" + b.getValue()
 
         instructions.append(op)
         

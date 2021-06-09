@@ -946,6 +946,11 @@ def sym_exec_block(params, block, pre_block, depth, func_call,level,path):
             sha_identify = True
             fake_stack.insert(0,1)
 
+        if instr.startswith("KECCAK256",0):
+            # print block
+            sha_identify = True
+            fake_stack.insert(0,1)
+
         if debug_info:
             print ("Stack despues de la ejecucion de la instruccion "+ instr)
             print (stack)
@@ -1859,7 +1864,7 @@ def sym_exec_ins(params, block, instr, func_call,stack_first,instr_index):
         
     # 20s: SHA3
     #
-    elif opcode == "SHA3":
+    elif opcode == "SHA3" or opcode == "KECCAK256":
         if len(stack) > 1:
             global_state["pc"] = global_state["pc"] + 1
             s0 = stack.pop(0)
