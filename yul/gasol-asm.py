@@ -131,6 +131,6 @@ def optimize_asm(file_name):
 
 if __name__ == '__main__':
     ap = argparse.ArgumentParser(description='Backend of gasol tool')
-    ap.add_argument('json_path', help='Path to json file that contains the SFS')
-    file_name = "salida"
-    optimize_asm(file_name)
+    ap.add_argument('json_path', help='Path to json file that contains the asm')
+    args = ap.parse_args()
+    optimize_asm(args.json_path)
