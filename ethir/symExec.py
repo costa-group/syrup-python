@@ -28,7 +28,7 @@ from global_params import syrup_path, costabs_path, tmp_path
 
 import rbr
 from utils import *#cfg_dot, write_cfg, update_map, get_public_fields, getLevel, update_sstore_map,correct_map_fields1, get_push_value, get_initial_block_address, check_graph_consistency, find_first_closing_parentheses, check_if_same_stack
-from opcodes import get_opcode
+from opcodes import get_opcode,get_syrup_cost
 from graph_scc import Graph_SCC, get_entry_all,filter_nested_scc
 from pattern import look_for_string_pattern,check_sload_fragment_pattern,sstore_fragment
 from global_params import costabs_folder
@@ -328,6 +328,11 @@ def build_cfg_and_analyze(evm_version):
         #     get_evm_block()
         construct_static_edges()
         #print_cfg()
+
+        l, g = compute_len_and_gas()
+        s_name = source_n.split("/")[-1].split(".")[0]
+        print("OPT INFO "+s_name+": "+str(l)+","+str(g))
+        print ("COMPLETE LIST "+s_name+": "+str(len(vertices)))
         full_sym_exec()  # jump targets are constructed on the fly
 
     #print mapping_state_variables
@@ -843,6 +848,8 @@ def sym_exec_block(params, block, pre_block, depth, func_call,level,path):
     global stack_h
     global calldataload_values
     global jump_type
+    global len_sm
+    global gas
 
     visited = params.visited
     stack = params.stack
@@ -1111,7 +1118,7 @@ def get_all_blocks_with_same_stack(successor, stack):
     same_stack_successors = []
     
     for found_successor in all_successor_copies:
-        list_stacks = vertices[found_successor].get_stacks()
+        list_stacks = list(vertices[found_successor].get_stacks())
         
         # If there's no stack in the node, we must check if our stack is empty, or doesn't contain jump values info.
         # if list_stacks == [[]]:
@@ -1176,7 +1183,7 @@ def copy_already_visited_node(successor, new_params, block, depth, func_call,cur
     # This maps have already been initialized for each block,
     # therefore we initilize them for new blocks, using info from successor (not neccesary)
     stack_h[new_successor_address] = [float("inf"),float("inf")]
-    calldataload_values[new_successor_address] = calldataload_values[successor]
+    calldataload_values[new_successor_address] = list(calldataload_values[successor])
 
     # Edges must be initialized to None, as it doesn't share the same list as the original node
     edges[new_successor_address] = []
@@ -3534,3 +3541,37 @@ def remove_unnecesary_opcodes(idx, instructions):
         return (j,instructions[:idx+1])
     else:
         return ("",instructions)
+
+
+def compute_len_and_gas():
+    l = 0
+    g = 0
+
+    split_block = ["LOG0","LOG1","LOG2","LOG3","LOG4","CALLDATACOPY","CODECOPY","EXTCODECOPY","RETURNDATACOPY","MSTORE8","CALL","STATICCALL","DELEGATECALL","CREATE","CREATE2","ASSIGNINMUTABLE","JUMPDEST","JUMP","JUMPI","ASSERTFAIL","RETURN","REVERT","SUICIDE","STOP","MSTORE","SSTORE"]
+
+    for b in vertices:
+        instructions = list(vertices[b].get_instructions())
+
+        # print(b)
+        # print(instructions)
+
+
+        if "JUMPI " in instructions:
+            instructions.pop()
+            instructions.pop()
+            last = instructions.pop().strip()
+            while last in ["GT","ISZERO","EQ","LT","SGT","SLT"]:
+                last = instructions.pop().strip()
+                
+            instructions.append(last)
+            
+        # print(instructions)
+        # print("********************")
+        for i in instructions:
+            if i.strip() not in split_block:
+                # print(i.strip())
+                l+=1
+                g+=get_syrup_cost(i.strip())
+            # else:
+            #     print(i.strip())x
+    return (l,g)
