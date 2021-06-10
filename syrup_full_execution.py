@@ -104,7 +104,9 @@ def main():
     global args
     global encoding_file
     global tout
-    
+
+    init()
+
     parser = argparse.ArgumentParser()
     group = parser.add_mutually_exclusive_group(required=True)
 
@@ -163,7 +165,6 @@ def main():
     if args.tout is not None:
         tout = args.tout
 
-    init()    
     clean_dir()
     
     if "gasol" not in os.listdir("/tmp/"):
