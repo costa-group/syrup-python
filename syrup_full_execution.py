@@ -61,7 +61,7 @@ def execute_ethir():
 
 
 def generate_files_for_solution(block_name, solver_output):
-    generate_disasm_sol(block_name, solver_output)
+    generate_disasm_sol(block_name.split("_")[0], block_name, solver_output)
 
 
 def check_log_information(files, log_dict):
@@ -135,7 +135,7 @@ def main():
                     action='store_true', dest='at_most')
     parser.add_argument('-pushed-once', help='add a constraint to indicate that each pushed value is pushed at least once',
                     action='store_true', dest='pushed_once')
-    parser.add_argument("-tout", metavar='timeout', action='store', type=int, help="Timeout in seconds.")
+    parser.add_argument("-tout", metavar='timeout', action='store', type=int, help="Timeout in seconds.", default=tout)
     parser.add_argument("-inequality-gas-model", dest='inequality_gas_model', action='store_true',
                     help="Soft constraints with inequalities instead of equalities")
     parser.add_argument("-instruction-order", help='add a constraint representing the order among instructions',

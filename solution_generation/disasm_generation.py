@@ -54,7 +54,7 @@ def change_opcode_push_type(position, opcode, pushed_value):
     return position, opcode
 
 
-def generate_file_names(block_name):
+def generate_file_names(contract_name, block_name):
     global instruction_json
     global opcodes_json
     global gas_json
@@ -66,17 +66,17 @@ def generate_file_names(block_name):
     opcodes_json = tmp_costabs+"smt_encoding/"+block_name+"_opcode.json"
     gas_json = tmp_costabs+"smt_encoding/"+block_name+"_gas.json"
 
-    instruction_final_solution = tmp_costabs+"solutions/disasm/"+block_name+"_optimized.disasm_opt"
-    opcodes_final_solution = tmp_costabs+"solutions/evm/"+block_name+"_optimized.evm"
-    gas_final_solution = tmp_costabs + "solutions/total_gas/" + block_name + "_real_gas.txt"
+    instruction_final_solution = tmp_costabs+"solutions/" + contract_name + "/disasm/" + block_name + "_optimized.disasm_opt"
+    opcodes_final_solution = tmp_costabs+"solutions/" + contract_name + "/evm/" + block_name+"_optimized.evm"
+    gas_final_solution = tmp_costabs + "solutions/" + contract_name + "/total_gas/" + block_name + "_real_gas.txt"
 
 
 # Generates three structures containing all the info from the solver: the sequence of instructions
 # in plain text, the sequence of instructions converted to hexadecimal, the pushed values corresponding to push
 # opcodes and an int that contains the gas cost of this solution.
-def generate_info_from_solution(block_name, solver_output):
+def generate_info_from_solution(contract_name, block_name, solver_output):
     init()
-    generate_file_names(block_name)
+    generate_file_names(contract_name, block_name)
     
     with open(opcodes_json, 'r') as path:
         opcodes_theta_dict = json.load(path)
@@ -121,12 +121,12 @@ def generate_info_from_solution(block_name, solver_output):
     return instr_sol, opcode_sol, pushed_values_decimal, total_gas
 
 
-def generate_disasm_sol(block_name, solver_output):
-    instr_sol, opcode_sol, pushed_values_decimal, total_gas = generate_info_from_solution(block_name, solver_output)
+def generate_disasm_sol(contract_name, block_name, solver_output):
+    instr_sol, opcode_sol, pushed_values_decimal, total_gas = generate_info_from_solution(contract_name, block_name, solver_output)
 
-    pathlib.Path(tmp_costabs + "solutions/total_gas/").mkdir(parents=True, exist_ok=True)
-    pathlib.Path(tmp_costabs + "solutions/disasm/").mkdir(parents=True, exist_ok=True)
-    pathlib.Path(tmp_costabs + "solutions/evm/").mkdir(parents=True, exist_ok=True)
+    pathlib.Path(tmp_costabs+"solutions/" + contract_name + "/disasm/").mkdir(parents=True, exist_ok=True)
+    pathlib.Path(tmp_costabs+"solutions/" + contract_name + "/evm/").mkdir(parents=True, exist_ok=True)
+    pathlib.Path(tmp_costabs+"solutions/" + contract_name + "/total_gas/").mkdir(parents=True, exist_ok=True)
 
 
     with open(opcodes_final_solution, 'w') as opcodes_file:
