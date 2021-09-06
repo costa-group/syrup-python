@@ -1,17 +1,23 @@
 #!/bin/bash
 
-SOL_DIR=/home/pabgordi/tosem20/most-called-contracts
-RESULTS_OK=/home/pabgordi/tosem20/results-a/SFS_OK
-RESULTS_TIMEOUT=/home/pabgordi/tosem20/results-a/SFS_TIMEOUT
-RESULTS_ERROR=/home/pabgordi/tosem20/results-a/SFS_ERROR
-ETHIR_DIR=/home/pabgordi/tosem20/syrup/ethir
-COSTABS_DIR=/home/pabgordi/tmp/costabs
+SOL_DIR=../examples/tosem-benckmarks-a
+RESULTS_OK=../results-a/SFS_OK
+RESULTS_TIMEOUT=../results-a/SFS_TIMEOUT
+RESULTS_ERROR=../results-a/SFS_ERROR
+ETHIR_DIR=../ethir
+COSTABS_DIR=/tmp/syrup
 ETHIR_COMMAND="python3 $ETHIR_DIR/oyente_ethir.py -s"
 ETHIR_ARGS=" -syrup -storage"
 TIMEOUT=210s
 
 rm -rf $SOL_DIR/*.evm $SOL_DIR/*.disasm
+rm -rf ../results-a/SFS_OK
+rm -rf ../results-a/SFS_TIMEOUT
+rm -rf ../results-a/SFS_ERROR
+rm -rf ../results-a/logs
 
+mkdir ./tmp/syrup
+mkdir ../results-a
 mkdir ../results-a/SFS_OK
 mkdir ../results-a/SFS_TIMEOUT
 mkdir ../results-a/SFS_ERROR
