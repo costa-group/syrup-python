@@ -1,6 +1,6 @@
 #!/bin/bash
 
-SOL_DIR=../examples/tosem-benckmarks-a
+SOL_DIR=../examples/tosem-benchmarks-a
 RESULTS_OK=../results-a/SFS_OK
 RESULTS_TIMEOUT=../results-a/SFS_TIMEOUT
 RESULTS_ERROR=../results-a/SFS_ERROR
@@ -11,18 +11,18 @@ ETHIR_ARGS=" -syrup -storage"
 TIMEOUT=210s
 
 rm -rf $SOL_DIR/*.evm $SOL_DIR/*.disasm
-rm -rf ../results-a/SFS_OK
-rm -rf ../results-a/SFS_TIMEOUT
-rm -rf ../results-a/SFS_ERROR
-rm -rf ../results-a/logs
+rm -rf ../results-a
+rm -rf /tmp/syrup
 
-mkdir ./tmp/syrup
+mkdir /tmp/syrup
 mkdir ../results-a
 mkdir ../results-a/SFS_OK
 mkdir ../results-a/SFS_TIMEOUT
 mkdir ../results-a/SFS_ERROR
 mkdir ../results-a/logs
+mkdir ../results-a/sfs-a
 
+echo ls $SOL_DIR
 SOL_FILES=`ls $SOL_DIR`
 
 echo $SOL_FILES
@@ -40,7 +40,9 @@ for SOL in $SOL_FILES; do
         echo "$SOL OK"
         mkdir $RESULTS_OK/$FNAME
         cp -r $COSTABS_DIR/* $RESULTS_OK/$FNAME
+        cp $COSTABS_DIR/jsons/* ../results-a/sfs-a
         cp $SOL_DIR/$SOL $RESULTS_OK/$FNAME
+        
     elif [ $RES -eq "124" ]; then
         echo "$SOL BASH TIMEOUT"
         cp $SOL_DIR/$SOL $RESULTS_TIMEOUT/
