@@ -57,6 +57,6 @@ PARALLEL = 0
 
 #Paths
 tmp_path = "/tmp/"
-costabs_path = "/tmp/gasol/"
-syrup_path = "/tmp/gasol/jsons"
-costabs_folder = "gasol"
+costabs_path = "/tmp/syrup/"
+syrup_path = "/tmp/syrup/jsons"
+costabs_folder = "syrup"
