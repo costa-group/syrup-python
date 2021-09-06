@@ -1,22 +1,28 @@
 #!/bin/bash
 
-SOL_DIR=/home/pabgordi/tosem20/most-called-contracts
-RESULTS_OK=/home/pabgordi/tosem20/results-b/SFS_OK
-RESULTS_TIMEOUT=/home/pabgordi/tosem20/results-b/SFS_TIMEOUT
-RESULTS_ERROR=/home/pabgordi/tosem20/results-b/SFS_ERROR
-ETHIR_DIR=/home/pabgordi/tosem20/syrup/ethir
-COSTABS_DIR=/home/pabgordi/tmp/costabs
+SOL_DIR=../examples/tosem-benchmarks-b
+RESULTS_OK=../results-b/SFS_OK
+RESULTS_TIMEOUT=../results-b/SFS_TIMEOUT
+RESULTS_ERROR=../results-b/SFS_ERROR
+ETHIR_DIR=../ethir
+COSTABS_DIR=/tmp/syrup
 ETHIR_COMMAND="python3 $ETHIR_DIR/oyente_ethir.py -s"
 ETHIR_ARGS=" -b -syrup -storage"
 TIMEOUT=210s
 
 rm -rf $SOL_DIR/*.evm $SOL_DIR/*.disasm
+rm -rf ../results-b
+rm -rf /tmp/syrup
 
+mkdir /tmp/syrup
+mkdir ../results-b
 mkdir ../results-b/SFS_OK
 mkdir ../results-b/SFS_TIMEOUT
 mkdir ../results-b/SFS_ERROR
 mkdir ../results-b/logs
+mkdir ../results-b/sfs-b
 
+echo ls $SOL_DIR
 SOL_FILES=`ls $SOL_DIR`
 
 echo $SOL_FILES
@@ -34,7 +40,9 @@ for SOL in $SOL_FILES; do
         echo "$SOL OK"
         mkdir $RESULTS_OK/$FNAME
         cp -r $COSTABS_DIR/* $RESULTS_OK/$FNAME
+        cp $COSTABS_DIR/jsons/* ../results-b/sfs-b
         cp $SOL_DIR/$SOL $RESULTS_OK/$FNAME
+        
     elif [ $RES -eq "124" ]; then
         echo "$SOL BASH TIMEOUT"
         cp $SOL_DIR/$SOL $RESULTS_TIMEOUT/
