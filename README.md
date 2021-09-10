@@ -70,7 +70,7 @@ Add ot to the PATh and test that it is installed.
  sudo apt-get install ethereum
 ```
 
-### 3. Install [Z3]
+### 3. Install [Z3](https://github.com/Z3Prover/z3/releases)
 
 Use `pip install` command to install Z3
 
@@ -118,7 +118,7 @@ three folders containing all the relevant information for each optimized sub-blo
 ### Max-SMT encoding
 
 `Syrup 2.0` aims to determine the most suitable configuration in order to make the framework feasible to include in _real-world_ compilers. As such, 
-there exists many flags that allow the user to specify different combinations of constraints and timeouts. These configurations have been studied in detail and a visualizer[http://costa.fdi.ucm.es/syrup-visualizer] has been implemented to interpret the experiments.
+there exists many flags that allow the user to specify different combinations of constraints and timeouts. These configurations have been studied in detail and a [visualizer](http://costa.fdi.ucm.es/syrup-visualizer) has been implemented to interpret the experiments.
 
 By default, the encoding that has been determined to work the best so far is enabled. It can be disabled using -disable-default-encoding flag :
 
