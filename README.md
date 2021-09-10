@@ -68,3 +68,12 @@ pip install six
 pip install requests
 ```
 
+### 5. Insrtall the SMT Solvers
+
+Download an static executable of the SMT solvers used from the
+following links:
+
+* Z3: https://github.com/Z3Prover/z3/releases/tag/z3-4.8.12
+* Barcelogic: Send an email to alberu04@ucm.es. Subject: "Static
+  Executable Syrup".
+* OptiMathSAT: http://optimathsat.disi.unitn.it/pages/download-js.html
