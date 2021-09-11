@@ -1,8 +1,0 @@
-block0()=>
-	s(0) = 0
-	nop(PUSH)
-	s(1) = 5
-	nop(PUSH)
-	sstore(s(1),s(0))
-	nop(SSTORE)
-

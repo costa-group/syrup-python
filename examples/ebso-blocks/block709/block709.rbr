@@ -1,8 +1,0 @@
-block0(s(1), s(0))=>
-	s(0) = s(1)%s(0)
-	nop(MOD)
-	s(1) = 1
-	nop(PUSH)
-	s(0)= eq(s(1), s(0))
-	nop(EQ)
-

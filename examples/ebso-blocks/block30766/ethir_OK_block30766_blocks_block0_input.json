@@ -1,1 +1,0 @@
-{"max_progr_len": 7, "src_ws": ["s(0)"], "vars": ["s(0)", "s(5)", "s(6)"], "init_progr_len": 5, "max_sk_sz": 4, "current_cost": 21, "user_instrs": [{"outpt_sk": ["s(6)"], "commutative": false, "inpt_sk": [1000000000000000000000, "s(0)"], "gas": 3, "disasm": "GT", "opcode": "11", "id": "GT_0"}], "tgt_ws": [6885, "s(6)", "s(5)", "s(0)"]}

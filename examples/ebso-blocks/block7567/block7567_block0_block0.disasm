@@ -1,5 +1,0 @@
-PUSH
-DUP2
-EQ
-DUP1
-PUSH

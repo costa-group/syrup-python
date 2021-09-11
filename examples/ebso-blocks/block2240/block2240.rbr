@@ -1,9 +1,0 @@
-block0(s(0))=>
-	nop(POP)
-	s(0) = 50000
-	nop(PUSH)
-	s(1) = gas
-	nop(GAS)
-	s(0) = gt(s(1), s(0))
-	nop(GT)
-

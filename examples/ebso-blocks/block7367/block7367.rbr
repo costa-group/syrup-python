@@ -1,9 +1,0 @@
-block0(s(0))=>
-	nop(POP)
-	s(0) = 4117
-	nop(PUSH)
-	s(1) = address
-	nop(ADDRESS)
-	s(2) = 4959
-	nop(PUSH)
-

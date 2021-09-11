@@ -1,8 +1,0 @@
-block0()=>
-	s(0) = 9050
-	nop(PUSH)
-	s(1) = gas
-	nop(GAS)
-	s(0) = s(1)-s(0)
-	nop(SUB)
-

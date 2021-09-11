@@ -1,6 +1,0 @@
-block0()=>
-	s(0) = gasprice
-	nop(GASPRICE)
-	s(1) = 1376
-	nop(PUSH)
-

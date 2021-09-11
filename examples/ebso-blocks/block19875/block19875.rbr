@@ -1,9 +1,0 @@
-block0(s(1), s(0))=>
-	nop(POP)
-	s(1) = 2500000000000000000000
-	nop(PUSH)
-	s(2) = s(0)
-	nop(DUP2)
-	s(1) = lt(s(2), s(1))
-	nop(LT)
-

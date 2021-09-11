@@ -1,1 +1,0 @@
-{"max_progr_len": 3, "src_ws": ["s(0)"], "vars": ["s(0)", "s(4)"], "init_progr_len": 3, "max_sk_sz": 4, "current_cost": 8, "user_instrs": [{"outpt_sk": ["s(4)"], "commutative": false, "inpt_sk": [], "gas": 2, "disasm": "CALLDATASIZE", "opcode": "36", "id": "CALLDATASIZE_0"}], "tgt_ws": ["s(0)", 4, "s(4)", "s(0)"]}

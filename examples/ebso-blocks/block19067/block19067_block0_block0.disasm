@@ -1,5 +1,0 @@
-PUSH
-DUP3
-AND
-GT
-PUSH

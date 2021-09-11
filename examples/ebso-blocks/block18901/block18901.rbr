@@ -1,8 +1,0 @@
-block0()=>
-	s(0) = 6912
-	nop(PUSH)
-	s(1) = 100000000000
-	nop(PUSH)
-	s(2) = 15368
-	nop(PUSH)
-

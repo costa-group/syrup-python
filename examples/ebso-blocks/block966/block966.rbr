@@ -1,6 +1,0 @@
-block0(s(1), s(0))=>
-	nop(POP)
-	nop(POP)
-	s(0) = 1
-	nop(PUSH)
-

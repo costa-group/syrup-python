@@ -1,8 +1,0 @@
-block0(s(1), s(0))=>
-	s(2) = s(0)
-	nop(DUP2)
-	s(3) = 6709
-	nop(PUSH)
-	s(4) = 17278
-	nop(PUSH)
-

@@ -1,1 +1,0 @@
-{"max_progr_len": 3, "src_ws": ["s(0)"], "vars": ["s(0)", "s(2)"], "init_progr_len": 3, "max_sk_sz": 3, "current_cost": 11, "user_instrs": [{"outpt_sk": ["s(2)"], "commutative": true, "inpt_sk": [6, "s(0)"], "gas": 5, "disasm": "MUL", "opcode": "02", "id": "MUL_0"}], "tgt_ws": ["s(2)", "s(0)"]}

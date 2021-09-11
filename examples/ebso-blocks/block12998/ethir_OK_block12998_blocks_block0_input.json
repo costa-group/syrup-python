@@ -1,1 +1,0 @@
-{"max_progr_len": 5, "src_ws": ["s(0)"], "vars": ["s(0)", "s(6)"], "init_progr_len": 5, "max_sk_sz": 6, "current_cost": 14, "user_instrs": [{"outpt_sk": ["s(6)"], "commutative": false, "inpt_sk": [], "gas": 2, "disasm": "NUMBER", "opcode": "43", "id": "NUMBER_0"}], "tgt_ws": [3938, "s(6)", "s(0)", 3592, 0, "s(0)"]}

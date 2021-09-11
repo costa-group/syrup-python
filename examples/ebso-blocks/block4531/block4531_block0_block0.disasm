@@ -1,6 +1,0 @@
-POP
-PUSH
-DUP4
-SUB
-DUP5
-LT

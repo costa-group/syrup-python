@@ -1,7 +1,0 @@
-block0(s(0))=>
-	nop(POP)
-	s(0) = address
-	nop(ADDRESS)
-	s(0) = balance
-	nop(BALANCE)
-

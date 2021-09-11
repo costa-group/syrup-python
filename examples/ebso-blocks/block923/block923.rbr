@@ -1,8 +1,0 @@
-block0(s(2), s(1), s(0))=>
-	s(1) = s(2)/s(1)
-	nop(DIV)
-	s(0) = s(1)*s(0)
-	nop(MUL)
-	s(1) = 4490
-	nop(PUSH)
-

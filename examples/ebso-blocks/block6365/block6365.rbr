@@ -1,8 +1,0 @@
-block0()=>
-	s(0) = 9793
-	nop(PUSH)
-	s(1) = caller
-	nop(CALLER)
-	s(2) = 6721
-	nop(PUSH)
-

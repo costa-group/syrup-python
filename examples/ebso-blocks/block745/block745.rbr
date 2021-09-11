@@ -1,6 +1,0 @@
-block0()=>
-	s(0) = timestamp
-	nop(TIMESTAMP)
-	s(1) = 17774
-	nop(PUSH)
-

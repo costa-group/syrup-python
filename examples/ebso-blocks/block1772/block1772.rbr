@@ -1,9 +1,0 @@
-block0(s(2), s(1), s(0))=>
-	s(3) = 1500
-	nop(PUSH)
-	s(4) = s(0)
-	s(0) = s(3)
-	s(3) = s(4)
-	nop(SWAP3)
-	nop(POP)
-

@@ -1,1 +1,0 @@
-{"max_progr_len": 10, "src_ws": ["s(0)", "s(1)", "s(2)"], "vars": ["s(0)", "s(1)", "s(2)", "s(5)"], "init_progr_len": 10, "max_sk_sz": 6, "current_cost": 56, "user_instrs": [{"outpt_sk": ["s(5)"], "commutative": false, "inpt_sk": ["s(0)", 64], "gas": 30, "disasm": "SHA3", "opcode": "20", "id": "SHA3_0"}], "tgt_ws": ["s(0)", "s(5)", "s(1)", 1940, "s(1)"]}

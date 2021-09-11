@@ -1,5 +1,0 @@
-PUSH
-DUP8
-LT
-DUP1
-PUSH

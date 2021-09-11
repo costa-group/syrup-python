@@ -1,5 +1,0 @@
-POP
-DUP9
-PUSH
-SLOAD
-LT

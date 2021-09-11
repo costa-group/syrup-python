@@ -1,6 +1,0 @@
-POP
-PUSH
-DUP8
-PUSH
-AND
-LT

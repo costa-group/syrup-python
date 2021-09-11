@@ -1,8 +1,0 @@
-block0()=>
-	s(0) = calldatasize
-	nop(CALLDATASIZE)
-	s(1) = 0
-	nop(PUSH)
-	s(2) = 24
-	nop(PUSH)
-

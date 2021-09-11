@@ -1,9 +1,0 @@
-block0(s(0))=>
-	nop(POP)
-	s(0) = 30000000000000000000
-	nop(PUSH)
-	s(1) = callvalue
-	nop(CALLVALUE)
-	s(0) = lt(s(1), s(0))
-	nop(LT)
-

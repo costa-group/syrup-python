@@ -1,1 +1,0 @@
-{"max_progr_len": 9, "src_ws": ["s(0)"], "vars": ["s(0)", "s(6)"], "init_progr_len": 9, "max_sk_sz": 6, "current_cost": 26, "user_instrs": [{"outpt_sk": ["s(6)"], "commutative": true, "inpt_sk": [1461501637330902918203684832716283019655932542975, "s(0)"], "gas": 3, "disasm": "AND", "opcode": "16", "id": "AND_0"}], "tgt_ws": [0, "s(6)", 0, 4, 0, "s(0)"]}

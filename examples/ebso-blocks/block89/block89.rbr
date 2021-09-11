@@ -1,6 +1,0 @@
-block0(s(1), s(0))=>
-	s(2) = s(1)
-	nop(DUP1)
-	s(3) = s(0)
-	nop(DUP3)
-

@@ -1,1 +1,0 @@
-{"max_progr_len": 17, "src_ws": [], "vars": ["s(4)"], "init_progr_len": 16, "max_sk_sz": 5, "current_cost": 49, "user_instrs": [{"outpt_sk": ["s(4)"], "commutative": false, "inpt_sk": [4], "gas": 3, "disasm": "CALLDATALOAD", "opcode": "35", "id": "CALLDATALOAD_0"}], "tgt_ws": [2912, "s(4)", 466]}

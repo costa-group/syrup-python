@@ -1,1 +1,0 @@
-{"max_progr_len": 11, "src_ws": ["s(0)", "s(1)", "s(2)"], "vars": ["s(0)", "s(1)", "s(2)", "s(7)"], "init_progr_len": 11, "max_sk_sz": 7, "current_cost": 228, "user_instrs": [{"outpt_sk": ["s(7)"], "commutative": false, "inpt_sk": [12], "gas": 200, "disasm": "SLOAD", "opcode": "54", "id": "SLOAD_0"}], "tgt_ws": [5962, "s(2)", "s(7)", 5718, 0, 0, "s(2)"]}

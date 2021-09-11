@@ -1,5 +1,0 @@
-POP
-DUP6
-MLOAD
-DUP4
-EQ

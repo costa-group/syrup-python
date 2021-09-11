@@ -1,8 +1,0 @@
-block0(s(2), s(1), s(0))=>
-	s(1) = s(2)+s(1)
-	nop(ADD)
-	sstore(s(1),s(0))
-	nop(SSTORE)
-	s(0) = 4285
-	nop(PUSH)
-

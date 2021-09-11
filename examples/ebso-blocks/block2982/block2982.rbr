@@ -1,8 +1,0 @@
-block0(s(0))=>
-	s(1) = callvalue
-	nop(CALLVALUE)
-	s(0) = gt(s(1), s(0))
-	nop(GT)
-	s(1) = 9930
-	nop(PUSH)
-

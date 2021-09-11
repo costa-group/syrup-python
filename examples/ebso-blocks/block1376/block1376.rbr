@@ -1,8 +1,0 @@
-block0(s(2), s(1), s(0))=>
-	s(1) = s(2)%s(1)
-	nop(MOD)
-	s(0) = lt(s(1), s(0))
-	nop(LT)
-	s(1) = 8527
-	nop(PUSH)
-

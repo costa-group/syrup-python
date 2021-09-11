@@ -1,6 +1,0 @@
-block0()=>
-	s(0) = 96
-	nop(PUSH)
-	s(1) = 64
-	nop(PUSH)
-

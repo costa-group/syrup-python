@@ -1,8 +1,0 @@
-block0()=>
-	s(0) = 193
-	nop(PUSH)
-	s(0) = calldataload
-	nop(CALLDATALOAD)
-	s(1) = 704
-	nop(PUSH)
-

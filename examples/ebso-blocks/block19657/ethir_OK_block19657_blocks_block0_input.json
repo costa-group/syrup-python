@@ -1,1 +1,0 @@
-{"max_progr_len": 7, "src_ws": ["s(0)", "s(1)", "s(2)"], "vars": ["s(0)", "s(1)", "s(2)", "s(5)"], "init_progr_len": 7, "max_sk_sz": 5, "current_cost": 22, "user_instrs": [{"outpt_sk": ["s(5)"], "commutative": false, "inpt_sk": ["s(0)", "s(1)"], "gas": 5, "disasm": "MOD", "opcode": "06", "id": "MOD_0"}], "tgt_ws": [15289, "s(5)", 6130, 6135, "s(5)"]}

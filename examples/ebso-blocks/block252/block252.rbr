@@ -1,6 +1,0 @@
-block0()=>
-	s(0) = origin
-	nop(ORIGIN)
-	s(1) = 32
-	nop(PUSH)
-

@@ -1,9 +1,0 @@
-block0(s(0))=>
-	nop(POP)
-	s(0) = 615201889161465874244513461769263459587665772405
-	nop(PUSH)
-	s(1) = caller
-	nop(CALLER)
-	s(0)= eq(s(1), s(0))
-	nop(EQ)
-

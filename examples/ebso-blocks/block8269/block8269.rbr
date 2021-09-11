@@ -1,9 +1,0 @@
-block0()=>
-	s(0) = 192
-	nop(PUSH)
-	s(1) = 4
-	nop(PUSH)
-	nop(POP)
-	s(1) = 1660
-	nop(PUSH)
-

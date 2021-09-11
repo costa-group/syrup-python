@@ -1,7 +1,0 @@
-block0(s(2), s(1), s(0))=>
-	nop(POP)
-	s(1) = mload(s(1))
-	nop(MLOAD)
-	s(0)= eq(s(1), s(0))
-	nop(EQ)
-

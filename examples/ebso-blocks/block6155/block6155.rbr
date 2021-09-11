@@ -1,8 +1,0 @@
-block0()=>
-	s(0) = 5504
-	nop(PUSH)
-	s(0) = mload(s(0))
-	nop(MLOAD)
-	s(1) = 5856
-	nop(PUSH)
-
