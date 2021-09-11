@@ -114,8 +114,6 @@ def main():
     parser.add_argument( "-b",   "--bytecode",               help="read bytecode in source instead of solidity file", action="store_true")
     
     #Added by Pablo Gordillo
-    parser.add_argument( "-d", "--debug",                   help="Display the status of the stack after each opcode", action = "store_true")
-    parser.add_argument( "-cfg", "--control-flow-graph",    help="Store the CFG", action="store_true")
     parser.add_argument( "-storage", "--storage",                 help="Split using SSTORE and MSTORE", action="store_true")
     #parser.add_argument("-ebso", "--ebso", help="Generate the info for EBSO in a json file", action = "store_true")
     parser.add_argument("-isb", "--isolate_block", help="Generate the RBR for an isolate block", action = "store_true")
