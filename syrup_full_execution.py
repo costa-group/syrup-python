@@ -28,7 +28,7 @@ def init():
     global disasm_generation_file
     disasm_generation_file = project_path + "/scripts/disasm_generation.py"
     global tmp_costabs
-    tmp_costabs = "/tmp/gasol/"
+    tmp_costabs = "/tmp/syrup/"
     global json_dir
     json_dir = tmp_costabs + "jsons/"
     global sol_dir
@@ -114,6 +114,13 @@ def main():
     parser.add_argument( "-b",   "--bytecode",               help="read bytecode in source instead of solidity file", action="store_true")
     
     #Added by Pablo Gordillo
+    parser.add_argument( "-e",   "--evm",                    help="Do not remove the .evm file.", action="store_true")
+    #Added by Pablo Gordillo
+    parser.add_argument( "-disasm", "--disassembly",        help="Consider a dissasembly evm file directly", action="store_true")
+    parser.add_argument( "-in", "--init",        help="Consider the initialization of the fields", action="store_true")
+    parser.add_argument( "-d", "--debug",                   help="Display the status of the stack after each opcode", action = "store_true")
+    parser.add_argument( "-cfg", "--control-flow-graph",    help="Store the CFG", action="store_true")
+    parser.add_argument( "-saco", "--saco",                 help="Translate EthIR RBR to SACO RBR", action="store_true")
     parser.add_argument( "-storage", "--storage",                 help="Split using SSTORE and MSTORE", action="store_true")
     #parser.add_argument("-ebso", "--ebso", help="Generate the info for EBSO in a json file", action = "store_true")
     parser.add_argument("-isb", "--isolate_block", help="Generate the RBR for an isolate block", action = "store_true")
@@ -158,9 +165,10 @@ def main():
 
     clean_dir()
     
-    if "gasol" not in os.listdir("/tmp/"):
+    if "syrup" not in os.listdir("/tmp/"):
         os.mkdir(tmp_costabs)
 
+    
     os.mkdir(tmp_costabs+"solutions")
 
     if args.log_path is not None and args.solver:
