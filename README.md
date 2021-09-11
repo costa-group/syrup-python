@@ -178,7 +178,7 @@ For instances, to analyze the smart contract [0x001385C23468Cb4614831aD9205F041C
 OptiMathSAT as SMT solver and the default configuration, you have to
 execute the following command:
 ```
-
+./syrup_full_execution.py -s examples/tosem-benchmarks-a/0x001385C23468Cb4614831aD9205F041Cf64A2958.sol -storage -solver oms
 ```
 ## How to reproduce the experiments presented in TOSEM
 
