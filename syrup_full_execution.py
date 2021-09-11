@@ -111,9 +111,6 @@ def main():
     group = parser.add_mutually_exclusive_group(required=True)
 
     group.add_argument("-s",  "--source",    type=str, help="local source file name. Solidity by default. Use -b to process evm instead. Use stdin to read from stdin.")
-
-    # parser.add_argument("--version", action="version", version="EthIR version 1.0.7 - Commonwealth")
-    parser.add_argument( "-e",   "--evm",                    help="Do not remove the .evm file.", action="store_true")
     parser.add_argument( "-b",   "--bytecode",               help="read bytecode in source instead of solidity file", action="store_true")
     
     #Added by Pablo Gordillo
