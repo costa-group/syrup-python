@@ -1,26 +1,18 @@
 # Syrup
-=====
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://github.com/costa-group/gasol-optimizer/blob/main/LICENSE)
 ![version](https://img.shields.io/badge/version-2.0-green)
-
-This repository contains a new implementation of the backend of the `syrup` tool chain presented in
-
-> "Synthesis of Super-Optimized Smart Contracts using Max-SMT", CAV
-> 2020, [Elvira Albert](https://costa.fdi.ucm.es/~elvira/), [Pablo
-> Gordillo](https://costa.fdi.ucm.es/~pabgordi/), [Albert
-> Rubio](https://costa.fdi.ucm.es/~arubio/), and [Maria A
-> Schett](http://maria-a-schett.net/)
-
-whose initial implementation can be found [here](https://github.com/mariaschett/syrup-backend).
 
 `Syrup` is a tool that applies super-optimization techniques to optimize Ethereum's smart contracts. In order to do so, `Syrup`
 splits smart contracts into basic block, and for each of them, tries to find a sequence of EVM instructions that leads to the same stack
 as the original block but spends less gas. 
 
-`Syrup` uses the Stack Functional Specification (SFS) as an intermediate representation on the
-impact a sequence of instructions has on a block, and from this representation, a Max-SMT encoding is derived to find the best translation.
+`Syrup` uses an intermediate representation (Stack Functional
+Specification or SFS) on the impact a sequence of instructions has on
+a block, and from this representation, a Max-SMT encoding is derived
+to find the best translation. The SFS defines the state of the stack
+after executing the basic block in terms of the state of the initial stack.
 
-This version of the `syrup` tool is implemented entirely in Python and considers further configurations in the Max-SMT encoding
+This version of the `syrup` tool is implemented entirely in Python3 and considers further configurations in the Max-SMT encoding
 to determine the best options for its usage.
 
 ## Installation (Ubuntu 20.04)
