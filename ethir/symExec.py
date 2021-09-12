@@ -24,14 +24,17 @@ from basicblock import BasicBlock
 #                                          EXCEPTION, PICKLE_PATH)
 # from vulnerability import CallStack, TimeDependency, MoneyConcurrency, Reentrancy, AssertionFailure, ParityMultisigBug2
 import global_params
-from global_params import syrup_path, costabs_path, tmp_path
+
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.realpath(__file__))+"/params")
+from paths import json_path, syrup_path, tmp_path, syrup_folder
 
 import rbr
 from utils import *#cfg_dot, write_cfg, update_map, get_public_fields, getLevel, update_sstore_map,correct_map_fields1, get_push_value, get_initial_block_address, check_graph_consistency, find_first_closing_parentheses, check_if_same_stack
 from opcodes import get_opcode,get_syrup_cost
 from graph_scc import Graph_SCC, get_entry_all,filter_nested_scc
 from pattern import look_for_string_pattern,check_sload_fragment_pattern,sstore_fragment
-from global_params import costabs_folder
 
 log = logging.getLogger(__name__)
 
@@ -3253,13 +3256,13 @@ def component_of_aux(block,visited):
     return visited
             
 def generate_saco_config_file(cname):
-    if costabs_folder not in os.listdir(tmp_path):
-        os.mkdir(costabs_path)
+    if syrup_folder not in os.listdir(tmp_path):
+        os.mkdir(syrup_path)
         
     if cname == None:
-        name = costabs_path+"config_block.config"
+        name = syrup_path+"config_block.config"
     else:
-        name = costabs_path+cname+".config"
+        name = syrup_path+cname+".config"
     
     with open(name,"w") as f:
         function_block_map.items()
@@ -3292,13 +3295,13 @@ def process_argument_function(arg):
 def generate_verify_config_file(cname):
     to_write = []
     remove_getters_has_invalid()
-    if costabs_folder not in os.listdir(tmp_path):
-        os.mkdir(costabs_path)
+    if syrup_folder not in os.listdir(tmp_path):
+        os.mkdir(syrup_path)
         
     if cname == None:
-        name = costabs_path+"config_block.config"
+        name = syrup_path+"config_block.config"
     else:
-        name = costabs_path+cname+".config"
+        name = syrup_path+cname+".config"
     with open(name,"w") as f:
         for elem in function_block_map.items():
             block_fun = elem[1][0]
@@ -3516,12 +3519,12 @@ def get_evm_block():
             str_b = str_b+op_val+num
         blocks[b] = str_b
 
-    if costabs_folder not in os.listdir(tmp_path):
-        os.mkdir(costabs_path)
-    if "jsons" not in os.listdir(costabs_path):
+    if syrup_folder not in os.listdir(tmp_path):
         os.mkdir(syrup_path)
+    if "jsons" not in os.listdir(syrup_path):
+        os.mkdir(json_path)
     for b in blocks:
-        bl_path = syrup_path+"/block"+str(b)
+        bl_path = json_path+"/block"+str(b)
         os.mkdir(bl_path)
         f = open(bl_path+"/block_"+str(b)+".bl","w")
         f.write(blocks[b])

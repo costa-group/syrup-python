@@ -54,9 +54,3 @@ GENERATE_TEST_CASES = 0
 
 # Run Oyente in parallel
 PARALLEL = 0
-
-#Paths
-tmp_path = "/tmp/"
-costabs_path = "/tmp/syrup/"
-syrup_path = "/tmp/syrup/jsons"
-costabs_folder = "syrup"

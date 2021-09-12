@@ -14,11 +14,11 @@ from graph_scc import get_entry_scc
 import traceback
 
 from syrup_optimization import smt_translate_isolate
-from global_params import costabs_path, tmp_path, costabs_folder
 
-
-# costabs_path = "/tmp/costabs/" 
-# tmp_path = "/tmp/"
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.realpath(__file__))+"/params")
+from paths import syrup_path, tmp_path, syrup_folder
 
 '''
 It initialize the globals variables. 
@@ -1556,13 +1556,13 @@ for each smart contract.
 -executions refers to the number of smart contract that has been translated. int.
 '''
 def write_rbr(rule,block_id,cname = None):
-    if costabs_folder not in os.listdir(tmp_path):
-        os.mkdir(costabs_path)
+    if syrup_folder not in os.listdir(tmp_path):
+        os.mkdir(syrup_path)
 
     if block_id !=-1:
-        name = costabs_path+cname+"block"+str(block_id)+".rbr"
+        name = syrup_path+cname+"block"+str(block_id)+".rbr"
     else:
-        name = costabs_path+cname+".rbr"
+        name = syrup_path+cname+".rbr"
         
     with open(name,"w") as f:
         f.write(rule.rule2string()+"\n")
@@ -1684,7 +1684,7 @@ def evm2rbr_compiler(contract_name = None, syrup = None,block = None, sto = Fals
             raise Exception("Error in RBR generation",4)
             
 def write_info_lines(rbr,source_map,contract_name):
-    final_path = costabs_path + "/" + contract_name + "_lines.pl"
+    final_path = syrup_path + "/" + contract_name + "_lines.pl"
     f = open (final_path, "w")
 
     for rules in rbr:

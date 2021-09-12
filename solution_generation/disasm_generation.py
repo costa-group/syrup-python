@@ -7,7 +7,7 @@ import pathlib
 import sys
 import os
 sys.path.append(os.path.dirname(os.path.realpath(__file__))+"/params")
-from params.paths import syrup_path, smt_encoding_path, solutions_path
+from paths import syrup_path, smt_encoding_path, solutions_path
 
 
 def init():

@@ -1,7 +1,8 @@
 import os
 
 tmp_path = "/tmp/"
-syrup_path = tmp_path + "syrup/"
+syrup_folder = "syrup"
+syrup_path = tmp_path + syrup_folder + "/"
 json_path = syrup_path + "jsons"
 smt_encoding_path = syrup_path +"smt_encoding/"
 solutions_path = syrup_path +"solutions/"

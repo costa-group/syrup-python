@@ -17,9 +17,10 @@ from functools import reduce
 #from z3.z3util import get_vars
 
 from dot_tree import Tree, build_tree
-from global_params import costabs_path, tmp_path, costabs_folder
-# costabs_path = "/tmp/costabs/"
-# tmp_path = "/tmp/"
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.realpath(__file__))+"/params")
+from paths import syrup_path, tmp_path, syrup_folder
 
 def ceil32(x):
     return x if x % 32 == 0 else x + 32 - (x % 32)
@@ -386,24 +387,24 @@ def process_hashes(solidity_file,solidity_version):
 
 def write_cfg(it,vertices,name = False,cloned = False):
     vert = sorted(vertices.values(), key = getKey)
-    if costabs_folder not in os.listdir(tmp_path):
-        os.mkdir(costabs_path)
+    if syrup_folder not in os.listdir(tmp_path):
+        os.mkdir(syrup_path)
 
     if not cloned:
         if it == None:
-            name = costabs_path+"cfg_evm.cfg"
+            name = syrup_path+"cfg_evm.cfg"
         elif name == False:
-            name = costabs_path+"cfg_evm"+str(it)+".cfg"
+            name = syrup_path+"cfg_evm"+str(it)+".cfg"
         else:
-            name = costabs_path+"cfg_"+name+".cfg"
+            name = syrup_path+"cfg_"+name+".cfg"
 
     else:
         if it == None:
-            name = costabs_path+"cfg_cloned_evm.cfg"
+            name = syrup_path+"cfg_cloned_evm.cfg"
         elif name == False:
-            name = costabs_path+"cfg__cloned_evm"+str(it)+".cfg"
+            name = syrup_path+"cfg__cloned_evm"+str(it)+".cfg"
         else:
-            name = costabs_path+"cfg_"+name+"_cloned.cfg"
+            name = syrup_path+"cfg_"+name+"_cloned.cfg"
         
     with open(name,"w") as f:
         for block in vert:
@@ -422,25 +423,25 @@ def write_cfg(it,vertices,name = False,cloned = False):
 def cfg_dot(it,block_input,name = False,cloned = False):
     vert = sorted(block_input.values(), key = getKey)
 
-    if costabs_folder not in os.listdir(tmp_path):
-        os.mkdir(costabs_path)
+    if syrup_folder not in os.listdir(tmp_path):
+        os.mkdir(syrup_path)
     
     if not cloned:
 
         if it == None:
-            name = costabs_path+"cfg.dot"
+            name = syrup_path+"cfg.dot"
         elif name == False:
-            name = costabs_path+"cfg"+str(it)+".dot"
+            name = syrup_path+"cfg"+str(it)+".dot"
         else:
-            name = costabs_path+name+".dot"
+            name = syrup_path+name+".dot"
     else:
 
         if it == None:
-            name = costabs_path+"cfg_cloned.dot"
+            name = syrup_path+"cfg_cloned.dot"
         elif name == False:
-            name = costabs_path+"cfg_cloned_"+str(it)+".dot"
+            name = syrup_path+"cfg_cloned_"+str(it)+".dot"
         else:
-            name = costabs_path+name+"_cloned.dot"
+            name = syrup_path+name+"_cloned.dot"
         
     f = open(name,"w")
     tree = build_tree(vert[0],[("st",0)],block_input)
@@ -454,7 +455,7 @@ def update_map(m,key,val):
     return m
 
 def store_times(oyente_time,ethir_time):
-    f = open(costabs_path+"times.csv","a")
+    f = open(syrup_path+"times.csv","a")
     fp = csv.writer(f, delimiter=',')
     fp.writerow(["Oyente",oyente_time,"EthIR",ethir_time])
     f.close()
