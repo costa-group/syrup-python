@@ -13,7 +13,7 @@ to find the best translation. The SFS defines the state of the stack
 after executing the basic block in terms of the state of the initial stack.
 
 This version of the `syrup` tool is implemented entirely in Python3 and considers further configurations in the Max-SMT encoding
-to determine the best options for its usage.
+to determine the best options for its usage, as well as more simplification rules.
 
 ## Installation (Ubuntu 20.04)
 
@@ -115,8 +115,14 @@ each optimized sub-block:
 
 * disasm: opcodes from the solution, in format human-readable.
 
-* total_gas: gas associated to each generated block.
+* total\_gas: gas associated to each generated block.
 
+`Syrup 2.0` also generates by default a log file in the folder /tmp/syrup/ that stores the result from the 
+optimization process in term of the solution from each generated Max-SMT problem.
+This way, it can be ensured the same optimization results can be obtained when
+executing the tool with the same input format. If the log file is not provided, it
+cannot ensured this behaviour can be replicated, mostly due to the fact that SMT solvers
+may lead to different models.
 
 ### Max-SMT encoding
 
@@ -168,11 +174,12 @@ EVM bytecode, SFS os basic block is stored
 * -v activates the lightweight verifier included in `Syrup 2.0`
 * -tout allows specifying a desired timeout for the optimization
   process of each of the basic blocks of the smart contract under
-  analysis. It is set to XXs by default
-* ----
-* ----
-* TODO
-
+  analysis. It is set to 10s by default
+* -disable-generation-log-file Disables the generation of a log file storing the contents
+  of the superoptimization process
+* -check-log-file accepts the log file generated from a previous run and outputs the same files
+* the remaining flags correspond to those related to the Max-SMT encoding that have already
+been discussed in the previous section
 
 For instances, to analyze the smart contract [0x001385C23468Cb4614831aD9205F041Cf64A2958.sol](https://github.com/costa-group/syrup-python/blob/master/examples/tosem-benchmarks-a/0x001385C23468Cb4614831aD9205F041Cf64A2958.sol) using
 OptiMathSAT as SMT solver and the default configuration, you have to
@@ -180,6 +187,10 @@ execute the following command:
 ```
 ./syrup_full_execution.py -s examples/tosem-benchmarks-a/0x001385C23468Cb4614831aD9205F041Cf64A2958.sol -storage -solver oms
 ```
+
+
+
+
 ## How to reproduce the experiments presented in TOSEM
 
 The directory _examples_ contains the benchmarks used in the
