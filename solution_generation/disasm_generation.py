@@ -4,31 +4,34 @@ import json
 import collections
 import pathlib
 
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.realpath(__file__))+"/params")
+from params.paths import syrup_path, smt_encoding_path, solutions_path
+
 
 def init():
-    global tmp_costabs
-    tmp_costabs = "/tmp/gasol/"
-
     global instruction_json
-    instruction_json = tmp_costabs + "smt_encoding/instruction.json"
+    instruction_json = smt_encoding_path + "instruction.json"
 
     global opcodes_json
-    opcodes_json = tmp_costabs + "smt_encoding/opcode.json"
+    opcodes_json = smt_encoding_path + "opcode.json"
 
     global gas_json
-    gas_json = tmp_costabs + "smt_encoding/gas.json"
+    gas_json = smt_encoding_path + "gas.json"
 
     global solution_file
-    solution_file = tmp_costabs + "solution.txt"
+    solution_file = syrup_path + "solution.txt"
 
     global instruction_final_solution
-    instruction_final_solution = tmp_costabs + "optimized_block_instructions.disasm_opt"
+    instruction_final_solution = syrup_path + "optimized_block_instructions.disasm_opt"
 
     global opcodes_final_solution
-    opcodes_final_solution = tmp_costabs + "optimized_block_opcodes.evm"
+    opcodes_final_solution = syrup_path + "optimized_block_opcodes.evm"
 
     global gas_final_solution
-    gas_final_solution = tmp_costabs + "gas.txt"
+    gas_final_solution = syrup_path + "gas.txt"
+
 
 # Push is determined by the number of bytes of pushed value
 def decide_push_type(elem):
@@ -62,13 +65,13 @@ def generate_file_names(contract_name, block_name):
     global opcodes_final_solution
     global gas_final_solution
 
-    instruction_json = tmp_costabs+"smt_encoding/"+block_name+"_instruction.json"
-    opcodes_json = tmp_costabs+"smt_encoding/"+block_name+"_opcode.json"
-    gas_json = tmp_costabs+"smt_encoding/"+block_name+"_gas.json"
+    instruction_json = smt_encoding_path + block_name + "_instruction.json"
+    opcodes_json = smt_encoding_path + block_name + "_opcode.json"
+    gas_json = smt_encoding_path + block_name + "_gas.json"
 
-    instruction_final_solution = tmp_costabs+"solutions/" + contract_name + "/disasm/" + block_name + "_optimized.disasm_opt"
-    opcodes_final_solution = tmp_costabs+"solutions/" + contract_name + "/evm/" + block_name+"_optimized.evm"
-    gas_final_solution = tmp_costabs + "solutions/" + contract_name + "/total_gas/" + block_name + "_real_gas.txt"
+    instruction_final_solution = solutions_path + contract_name + "/disasm/" + block_name + "_optimized.disasm_opt"
+    opcodes_final_solution = solutions_path + contract_name + "/evm/" + block_name+"_optimized.evm"
+    gas_final_solution = solutions_path + contract_name + "/total_gas/" + block_name + "_real_gas.txt"
 
 
 # Generates three structures containing all the info from the solver: the sequence of instructions
@@ -124,9 +127,9 @@ def generate_info_from_solution(contract_name, block_name, solver_output):
 def generate_disasm_sol(contract_name, block_name, solver_output):
     instr_sol, opcode_sol, pushed_values_decimal, total_gas = generate_info_from_solution(contract_name, block_name, solver_output)
 
-    pathlib.Path(tmp_costabs+"solutions/" + contract_name + "/disasm/").mkdir(parents=True, exist_ok=True)
-    pathlib.Path(tmp_costabs+"solutions/" + contract_name + "/evm/").mkdir(parents=True, exist_ok=True)
-    pathlib.Path(tmp_costabs+"solutions/" + contract_name + "/total_gas/").mkdir(parents=True, exist_ok=True)
+    pathlib.Path(solutions_path + contract_name + "/disasm/").mkdir(parents=True, exist_ok=True)
+    pathlib.Path(solutions_path + contract_name + "/evm/").mkdir(parents=True, exist_ok=True)
+    pathlib.Path(solutions_path + contract_name + "/total_gas/").mkdir(parents=True, exist_ok=True)
 
 
     with open(opcodes_final_solution, 'w') as opcodes_file:

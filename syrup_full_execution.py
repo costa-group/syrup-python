@@ -6,6 +6,7 @@ sys.path.append(os.path.dirname(os.path.realpath(__file__))+"/ethir")
 sys.path.append(os.path.dirname(os.path.realpath(__file__))+"/backend")
 sys.path.append(os.path.dirname(os.path.realpath(__file__))+"/verification")
 sys.path.append(os.path.dirname(os.path.realpath(__file__))+"/solution_generation")
+sys.path.append(os.path.dirname(os.path.realpath(__file__))+"/params")
 import glob
 import argparse
 from oyente_ethir import clean_dir, analyze_disasm_bytecode, analyze_bytecode, analyze_solidity, analyze_isolate_block, has_dependencies_installed
@@ -17,34 +18,7 @@ import json
 from solver_solution_verify import generate_solution_dict, check_solver_output_is_correct
 from solver_output_generation import obtain_solver_output
 import re
-
-def init():
-    global project_path
-    project_path =  os.path.dirname(os.path.realpath(__file__))
-
-    global ethir_syrup
-    ethir_syrup = project_path + "/ethir"
-
-    global disasm_generation_file
-    disasm_generation_file = project_path + "/scripts/disasm_generation.py"
-    global tmp_costabs
-    tmp_costabs = "/tmp/syrup/"
-    global json_dir
-    json_dir = tmp_costabs + "jsons/"
-    global sol_dir
-    sol_dir = tmp_costabs + "sols/"
-
-    global encoding_path
-    encoding_path = tmp_costabs+"smt_encoding/"
-    
-    global encoding_file
-    encoding_file = tmp_costabs + "encoding.smt2"
-
-    global instruction_file
-    instruction_file = tmp_costabs + "optimized_block_instructions.disasm_opt"
-
-    global tout
-    tout = 10
+from paths import syrup_path, json_path, syrup_timeout
 
 
 def execute_ethir():
@@ -90,7 +64,6 @@ def new_check_log_information(files, log_dict, contract_name):
     correct = True
     execute_syrup_backend_combined(files, log_dict, contract_name, args.solver)
     solver_output = obtain_solver_output(contract_name, args.solver, 1)
-    print(solver_output)
     if not check_solver_output_is_correct(solver_output):
         print("Failed to verify block " + contract_name)
         correct = False
@@ -102,10 +75,6 @@ def new_check_log_information(files, log_dict, contract_name):
 
 def main():
     global args
-    global encoding_file
-    global tout
-
-    init()
 
     parser = argparse.ArgumentParser()
     group = parser.add_mutually_exclusive_group(required=True)
@@ -135,7 +104,7 @@ def main():
                     action='store_true', dest='at_most')
     parser.add_argument('-pushed-once', help='add a constraint to indicate that each pushed value is pushed at least once',
                     action='store_true', dest='pushed_once')
-    parser.add_argument("-tout", metavar='timeout', action='store', type=int, help="Timeout in seconds.", default=tout)
+    parser.add_argument("-tout", metavar='timeout', action='store', type=int, help="Timeout in seconds.")
     parser.add_argument("-inequality-gas-model", dest='inequality_gas_model', action='store_true',
                     help="Soft constraints with inequalities instead of equalities")
     parser.add_argument("-instruction-order", help='add a constraint representing the order among instructions',
@@ -162,14 +131,16 @@ def main():
 
     if args.tout is not None:
         tout = args.tout
+    else:
+        tout = syrup_timeout
 
     clean_dir()
     
     if "syrup" not in os.listdir("/tmp/"):
-        os.mkdir(tmp_costabs)
+        os.mkdir(syrup_path)
 
     
-    os.mkdir(tmp_costabs+"solutions")
+    os.mkdir(syrup_path+"solutions")
 
     if args.log_path is not None and args.solver:
         with open(args.log_path) as path:
@@ -179,7 +150,7 @@ def main():
             files = [args.source]
         else:
             execute_ethir()
-            files = glob.glob(json_dir + "/*.json")
+            files = glob.glob(json_path + "/*.json")
         new_check_log_information(files, log_dict,  re.sub(".json|.sol", "", args.source.split("/")[-1]))
         return
     if not args.json:
@@ -191,7 +162,7 @@ def main():
 
             log_info = dict()
 
-            for f in glob.glob(json_dir + "/*.json"):
+            for f in glob.glob(json_path + "/*.json"):
                 #run_command(syrup_bend_path + " " + f)
                 execute_syrup_backend(args,f)
                 
@@ -205,7 +176,7 @@ def main():
                     if args.gen_log:
                         log_info[block_name] = generate_solution_dict(solver_output)
             if args.gen_log:
-                log_file = tmp_costabs + args.source.split("/")[-1].split(".")[-2] + ".log"
+                log_file = syrup_path + args.source.split("/")[-1].split(".")[-2] + ".log"
                 with open(log_file, "w") as log_f:
                     json.dump(log_info, log_f)
 

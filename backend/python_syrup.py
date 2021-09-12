@@ -7,8 +7,10 @@ import argparse
 from encoding_files import initialize_dir_and_streams, write_encoding
 from smtlib_utils import set_logic, check_sat
 import re
-
-costabs_path = "/tmp/gasol/"
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.realpath(__file__))+"/params")
+from paths import syrup_path
 
 
 def parse_data(json_path, var_initial_idx=0):
@@ -63,7 +65,7 @@ def initialize_flags_and_additional_info(args_i, current_cost, instr_seq, previo
 
 # Executes the smt encoding generator from the main script
 def execute_syrup_backend(args_i,json_file = None, previous_solution_dict = None, block_name = None):
-    path = costabs_path
+    path = syrup_path
     # Args_i is None if the function is called from syrup-asm. In this case
     # we assume by default oms, and json_file already contains the sfs dict
     if args_i is None:
@@ -75,7 +77,7 @@ def execute_syrup_backend(args_i,json_file = None, previous_solution_dict = None
         else:
             json_path = args_i.source
 
-        path = costabs_path
+        path = syrup_path
         solver = args_i.solver
         es = initialize_dir_and_streams(path, solver, json_path)
 
@@ -93,7 +95,7 @@ def execute_syrup_backend_combined(json_files, previous_solution_dict, contract_
     # Stores the number of previous stack variables to ensures there's no collision
     next_var_idx = 0
 
-    es = initialize_dir_and_streams(costabs_path, solver, contract_name)
+    es = initialize_dir_and_streams(syrup_path, solver, contract_name)
 
     write_encoding(set_logic('QF_LIA'))
 
@@ -121,8 +123,8 @@ def execute_syrup_backend_combined(json_files, previous_solution_dict, contract_
 if __name__ == "__main__":
     ap = argparse.ArgumentParser(description='Backend of syrup tool')
     ap.add_argument('json_path', help='Path to json file that contains the SFS')
-    ap.add_argument('-out', help='Path to dir where the smt is stored (by default, in ' + str(costabs_path) + ")",
-                    nargs='?', default=costabs_path, metavar='dir')
+    ap.add_argument('-out', help='Path to dir where the smt is stored (by default, in ' + str(syrup_path) + ")",
+                    nargs='?', default=syrup_path, metavar='dir')
     ap.add_argument('-write-only', help='print smt constraint in SMT-LIB format, '
                                                              'a mapping to instructions, and objectives',
                     action='store_true', dest='write_only')
