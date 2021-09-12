@@ -88,7 +88,7 @@ following links:
   Executable Syrup".
 * OptiMathSAT: http://optimathsat.disi.unitn.it/pages/download-js.html
 
-When they are downloaded, create a directory called bin in the root
+When they are downloaded, create a directory called _bin_ in the root
 directory of the repository and move them to this folder.
 
 ## Usage
@@ -107,7 +107,7 @@ are available in the following links:
 ### Output format
 
 `Syrup 2.0` stores all the output from its execution in the folder
-/tmp/syrup/solutions. For each analyzed contract, it creates three
+_/tmp/syrup/solutions_. For each analyzed contract, it creates three
 folders in this directory containing all the relevant information for
 each optimized sub-block:
 
@@ -178,7 +178,9 @@ For instances, to analyze the smart contract [0x001385C23468Cb4614831aD9205F041C
 OptiMathSAT as SMT solver and the default configuration, you have to
 execute the following command:
 ```
-./syrup_full_execution.py -s examples/tosem-benchmarks-a/0x001385C23468Cb4614831aD9205F041Cf64A2958.sol -storage -solver oms
+./syrup_full_execution.py -s
+examples/tosem-benchmarks-a/0x001385C23468Cb4614831aD9205F041Cf64A2958.sol
+-storage -solver oms
 ```
 ## How to reproduce the experiments presented in TOSEM
 
@@ -187,21 +189,24 @@ experimental section (Section 5) of the paper (directories
 _tosem-benchmarks-a_ and _tosem-benchmarks-b_ respectively) submitted
 to TOSEM. The smart contracts located in _tosem-benckmarks-a_ are
 those selected for experiments (i) and (ii) and the ones located in
-_tosem-benckmarks-b_ the contracts used for experiments (iii),
+_tosem-benckmarks-b_ the contracts used for experiments (iii).
 
 In order to reproduce the results, you can find the scripts used in
 the directory _scripts_:
 
 * Script _process\_benckmarks\_a.sh_ (_process\_benckmarks\_b.sh_
 respectively) generates the SFS for all the blocks of the smart
-contracts located in the directory _tosem-benckmarks-a_ (_tosem-benckamrks b_ respectively).
+contracts located in the directory _tosem-benckmarks-a_
+(_tosem-benckamrks b_ respectively). These scripts generate two new
+directories in the root directory of the repository: _results-a_ for
+the smart contracts analyzed in the set _tosem-benchmarks-a_ and
+_results-b_ for those in _tosem-benckmarks-b_. There, you can find a
+new directory _sfs-a_ (_sfs-b_ respectively) with the SFSs generated
+for each of the basic blocks.
 
-* To reproduce the results obtained in Section 5.2 and 5.3, you have to 
-execute the script XX running the command YY.
+* Once, the SFSs are generated you have to execute the script XX
+running the command YY in to reproduce the results obtained in Section
+5.2 and 5.3.
 
-* To reproduce the results obtained in Section 5.4, you have to execute the script XX running the command YY.
-
-In addition, to optimize a smart contract you have to execute the
-command line XX.  It generates the SFS of all its blocks and, after
-that, it generates the optimized blocks using the specified SMT-solver
-and timeout.
+* To reproduce the results obtained in Section 5.4, you have to
+  execute the script XX running the command YY.
