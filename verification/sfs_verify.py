@@ -1,6 +1,6 @@
 import sys
 import os
-sys.path.append(os.path.dirname(os.path.realpath(__file__))+"/../ethir")
+sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))+"/ethir")
 from utils_verify import *
 import rbr_isolate_block
 from utils import process_isolate_block

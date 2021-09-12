@@ -2,7 +2,7 @@ import os
 import shlex
 import subprocess
 import sys
-sys.path.append(os.path.dirname(os.path.realpath(__file__))+"/params")
+sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))+"/params")
 from paths import smt_encoding_path, z3_exec, bclt_exec, oms_exec
 
 

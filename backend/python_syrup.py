@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
 
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))+"/params")
+from paths import syrup_path
+
 from superoptimization_enconding import generate_smtlib_encoding, generate_smtlib_encoding_appending
 from utils_bckend import add_bars_and_index_to_string
 import json
@@ -7,10 +12,6 @@ import argparse
 from encoding_files import initialize_dir_and_streams, write_encoding
 from smtlib_utils import set_logic, check_sat
 import re
-import sys
-import os
-sys.path.append(os.path.dirname(os.path.realpath(__file__))+"/params")
-from paths import syrup_path
 
 
 def parse_data(json_path, var_initial_idx=0):

@@ -1,4 +1,7 @@
-import opcodes 
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))+"/ethir")
+import opcodes
 
 '''
 It takes the name of a file containing the optimized version of a

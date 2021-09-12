@@ -19,7 +19,7 @@ from functools import reduce
 from dot_tree import Tree, build_tree
 import sys
 import os
-sys.path.append(os.path.dirname(os.path.realpath(__file__))+"/params")
+sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))+"/params")
 from paths import syrup_path, tmp_path, syrup_folder
 
 def ceil32(x):
