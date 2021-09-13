@@ -163,10 +163,15 @@ def main():
         if not args.write_only:
 
             block_name = args.source.split("/")[-1].rstrip(".json")
-            obtain_solver_output(block_name, args.solver, tout)
+            solver_output = obtain_solver_output(block_name, args.solver, tout)
+            generate_files_for_solution(block_name, solver_output)
 
-    if args.verify and not args.write_only:
-        verify_sfs(args.source, sfs_dict)
+        if args.verify and not args.write_only:
+            if verify_sfs(args.source, sfs_dict):
+                print("Correct verification")
+            else:
+                print("SFS do not match")
+
 
 if __name__=="__main__":
     main()
