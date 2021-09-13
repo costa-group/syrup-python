@@ -117,7 +117,7 @@ each optimized sub-block:
 
 * total\_gas: gas associated to each generated block.
 
-`Syrup 2.0` also generates by default a log file in the folder /tmp/syrup/ that stores the result from the 
+`Syrup 2.0` also generates by default a log file in the folder _/tmp/syrup/_ that stores the result from the 
 optimization process in term of the solution from each generated Max-SMT problem.
 This way, it can be ensured the same optimization results can be obtained when
 executing the tool with the same input format. If the log file is not provided, it
@@ -127,14 +127,9 @@ may lead to different models.
 ### Max-SMT encoding
 
 `Syrup 2.0` aims to determine the most suitable configuration in order to make the framework feasible to include in _real-world_ compilers. As such, 
-there exists several flags that allow the user to specify different combinations of constraints and timeouts. These configurations have been studied in detail and a [visualizer](http://costa.fdi.ucm.es/syrup-visualizer) has been implemented to interpret the experiments.
+there exists several flags that allow the user to specify different combinations of constraints and timeouts. These configurations have been studied in detail and a [visualizer](http://costa.fdi.ucm.es/syrup-visualizer) has been implemented to interpret the experiments. The encoding names used in the visualizer are depicted below.
 
-By default, the encoding that has been determined to work the best so far is enabled. It can be disabled using -disable-default-encoding flag :
-
-```
-TODO
-```
-
+By default, the encoding that has been determined to work the best so far is enabled. It can be disabled using _-disable-default-encoding flag_.
 When disabled, the same encoding as `Syrup 1.0` is produced by default: O'<sub>SFS</sub> + C<sub>L</sub>. The following flags activate different constraints to be included:
 
 * -inequality-gas-model : change soft constraint encoding from O'<sub>SFS</sub> to O<sub>SFS</sub> 
@@ -145,7 +140,7 @@ When disabled, the same encoding as `Syrup 1.0` is produced by default: O'<sub>S
 Other flags can be enabled to add other hard constraints or modify the soft constraints. However, they have not been fully checked and it is not guaranteed the produced blocks are indeed equivalent to the initial ones.
 
 The timeout per block can be specified using -tout flag. It is set to 10 seconds by default. When the timeout is reached, the underlying SMT solver halts its execution and returns the best
-model so far. If no model was found, no final block is produced. For instance, using previous example, we could specify a timeout of 5 seconds instead:
+model so far. If no model was found, empty files are produced.
 
 ### Analyze a smart contract
 
@@ -182,16 +177,11 @@ EVM bytecode, SFS os basic block is stored
 been discussed in the previous section
 
 For instances, to analyze the smart contract [0x001385C23468Cb4614831aD9205F041Cf64A2958.sol](https://github.com/costa-group/syrup-python/blob/master/examples/tosem-benchmarks-a/0x001385C23468Cb4614831aD9205F041Cf64A2958.sol) using
-OptiMathSAT as SMT solver and the default configuration, you have to
+OptiMathSAT as SMT solver, the initial configuration with C<sub>N</sub> and a timeout of 5 seconds, you have to
 execute the following command:
 ```
-./syrup_full_execution.py -s
-examples/tosem-benchmarks-a/0x001385C23468Cb4614831aD9205F041Cf64A2958.sol
--storage -solver oms
+./syrup_full_execution.py -s examples/tosem-benchmarks-a/0x001385C23468Cb4614831aD9205F041Cf64A2958.sol -storage -solver oms -disable-default-encoding -pushed-once -tout 5
 ```
-
-
-
 
 ## How to reproduce the experiments presented in TOSEM
 
@@ -215,9 +205,43 @@ _results-b_ for those in _tosem-benckmarks-b_. There, you can find a
 new directory _sfs-a_ (_sfs-b_ respectively) with the SFSs generated
 for each of the basic blocks.
 
-* Once, the SFSs are generated you have to execute the script XX
-running the command YY in to reproduce the results obtained in Section
-5.2 and 5.3.
+* Before running the experiments, we need to clean those repositories, i.e 
+just leave the json files representing the SFSs for each file. In order to do so, run
+script _remove\_jsons\_intermediate\_dir\_benchmark\_a.py_ (_remove\_jsons\_intermediate\_dir\_benchmark\_a.py_
+respectively).
 
-* To reproduce the results obtained in Section 5.4, you have to
-  execute the script XX running the command YY.
+* Once, the SFSs are generated you have to execute the script _analyze\_all\_blocks\_in\_contract\_benchmark\_a.py_
+(respectively _analyze\_all\_blocks\_in\_contract\_benchmark\_b.py_)
+to reproduce the experiments in Section 5.2 and 5.3 (Section 5.4 respectively). This scripts accepts several mandatory 
+flags in order to allow multiple configurations to study:
+
+  * -solver {z3,barcelogic,oms}
+  * -tout timeout : Timeout in seconds
+  *  -syrup-encoding-flags syrup_flags : Flags passed to syrup in order to generate different Max-SMT encodings. If multiple flags are provided, use
+  "" to delimitate the argument. It is mandatory to start syrup_flags string with a blank space, otherwise the options are not recognized.
+  *  -csv-folder csv_folder : Folder in which the results from the experiments are stored. Inside this folder, the subfolder 
+  _solver + "\_" + timeout + "s/"_ is created. This subfolder contains a csv file for each analyzed file, containing a row for each sub-block analyzed.
+
+Note that multiple executions of this script can lead to inconsistencies, as all intermediate files are stored in the same folder. This can lead
+to name clashing and thus, incoherent results. In order to avoid this behaviour, rename the variable _syrup\_folder_ in the file _params/paths.py_
+to another name before running again the script.
+
+For instance, if we want to study the initial configuration with C<sub>U</sub> encoding when applied to Z3 and with a timeout of 15 seconds,
+run the following command:
+
+```
+./analyze_all_blocks_in_contract_benchmark_a.py -solver z3 -tout 15 -syrup-encoding-flags " -disable-default-encoding -at-most " -csv-folder ../results-a/block_results/at_most/
+```
+
+As a result, the folder _/results-a/block\_results/at\_most/z3\_15s_ is created.
+
+* Finally, to obtain the global results per configuration instead of having a csv file per file, execute the script 
+_generate\_info\_per\_contract\_with\_verifier\_time.py_. This file accepts the path to the _general_ folder that stores all
+the experiments and generates a csv file for each encoding. 
+
+For instance, in previous example, the _general_ folder in which we will store the experiments
+is _../results-a/block\_results/_. Thus, we need to run the following command: 
+
+```
+./generate_info_per_contract_with_verifier_time.py -block-results-folder ../results-a/block_results/ -combined-csvs-folder ../results-a/combined_results/
+```
