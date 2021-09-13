@@ -19,7 +19,7 @@ to determine the best options for its usage, as well as more simplification rule
 
 ### 1. Install Solidity compiler (last version tested 0.8.1)
 
-The folder ethir/source contains static executables of different
+The folder _ethir/source_ contains static executables of different
 versions of Solidity compiler. Add it to the PATH and test that it is
 installed.
     
