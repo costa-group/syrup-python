@@ -14,6 +14,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))+"/p
 from paths import project_path, oms_exec, syrup_exec, syrup_path, smt_encoding_path, json_path, z3_exec, bclt_exec
 sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))+"/backend")
 from encoding_utils import generate_phi_dict
+from python_syrup import execute_syrup_backend
 from timeit import default_timer as timer
 sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))+"/verification")
 from sfs_verify import are_equals
@@ -38,7 +39,18 @@ def modifiable_path_files_init():
     parser.add_argument("-csv-folder", metavar='csv_folder', action='store', type=str,
                         help="folder that will store the csvs containing the statistics per file. Inside that folder, "
                              "another subfolder is created: solver_name + _ + timeout + 's'", required=True)
-
+    parser.add_argument('-at-most', help='add a constraint for each uninterpreted function so that they are used at most once',
+                    action='store_true', dest='at_most')
+    parser.add_argument('-pushed-once', help='add a constraint to indicate that each pushed value is pushed at least once',
+                    action='store_true', dest='pushed_once')
+    parser.add_argument("-inequality-gas-model", dest='inequality_gas_model', action='store_true',
+                    help="Soft constraints with inequalities instead of equalities")
+    parser.add_argument("-no-output-before-pop", help='add a constraint representing the fact that the previous instruction'
+                                                  'of a pop can only be a instruction that does not produce an element',
+                    action='store_true', dest='no_output_before_pop')
+    parser.add_argument("-disable-default-encoding", dest='default_encoding', action='store_false',
+                    help="Disable the constraints added for the default encoding")
+    global args
     args = parser.parse_args()
 
     # Selected solver. Only three possible values:
@@ -213,6 +225,7 @@ def get_tout_found_per_solver(solution):
 
 
 if __name__=="__main__":
+    global args
     init()
     pathlib.Path(syrup_path).mkdir(parents=True, exist_ok=True)
     pathlib.Path(results_dir).mkdir(parents=True, exist_ok=True)
@@ -242,6 +255,8 @@ if __name__=="__main__":
                 file_results['number_of_necessary_uninterpreted_instructions'] = len(user_instr)
                 file_results['number_of_necessary_push'] = len(generate_phi_dict(user_instr, final_stack))
                 initial_stack = data['src_ws']
+
+            execute_syrup_backend(args, file)
             run_command(syrup_backend_exec + " " + file + " " + syrup_flags)
             smt_exec_command = get_solver_to_execute()
             solution, executed_time = run_and_measure_command(smt_exec_command)
