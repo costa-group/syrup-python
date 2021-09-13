@@ -6,11 +6,11 @@ import shlex
 import subprocess
 import re
 import json
-import traceback
-
 import pandas as pd
 import sys
 import resource
+sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))+"/params")
+from paths import project_path, oms_exec, syrup_exec, syrup_path, smt_encoding_path, json_path, z3_exec, bclt_exec
 sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))+"/backend")
 from encoding_utils import generate_phi_dict
 from timeit import default_timer as timer
@@ -18,76 +18,93 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))+"/v
 from sfs_verify import are_equals
 from solver_solution_verify import generate_solution_dict, check_solver_output_is_correct
 sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))+"/scripts")
+import traceback
 
 
-def init():
-    global project_path
-    project_path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-
-    global tmp_costabs
-    tmp_costabs = "/tmp/costabs"
+def modifiable_path_files_init():
+    # Selected solver. Only three possible values:
+    # "oms", "z3", "barcelogic"
+    global solver
+    solver = "oms"
 
     # Timeout in s
     global tout
-    tout = 1
+    tout = 10
 
-    global z3_path
-    z3_path = project_path + "/bin/z3"
+    # Folder in which the csvs are stored. A csv is generated per each subfolder
+    global results_dir
+    results_dir = project_path + "results/prueba/" + solver + "_" + str(tout) + "s/"
 
-    global syrup_path
-    syrup_path = project_path + "/backend/python_syrup.py"
+    # Flags activated for the syrup backend (i.e. the Max-SMT encoding).
+    # Do not include timeout flag nor solver flag, only for encoding flags
+    global syrup_encoding_flags
+    syrup_encoding_flags = " -disable-default-encoding "
 
-    global syrup_flags
-    syrup_flags = "-tout " + str(tout) + " -solver z3"
-
+    # Folder which contains the json files to analyze. Must follow this structure:
+    # - main_folder
+    #   -- contract_1_folder
+    #      --- block_1.json
+    #      --- block_2.json
+    #      ...
+    #   -- contract_2_folder
+    #      --- block_1.json
+    #      --- block_2.json
+    #      ...
+    #   ...
     global contracts_dir_path
-    contracts_dir_path = project_path + "/examples/most_called"
+    contracts_dir_path = project_path + "examples/most_called"
 
-    global sol_dir
-    sol_dir = project_path + "/sols/"
 
+def not_modifiable_path_files_init():
     global disasm_generation_file
-    disasm_generation_file = project_path + "/scripts/disasm_generation.py"
-    # Timeout in seconds
+    disasm_generation_file = project_path + "solution_generation/disasm_generation.py"
 
-    global z3_flags
-    z3_flags = " "
+    global oms_flags
+    oms_flags = " "
+
+    global syrup_backend_exec
+    syrup_backend_exec = project_path + "backend/python_syrup.py"
 
     global solver_output_file
-    solver_output_file = tmp_costabs + "/solution.txt"
+    solver_output_file = syrup_path + "solution.txt"
 
     global encoding_file
-    encoding_file = tmp_costabs + "/smt_encoding/encoding.smt2"
+    encoding_file = smt_encoding_path + "encoding.smt2"
 
     global instruction_final_solution
-    instruction_final_solution = tmp_costabs + "/optimized_block_instructions.disasm_opt"
+    instruction_final_solution = syrup_path + "optimized_block_instructions.disasm_opt"
 
     global gas_final_solution
-    gas_final_solution = tmp_costabs + "/gas.txt"
-
-    global results_dir
-    results_dir = project_path + "/results/prueba/z3_" + str(tout) + "s/"
-
-    global syrup_full_execution_path
-    syrup_full_execution_path = project_path + "/syrup_full_execution.py"
+    gas_final_solution = syrup_path + "gas.txt"
 
     global final_json_path
-    final_json_path = tmp_costabs + "/jsons/block__block0_input.json"
+    final_json_path = json_path + "block__block0_input.json"
 
     global final_disasm_blk_path
-    final_disasm_blk_path = tmp_costabs + "/block.disasm_blk"
+    final_disasm_blk_path = syrup_path + "block.disasm_blk"
 
     global syrup_full_execution_flags
     syrup_full_execution_flags = " -isb -storage -s " + final_disasm_blk_path
 
     global log_path
-    log_path = project_path + "/logs"
+    log_path = project_path + "logs"
 
     global log_file
-    log_file = log_path + "/log_Z3.log"
+    log_file = log_path + "log_oms.log"
 
     global block_log
-    block_log = tmp_costabs + "/block.log"
+    block_log = syrup_path + "block.log"
+
+    global syrup_encoding_flags
+    global tout
+    global solver
+    global syrup_flags
+    syrup_flags = syrup_encoding_flags + " -tout " + str(tout) + " -solver " + solver
+
+
+def init():
+    modifiable_path_files_init()
+    not_modifiable_path_files_init()
 
 
 def run_command(cmd):
@@ -104,37 +121,100 @@ def run_and_measure_command(cmd):
     return solution, usage_stop.ru_utime + usage_stop.ru_stime - usage_start.ru_utime - usage_start.ru_stime
 
 
-def submatch(string):
+def analyze_file_oms(solution):
+    pattern = re.compile("\(gas (.*)\)")
+    for match in re.finditer(pattern, solution):
+        number = int(match.group(1))
+        pattern2 = re.compile("range")
+        if re.search(pattern2, solution):
+            return number, False
+        return number, True
+
+
+def submatch_z3(string):
     subpattern = re.compile("\(interval (.*) (.*)\)")
     for submatch in re.finditer(subpattern, string):
         return int(submatch.group(2))
     return -1
 
 
-def analyze_file(solution):
+def analyze_file_z3(solution):
     pattern = re.compile("\(gas (.*)\)")
     for match in re.finditer(pattern, solution):
-        number = submatch(match.group(1))
+        number = submatch_z3(match.group(1))
         if number == -1:
             return int(match.group(1)), True
         else:
             return number, False
 
 
+def submatch_barcelogic(string):
+    subpattern = re.compile("\(cost (.*)\)")
+    for submatch in re.finditer(subpattern, string):
+        return int(submatch.group(1))
+    return -1
+
+
+def analyze_file_barcelogic(solution):
+    pattern = re.compile("\(optimal (.*)\)")
+    for match in re.finditer(pattern, solution):
+        return int(match.group(1)), True
+    return submatch_barcelogic(solution), False
+
+
+def analyze_file(solution):
+    global solver
+    if solver == "oms":
+        return analyze_file_oms(solution)
+    elif solver == "z3":
+        return analyze_file_z3(solution)
+    else:
+        return analyze_file_barcelogic(solution)
+
+
+def get_solver_to_execute():
+    global encoding_file
+    global tout
+
+    if solver == "z3":
+        return z3_exec + " -smt2 " + encoding_file
+    elif solver == "barcelogic":
+        if tout is None:
+            return bclt_exec + " -file " + encoding_file
+        else:
+            return bclt_exec + " -file " + encoding_file + " -tlimit " + str(tout)
+    else:
+        return oms_exec + " " + encoding_file
+
+
+def get_tout_found_per_solver(solution):
+    global solver
+    if solver == "z3":
+        return re.search(re.compile("model is not"), solution)
+    elif solver == "barcelogic":
+        target_gas_cost, _ = analyze_file_barcelogic(solution)
+        return target_gas_cost == -1
+    else:
+        return re.search(re.compile("not enabled"), solution)
+
+
 if __name__=="__main__":
     init()
-    pathlib.Path(tmp_costabs).mkdir(parents=True, exist_ok=True)
+    pathlib.Path(syrup_path).mkdir(parents=True, exist_ok=True)
     pathlib.Path(results_dir).mkdir(parents=True, exist_ok=True)
     pathlib.Path(log_path).mkdir(parents=True, exist_ok=True)
 
-    file_to_rem = pathlib.Path(log_file)
-    file_to_rem.unlink(missing_ok=True)
+    # file_to_rem = pathlib.Path(log_file)
+    # file_to_rem.unlink(missing_ok=True)
 
     already_analyzed_contracts = glob.glob(results_dir + "/*.csv")
 
+    log_size_in_bytes = []
+
     for contract_path in [f.path for f in os.scandir(contracts_dir_path) if f.is_dir()]:
         rows_list = []
-        csv_file = results_dir + contract_path.split('/')[-1] + "_results_z3.csv"
+        log_dict = dict()
+        csv_file = results_dir + contract_path.split('/')[-1] + "_results_" + solver + ".csv"
 
         if csv_file in already_analyzed_contracts:
             continue
@@ -154,10 +234,11 @@ if __name__=="__main__":
                 file_results['number_of_necessary_uninterpreted_instructions'] = len(user_instr)
                 file_results['number_of_necessary_push'] = len(generate_phi_dict(user_instr, final_stack))
                 initial_stack = data['src_ws']
-            run_command(syrup_path + " " + file + " " + syrup_flags)
-            solution, executed_time = run_and_measure_command(z3_path + " -smt2 " + encoding_file + " " + z3_flags)
+            run_command(syrup_backend_exec + " " + file + " " + syrup_flags)
+            smt_exec_command = get_solver_to_execute()
+            solution, executed_time = run_and_measure_command(smt_exec_command)
             executed_time = round(executed_time, 3)
-            tout_pattern = re.search(re.compile("model is not"), solution)
+            tout_pattern = get_tout_found_per_solver(solution)
 
             if tout_pattern:
                 file_results['no_model_found'] = True
@@ -166,14 +247,16 @@ if __name__=="__main__":
             else:
                 # Checks solver log is correct
                 log_info = generate_solution_dict(solution)
+                log_dict[block_id] = log_info
                 with open(block_log, 'w') as path:
                     json.dump(log_info, path)
                 os.remove(encoding_file)
-                run_command(syrup_path + " " + file + " -check-log-file " + block_log + " -solver z3")
-                solver_output, verifier_time = run_and_measure_command(z3_path + " " + encoding_file)
+                run_command(syrup_backend_exec + " " + file + " -check-log-file " + block_log)
+                solver_output, verifier_time = run_and_measure_command(oms_exec + " " + encoding_file)
                 verifier_time = round(verifier_time, 3)
                 file_results['solution_checked_by_solver'] = check_solver_output_is_correct(solver_output)
                 file_results['time_verify_solution_solver'] = verifier_time
+
                 file_results['no_model_found'] = False
                 file_results['solver_time_in_sec'] = executed_time
 
@@ -204,18 +287,19 @@ if __name__=="__main__":
 
                 with open(gas_final_solution, 'r') as f:
                     file_results['real_gas'] = f.read()
-                    file_results['saved_gas'] = file_results['source_gas_cost'] - int(file_results['real_gas'])
+                    # It cannot be negative
+                    file_results['saved_gas'] = max(0, file_results['source_gas_cost'] - int(file_results['real_gas']))
+
                 try:
 
-                    run_command(syrup_full_execution_path + " " + syrup_full_execution_flags)
+                    run_command(syrup_exec + " " + syrup_full_execution_flags)
 
                     with open(final_json_path) as path:
                         data2 = json.load(path)
                         start = timer()
                         file_results['result_is_correct'] = are_equals(data, data2)
                         end = timer()
-                        file_results['verifier_time'] = end - start
-
+                        file_results['verifier_time'] = end-start
                 except Exception:
 
                     with open(log_file, "a+") as f:
@@ -227,6 +311,13 @@ if __name__=="__main__":
 
             rows_list.append(file_results)
 
+        contract_results = dict()
+        contract_results['contract_id'] = contract_path.split('/')[-1]
+        log_file = syrup_path + "/" + contract_path.split('/')[-1] + ".json"
+        with open(log_file, "w") as log_f:
+            json.dump(log_dict, log_f)
+        contract_results['log_size'] = os.path.getsize(log_file)
+        log_size_in_bytes.append(contract_results)
         df = pd.DataFrame(rows_list, columns=['block_id', 'target_gas_cost', 'real_gas',
                                               'shown_optimal', 'no_model_found', 'source_gas_cost', 'saved_gas',
                                               'solver_time_in_sec', 'target_disasm', 'init_progr_len',
@@ -235,3 +326,7 @@ if __name__=="__main__":
                                               'number_of_necessary_push', 'result_is_correct', 'verifier_time',
                                               'solution_checked_by_solver', 'time_verify_solution_solver'])
         df.to_csv(csv_file)
+
+    final_df = pd.DataFrame(log_size_in_bytes, columns=['contract_id', 'log_size'])
+    pathlib.Path(project_path+"/log_csv/").mkdir(parents=True, exist_ok=True)
+    final_df.to_csv(project_path+"/log_csv/log_size.csv")
