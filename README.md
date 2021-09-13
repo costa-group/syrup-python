@@ -2,9 +2,11 @@
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://github.com/costa-group/gasol-optimizer/blob/main/LICENSE)
 ![version](https://img.shields.io/badge/version-2.0-green)
 
-`Syrup` is a tool that applies super-optimization techniques to optimize Ethereum's smart contracts. In order to do so, `Syrup`
-splits smart contracts into basic block, and for each of them, tries to find a sequence of EVM instructions that leads to the same stack
-as the original block but spends less gas. 
+`Syrup` is a tool that applies super-optimization techniques to
+optimize Ethereum's smart contracts. In order to do so, `Syrup` splits
+smart contracts into basic block, and for each of them, tries to find
+a sequence of EVM instructions that leads to the same stack as the
+original block but spends less gas.
 
 `Syrup` uses an intermediate representation (Stack Functional
 Specification or SFS) on the impact a sequence of instructions has on
@@ -12,8 +14,10 @@ a block, and from this representation, a Max-SMT encoding is derived
 to find the best translation. The SFS defines the state of the stack
 after executing the basic block in terms of the state of the initial stack.
 
-This version of the `syrup` tool is implemented entirely in Python3 and considers further configurations in the Max-SMT encoding
-to determine the best options for its usage, as well as more simplification rules.
+This version of the `syrup` tool is implemented entirely in Python3
+and considers further configurations in the Max-SMT encoding to
+determine the best options for its usage, as well as more
+simplification rules.
 
 ## Installation (Ubuntu 20.04)
 
@@ -44,7 +48,8 @@ In case you want to install the latest version:
 ### 2. Install Ethereum (last version tested 1.9.20)
 
 Static executables of the Ethereum Virtual Machine are provided in the
-folder source. Add it to the PATh and test that it is installed.
+folder _ethir/source_. Add it to the PATh and test that it is
+installed.
  
  ```
  sudo cp source/evm* /usr/bin/
