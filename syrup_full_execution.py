@@ -167,10 +167,7 @@ def main():
             generate_files_for_solution(block_name, solver_output)
 
         if args.verify and not args.write_only:
-            if verify_sfs(args.source, sfs_dict):
-                print("Correct verification")
-            else:
-                print("SFS do not match")
+            verify_sfs(args.source, sfs_dict)
 
 
 if __name__=="__main__":
