@@ -109,15 +109,6 @@ def not_modifiable_path_files_init():
     global syrup_full_execution_flags
     syrup_full_execution_flags = " -isb -storage -s " + final_disasm_blk_path
 
-    global log_path
-    log_path = project_path + "logs"
-
-    global log_file
-    log_file = log_path + "log_oms.log"
-
-    global block_log
-    block_log = syrup_path + "block.log"
-
     global syrup_encoding_flags
     global tout
     global solver
@@ -225,14 +216,8 @@ if __name__=="__main__":
     init()
     pathlib.Path(syrup_path).mkdir(parents=True, exist_ok=True)
     pathlib.Path(results_dir).mkdir(parents=True, exist_ok=True)
-    pathlib.Path(log_path).mkdir(parents=True, exist_ok=True)
-
-    # file_to_rem = pathlib.Path(log_file)
-    # file_to_rem.unlink(missing_ok=True)
 
     already_analyzed_contracts = glob.glob(results_dir + "/*.csv")
-
-    log_size_in_bytes = []
 
     for contract_path in [f.path for f in os.scandir(contracts_dir_path) if f.is_dir()]:
         rows_list = []
@@ -268,17 +253,6 @@ if __name__=="__main__":
                 file_results['shown_optimal'] = False
                 file_results['solver_time_in_sec'] = executed_time
             else:
-                # Checks solver log is correct
-                log_info = generate_solution_dict(solution)
-                log_dict[block_id] = log_info
-                with open(block_log, 'w') as path:
-                    json.dump(log_info, path)
-                os.remove(encoding_file)
-                run_command(syrup_backend_exec + " " + file + " -check-log-file " + block_log)
-                solver_output, verifier_time = run_and_measure_command(oms_exec + " " + encoding_file)
-                verifier_time = round(verifier_time, 3)
-                file_results['solution_checked_by_solver'] = check_solver_output_is_correct(solver_output)
-                file_results['time_verify_solution_solver'] = verifier_time
 
                 file_results['no_model_found'] = False
                 file_results['solver_time_in_sec'] = executed_time
@@ -324,32 +298,14 @@ if __name__=="__main__":
                         end = timer()
                         file_results['verifier_time'] = end-start
                 except Exception:
-
-                    with open(log_file, "a+") as f:
-                        error_message = traceback.format_exc()
-                        print("File " + file, file=f)
-                        print("Error message: " + error_message, file=f)
-                        print("\n\n", file=f)
-                    continue
+                    pass
 
             rows_list.append(file_results)
 
-        contract_results = dict()
-        contract_results['contract_id'] = contract_path.split('/')[-1]
-        log_file = syrup_path + "/" + contract_path.split('/')[-1] + ".json"
-        with open(log_file, "w") as log_f:
-            json.dump(log_dict, log_f)
-        contract_results['log_size'] = os.path.getsize(log_file)
-        log_size_in_bytes.append(contract_results)
         df = pd.DataFrame(rows_list, columns=['block_id', 'target_gas_cost', 'real_gas',
                                               'shown_optimal', 'no_model_found', 'source_gas_cost', 'saved_gas',
                                               'solver_time_in_sec', 'target_disasm', 'init_progr_len',
                                               'final_progr_len',
                                               'number_of_necessary_uninterpreted_instructions',
-                                              'number_of_necessary_push', 'result_is_correct', 'verifier_time',
-                                              'solution_checked_by_solver', 'time_verify_solution_solver'])
+                                              'number_of_necessary_push', 'result_is_correct', 'verifier_time'])
         df.to_csv(csv_file)
-
-    final_df = pd.DataFrame(log_size_in_bytes, columns=['contract_id', 'log_size'])
-    pathlib.Path(project_path+"/log_csv/").mkdir(parents=True, exist_ok=True)
-    final_df.to_csv(project_path+"/log_csv/log_size.csv")
