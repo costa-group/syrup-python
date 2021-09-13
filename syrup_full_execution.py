@@ -166,8 +166,8 @@ def main():
             solver_output = obtain_solver_output(block_name, args.solver, tout)
             generate_files_for_solution(block_name, solver_output)
 
-        if args.verify and not args.write_only:
-            verify_sfs(args.source, sfs_dict)
+    if args.verify and not args.write_only:
+        verify_sfs(args.source, sfs_dict)
 
 
 if __name__=="__main__":
