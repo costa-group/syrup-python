@@ -2,9 +2,11 @@
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://github.com/costa-group/gasol-optimizer/blob/main/LICENSE)
 ![version](https://img.shields.io/badge/version-2.0-green)
 
-`Syrup` is a tool that applies super-optimization techniques to optimize Ethereum's smart contracts. In order to do so, `Syrup`
-splits smart contracts into basic block, and for each of them, tries to find a sequence of EVM instructions that leads to the same stack
-as the original block but spends less gas. 
+`Syrup` is a tool that applies super-optimization techniques to
+optimize Ethereum's smart contracts. In order to do so, `Syrup` splits
+smart contracts into basic block, and for each of them, tries to find
+a sequence of EVM instructions that leads to the same stack as the
+original block but spends less gas.
 
 `Syrup` uses an intermediate representation (Stack Functional
 Specification or SFS) on the impact a sequence of instructions has on
@@ -12,14 +14,16 @@ a block, and from this representation, a Max-SMT encoding is derived
 to find the best translation. The SFS defines the state of the stack
 after executing the basic block in terms of the state of the initial stack.
 
-This version of the `syrup` tool is implemented entirely in Python3 and considers further configurations in the Max-SMT encoding
-to determine the best options for its usage, as well as more simplification rules.
+This version of the `syrup` tool is implemented entirely in Python3
+and considers further configurations in the Max-SMT encoding to
+determine the best options for its usage, as well as more
+simplification rules.
 
 ## Installation (Ubuntu 20.04)
 
 ### 1. Install Solidity compiler (last version tested 0.8.1)
 
-The folder ethir/source contains static executables of different
+The folder _ethir/source_ contains static executables of different
 versions of Solidity compiler. Add it to the PATH and test that it is
 installed.
     
@@ -44,7 +48,8 @@ In case you want to install the latest version:
 ### 2. Install Ethereum (last version tested 1.9.20)
 
 Static executables of the Ethereum Virtual Machine are provided in the
-folder source. Add ot to the PATh and test that it is installed.
+folder _ethir/source_. Add it to the PATh and test that it is
+installed.
  
  ```
  sudo cp source/evm* /usr/bin/
@@ -117,30 +122,37 @@ each optimized sub-block:
 
 * total\_gas: gas associated to each generated block.
 
-`Syrup 2.0` also generates by default a log file in the folder _/tmp/syrup/_ that stores the result from the 
-optimization process in term of the solution from each generated Max-SMT problem.
-This way, it can be ensured the same optimization results can be obtained when
-executing the tool with the same input format. If the log file is not provided, it
-cannot ensured this behaviour can be replicated, mostly due to the fact that SMT solvers
-may lead to different models.
-
 ### Max-SMT encoding
 
-`Syrup 2.0` aims to determine the most suitable configuration in order to make the framework feasible to include in _real-world_ compilers. As such, 
-there exists several flags that allow the user to specify different combinations of constraints and timeouts. These configurations have been studied in detail and a [visualizer](http://costa.fdi.ucm.es/syrup-visualizer) has been implemented to interpret the experiments. The encoding names used in the visualizer are depicted below.
+`Syrup 2.0` aims to determine the most suitable configuration in order
+to make the framework feasible to include in _real-world_
+compilers. As such, there exists several flags that allow the user to
+specify different combinations of constraints and timeouts. These
+configurations have been studied in detail and a
+[visualizer](http://costa.fdi.ucm.es/syrup-visualizer) has been
+implemented to interpret the experiments. The encoding names used in
+the visualizer are depicted below.
 
-By default, the encoding that has been determined to work the best so far is enabled. It can be disabled using _-disable-default-encoding flag_.
-When disabled, the same encoding as `Syrup 1.0` is produced by default: O'<sub>SFS</sub> + C<sub>L</sub>. The following flags activate different constraints to be included:
+By default, the encoding that has been determined to work the best so
+far is enabled. It can be disabled using _-disable-default-encoding
+flag_.  When disabled, the same encoding as `Syrup 1.0` is produced by
+default: O'<sub>SFS</sub> + C<sub>L</sub>. The following flags
+activate different constraints to be included:
 
 * -inequality-gas-model : change soft constraint encoding from O'<sub>SFS</sub> to O<sub>SFS</sub> 
 * -pushed-once : enable hard constraint _Numerical values pushed at least once_ or C<sub>N</sub> 
 * -no-output-before-pop : enable hard constraint _Restricted opcodes before POP_ or C<sub>R</sub> 
 * -at-most : enable hard constraint _Uninterpreted opcodes at most once_ or C<sub>U</sub>
 
-Other flags can be enabled to add other hard constraints or modify the soft constraints. However, they have not been fully checked and it is not guaranteed the produced blocks are indeed equivalent to the initial ones.
+Other flags can be enabled to add other hard constraints or modify the
+soft constraints. However, they have not been fully checked and it is
+not guaranteed the produced blocks are indeed equivalent to the
+initial ones.
 
-The timeout per block can be specified using -tout flag. It is set to 10 seconds by default. When the timeout is reached, the underlying SMT solver halts its execution and returns the best
-model so far. If no model was found, empty files are produced.
+The timeout per block can be specified using -tout flag. It is set to
+10 seconds by default. When the timeout is reached, the underlying SMT
+solver halts its execution and returns the best model so far. If no
+model was found, empty files are produced.
 
 ### Analyze a smart contract
 
@@ -156,12 +168,11 @@ syrup_full_execution.py -s SOURCE -storage [-b] [-isb] [-json] [-solver
                                [-initial-solution]
                                [-disable-default-encoding]
                                [-number-instruction-gas-model] 
-                               [-disable-generation-log-file] [-check-log-file log_file]
 ```
 
 where the:
 * SOURCE represents the source file where the Solidity smart contract,
-EVM bytecode, SFS os basic block is stored
+EVM bytecode, SFS or basic block is stored
 * -b is needed when analyzing EVM bytecode
 * -isb is needed when analyzing a basic block
 * -json is needed when analyzing a SFS
@@ -170,11 +181,6 @@ EVM bytecode, SFS os basic block is stored
 * -tout allows specifying a desired timeout for the optimization
   process of each of the basic blocks of the smart contract under
   analysis. It is set to 10s by default
-* -disable-generation-log-file Disables the generation of a log file storing the contents
-  of the superoptimization process
-* -check-log-file accepts the log file generated from a previous run and outputs the same files
-* the remaining flags correspond to those related to the Max-SMT encoding that have already
-been discussed in the previous section
 
 For instances, to analyze the smart contract [0x001385C23468Cb4614831aD9205F041Cf64A2958.sol](https://github.com/costa-group/syrup-python/blob/master/examples/tosem-benchmarks-a/0x001385C23468Cb4614831aD9205F041Cf64A2958.sol) using
 OptiMathSAT as SMT solver, the initial configuration with C<sub>N</sub> and a timeout of 5 seconds, you have to
@@ -188,20 +194,20 @@ execute the following command:
 The directory _examples_ contains the benchmarks used in the
 experimental section (Section 5) of the paper (directories
 _tosem-benchmarks-a_ and _tosem-benchmarks-b_ respectively) submitted
-to TOSEM. The smart contracts located in _tosem-benckmarks-a_ are
+to TOSEM. The smart contracts located in _tosem-benchmarks-a_ are
 those selected for experiments (i) and (ii) and the ones located in
-_tosem-benckmarks-b_ the contracts used for experiments (iii).
+_tosem-benchmarks-b_ the contracts used for experiments (iii).
 
 In order to reproduce the results, you can find the scripts used in
 the directory _scripts_:
 
-* Script _process\_benckmarks\_a.sh_ (_process\_benckmarks\_b.sh_
+* Script _process\_benchmarks\_a.sh_ (_process\_benchmarks\_b.sh_
 respectively) generates the SFS for all the blocks of the smart
-contracts located in the directory _tosem-benckmarks-a_
-(_tosem-benckamrks b_ respectively). These scripts generate two new
+contracts located in the directory _tosem-benchmarks-a_
+(_tosem-benchmarks b_ respectively). These scripts generate two new
 directories in the root directory of the repository: _results-a_ for
 the smart contracts analyzed in the set _tosem-benchmarks-a_ and
-_results-b_ for those in _tosem-benckmarks-b_. There, you can find a
+_results-b_ for those in _tosem-benchmarks-b_. There, you can find a
 new directory _sfs-a_ (_sfs-b_ respectively) with the SFSs generated
 for each of the basic blocks.
 
@@ -218,12 +224,12 @@ flags in order to allow multiple configurations to study:
   * -solver {z3,barcelogic,oms}
   * -tout timeout : Timeout in seconds
   *  -syrup-encoding-flags syrup_flags : Flags passed to syrup in order to generate different Max-SMT encodings. If multiple flags are provided, use
-  "" to delimitate the argument. It is mandatory to start syrup_flags string with a blank space, otherwise the options are not recognized.
+  "" to delimit the argument. It is mandatory to start syrup_flags string with a blank space, otherwise the options are not recognized.
   *  -csv-folder csv_folder : Folder in which the results from the experiments are stored. Inside this folder, the subfolder 
   _solver + "\_" + timeout + "s/"_ is created. This subfolder contains a csv file for each analyzed file, containing a row for each sub-block analyzed.
 
 Note that multiple executions of this script can lead to inconsistencies, as all intermediate files are stored in the same folder. This can lead
-to name clashing and thus, incoherent results. In order to avoid this behaviour, rename the variable _syrup\_folder_ in the file _params/paths.py_
+to name clashing and thus, incoherent results. In order to avoid this behavior, rename the variable _syrup\_folder_ in the file _params/paths.py_
 to another name before running again the script.
 
 For instance, if we want to study the initial configuration with C<sub>U</sub> encoding when applied to Z3 and with a timeout of 15 seconds,
@@ -235,12 +241,15 @@ run the following command:
 
 As a result, the folder _/results-a/block\_results/at\_most/z3\_15s_ is created.
 
-* Finally, to obtain the global results per configuration instead of having a csv file per file, execute the script 
-_generate\_info\_per\_contract\_with\_verifier\_time.py_. This file accepts the path to the _general_ folder that stores all
-the experiments and generates a csv file for each encoding. 
+* Finally, to obtain the global results per configuration instead of
+having a csv file per file, execute the script
+_generate\_info\_per\_contract\_with\_verifier\_time.py_. This file
+accepts the path to the _general_ folder that stores all the
+experiments and generates a csv file for each encoding.
 
-For instance, in previous example, the _general_ folder in which we will store the experiments
-is _../results-a/block\_results/_. Thus, we need to run the following command: 
+For instance, in previous example, the _general_ folder in which we
+will store the experiments is _../results-a/block\_results/_. Thus, we
+need to run the following command:
 
 ```
 ./generate_info_per_contract_with_verifier_time.py -block-results-folder ../results-a/block_results/ -combined-csvs-folder ../results-a/combined_results/
