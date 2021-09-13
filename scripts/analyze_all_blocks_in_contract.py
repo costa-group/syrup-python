@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+import argparse
 import os
 import glob
 import pathlib
@@ -22,23 +23,40 @@ import traceback
 
 
 def modifiable_path_files_init():
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument("-solver", "--solver", help="Choose the solver", choices=["z3", "barcelogic", "oms"],
+                        required=True)
+    parser.add_argument("-tout", metavar='timeout', action='store', type=int, help="timeout in seconds", required=True)
+    parser.add_argument("-syrup-encoding-flags", metavar='syrup_flags', action='store', type=str,
+                        help="flags to select the desired Max-SMT encoding. "
+                             "Use same format as the one in syrup_full_execution. "
+                             "Also, first argument must be preceded by a blank space", required=True)
+    parser.add_argument("-jsons-folder", metavar='jsons_folder', action='store', type=str,
+                        help="folder that contains the jsons to analyze. It must be in the proper format",
+                        required=True)
+    parser.add_argument("-csv-folder", metavar='csv_folder', action='store', type=str,
+                        help="folder that will store the csvs containing the statistics per file", required=True)
+
+    args = parser.parse_args()
+
     # Selected solver. Only three possible values:
     # "oms", "z3", "barcelogic"
     global solver
-    solver = "oms"
+    solver = args.solver
 
     # Timeout in s
     global tout
-    tout = 10
+    tout = args.tout
 
-    # Folder in which the csvs are stored. A csv is generated per each subfolder
+    # Folder in which the csvs are stored. A csv is generated per each analyzed file
     global results_dir
-    results_dir = project_path + "results/prueba/" + solver + "_" + str(tout) + "s/"
+    results_dir = args.csv_folder
 
     # Flags activated for the syrup backend (i.e. the Max-SMT encoding).
     # Do not include timeout flag nor solver flag, only for encoding flags
     global syrup_encoding_flags
-    syrup_encoding_flags = " -disable-default-encoding "
+    syrup_encoding_flags = args.syrup_encoding_flags
 
     # Folder which contains the json files to analyze. Must follow this structure:
     # - main_folder
@@ -52,7 +70,7 @@ def modifiable_path_files_init():
     #      ...
     #   ...
     global contracts_dir_path
-    contracts_dir_path = project_path + "examples/most_called"
+    contracts_dir_path = args.jsons_folder
 
 
 def not_modifiable_path_files_init():
@@ -99,7 +117,7 @@ def not_modifiable_path_files_init():
     global tout
     global solver
     global syrup_flags
-    syrup_flags = syrup_encoding_flags + " -tout " + str(tout) + " -solver " + solver
+    syrup_flags = " " + syrup_encoding_flags + " -tout " + str(tout) + " -solver " + solver
 
 
 def init():
