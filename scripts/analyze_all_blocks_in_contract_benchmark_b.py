@@ -63,7 +63,7 @@ def modifiable_path_files_init():
 
 def not_modifiable_path_files_init():
     global contracts_dir_path
-    contracts_dir_path = project_path + "/results-b/SFS_OK"
+    contracts_dir_path = project_path + "results-b/SFS_OK"
 
     global disasm_generation_file
     disasm_generation_file = project_path + "solution_generation/disasm_generation.py"
