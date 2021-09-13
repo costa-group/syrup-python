@@ -174,18 +174,18 @@ def verify_sfs(source, sfs_dict):
             print("[ERROR] Path "+solutions_path+" does not exist.")
         else:
             init_time = dtimer()
-            
             keys_dict = sfs_dict.keys()
-            solution_files = list(filter(lambda x: x.find("disasm_opt")!=-1,os.listdir(solutions_path)))
+            c_dir = os.listdir(solutions_path)[0]
+            solution_files = list(filter(lambda x: x.find("disasm_opt")!=-1,os.listdir(solutions_path+"/"+c_dir+"/disasm")))
             for f in solution_files:
-
                 if "syrup_contract" in keys_dict:
                     contract = "syrup_contract"
                 else:
                     contract = get_contract_name(f)
-                    
+
+
                 block_id = get_block_id(f)
-                if os.path.getsize(solutions_path+f)!=0:
+                if os.path.getsize(solutions_path+"/"+c_dir+"/disasm/"+f)!=0:
                     if len(solution_files) == 1: #analyze json directly
                         try:
                             json_obj = sfs_dict[contract][block_id]
@@ -193,22 +193,19 @@ def verify_sfs(source, sfs_dict):
                             json_obj = sfs_dict
                         block_id = f
                     else:
-                        print(contract)
                         json_obj = sfs_dict[contract][block_id]
                     input_stack = len(json_obj["src_ws"])
                     gas = json_obj["current_cost"]
 
-                    x, y = process_isolate_block(solutions_path+f, input_stack)
+                    x, y = process_isolate_block(solutions_path+"/"+c_dir+"/disasm/"+f, input_stack)
 
                     block_data = {}
                     block_data["instructions"] = x
                     block_data["input"] = y
-
-                    print(block_data)
                     
                     value_gas = get_block_cost(x)
 
-                    if value_gas > gas:
+                    if value_gas == 0:
                         result = "Block "+block_id+" : GAS ERROR"
                         report+=result+"\n"
 
@@ -218,8 +215,8 @@ def verify_sfs(source, sfs_dict):
     
                         exit_code = rbr_isolate_block.evm2rbr_compiler(contract_name = cname, syrup = True, block = block_data)
                         json_opt_c = get_sfs_dict()
-                        print("++++++++++++++")
-                        print(json_opt_c)
+                        # print("++++++++++++++")
+                        # print(json_opt_c)
 
                         if len(json_opt_c)>1:
                             print("[ERROR] Something fails with the optimized block.")
