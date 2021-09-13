@@ -184,7 +184,10 @@ def analyze_bytecode(args_i = None):
 
     if args_i != None:
         args = args_i
-
+        args.syrup = True
+        args.optimize = None
+        args.cfile = False
+        args.goto = False
     
     x = dtimer()
 
