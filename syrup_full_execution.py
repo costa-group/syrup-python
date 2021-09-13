@@ -18,7 +18,7 @@ import json
 from solver_solution_verify import generate_solution_dict, check_solver_output_is_correct
 from solver_output_generation import obtain_solver_output
 import re
-from paths import syrup_path, json_path, syrup_timeout
+from paths import syrup_path, json_path, syrup_timeout, tmp_path, syrup_folder
 
 
 def execute_ethir():
@@ -136,7 +136,7 @@ def main():
 
     clean_dir()
     
-    if "syrup" not in os.listdir("/tmp/"):
+    if syrup_folder not in os.listdir(tmp_path):
         os.mkdir(syrup_path)
 
     
