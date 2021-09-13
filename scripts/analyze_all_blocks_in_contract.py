@@ -31,12 +31,13 @@ def modifiable_path_files_init():
     parser.add_argument("-syrup-encoding-flags", metavar='syrup_flags', action='store', type=str,
                         help="flags to select the desired Max-SMT encoding. "
                              "Use same format as the one in syrup_full_execution. "
-                             "Also, first argument must be preceded by a blank space", required=True)
+                             "First argument must be preceded by a blank space", required=True)
     parser.add_argument("-jsons-folder", metavar='jsons_folder', action='store', type=str,
                         help="folder that contains the jsons to analyze. It must be in the proper format",
                         required=True)
     parser.add_argument("-csv-folder", metavar='csv_folder', action='store', type=str,
-                        help="folder that will store the csvs containing the statistics per file", required=True)
+                        help="folder that will store the csvs containing the statistics per file. Inside that folder, "
+                             "another subfolder is created: solver_name + _ + timeout + 's'", required=True)
 
     args = parser.parse_args()
 
@@ -52,6 +53,10 @@ def modifiable_path_files_init():
     # Folder in which the csvs are stored. A csv is generated per each analyzed file
     global results_dir
     results_dir = args.csv_folder
+    if results_dir[-1] != "/":
+        results_dir += "/"
+
+    results_dir += solver + "_" + str(tout) + "s/"
 
     # Flags activated for the syrup backend (i.e. the Max-SMT encoding).
     # Do not include timeout flag nor solver flag, only for encoding flags
