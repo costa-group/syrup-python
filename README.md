@@ -122,30 +122,37 @@ each optimized sub-block:
 
 * total\_gas: gas associated to each generated block.
 
-`Syrup 2.0` also generates by default a log file in the folder _/tmp/syrup/_ that stores the result from the 
-optimization process in term of the solution from each generated Max-SMT problem.
-This way, it can be ensured the same optimization results can be obtained when
-executing the tool with the same input format. If the log file is not provided, it
-cannot ensured this behavior can be replicated, mostly due to the fact that SMT solvers
-may lead to different models.
-
 ### Max-SMT encoding
 
-`Syrup 2.0` aims to determine the most suitable configuration in order to make the framework feasible to include in _real-world_ compilers. As such, 
-there exists several flags that allow the user to specify different combinations of constraints and timeouts. These configurations have been studied in detail and a [visualizer](http://costa.fdi.ucm.es/syrup-visualizer) has been implemented to interpret the experiments. The encoding names used in the visualizer are depicted below.
+`Syrup 2.0` aims to determine the most suitable configuration in order
+to make the framework feasible to include in _real-world_
+compilers. As such, there exists several flags that allow the user to
+specify different combinations of constraints and timeouts. These
+configurations have been studied in detail and a
+[visualizer](http://costa.fdi.ucm.es/syrup-visualizer) has been
+implemented to interpret the experiments. The encoding names used in
+the visualizer are depicted below.
 
-By default, the encoding that has been determined to work the best so far is enabled. It can be disabled using _-disable-default-encoding flag_.
-When disabled, the same encoding as `Syrup 1.0` is produced by default: O'<sub>SFS</sub> + C<sub>L</sub>. The following flags activate different constraints to be included:
+By default, the encoding that has been determined to work the best so
+far is enabled. It can be disabled using _-disable-default-encoding
+flag_.  When disabled, the same encoding as `Syrup 1.0` is produced by
+default: O'<sub>SFS</sub> + C<sub>L</sub>. The following flags
+activate different constraints to be included:
 
 * -inequality-gas-model : change soft constraint encoding from O'<sub>SFS</sub> to O<sub>SFS</sub> 
 * -pushed-once : enable hard constraint _Numerical values pushed at least once_ or C<sub>N</sub> 
 * -no-output-before-pop : enable hard constraint _Restricted opcodes before POP_ or C<sub>R</sub> 
 * -at-most : enable hard constraint _Uninterpreted opcodes at most once_ or C<sub>U</sub>
 
-Other flags can be enabled to add other hard constraints or modify the soft constraints. However, they have not been fully checked and it is not guaranteed the produced blocks are indeed equivalent to the initial ones.
+Other flags can be enabled to add other hard constraints or modify the
+soft constraints. However, they have not been fully checked and it is
+not guaranteed the produced blocks are indeed equivalent to the
+initial ones.
 
-The timeout per block can be specified using -tout flag. It is set to 10 seconds by default. When the timeout is reached, the underlying SMT solver halts its execution and returns the best
-model so far. If no model was found, empty files are produced.
+The timeout per block can be specified using -tout flag. It is set to
+10 seconds by default. When the timeout is reached, the underlying SMT
+solver halts its execution and returns the best model so far. If no
+model was found, empty files are produced.
 
 ### Analyze a smart contract
 
@@ -161,7 +168,6 @@ syrup_full_execution.py -s SOURCE -storage [-b] [-isb] [-json] [-solver
                                [-initial-solution]
                                [-disable-default-encoding]
                                [-number-instruction-gas-model] 
-                               [-disable-generation-log-file] [-check-log-file log_file]
 ```
 
 where the:
@@ -175,11 +181,6 @@ EVM bytecode, SFS or basic block is stored
 * -tout allows specifying a desired timeout for the optimization
   process of each of the basic blocks of the smart contract under
   analysis. It is set to 10s by default
-* -disable-generation-log-file Disables the generation of a log file storing the contents
-  of the superoptimization process
-* -check-log-file accepts the log file generated from a previous run and outputs the same files
-* the remaining flags correspond to those related to the Max-SMT encoding that have already
-been discussed in the previous section
 
 For instances, to analyze the smart contract [0x001385C23468Cb4614831aD9205F041Cf64A2958.sol](https://github.com/costa-group/syrup-python/blob/master/examples/tosem-benchmarks-a/0x001385C23468Cb4614831aD9205F041Cf64A2958.sol) using
 OptiMathSAT as SMT solver, the initial configuration with C<sub>N</sub> and a timeout of 5 seconds, you have to
@@ -240,12 +241,15 @@ run the following command:
 
 As a result, the folder _/results-a/block\_results/at\_most/z3\_15s_ is created.
 
-* Finally, to obtain the global results per configuration instead of having a csv file per file, execute the script 
-_generate\_info\_per\_contract\_with\_verifier\_time.py_. This file accepts the path to the _general_ folder that stores all
-the experiments and generates a csv file for each encoding. 
+* Finally, to obtain the global results per configuration instead of
+having a csv file per file, execute the script
+_generate\_info\_per\_contract\_with\_verifier\_time.py_. This file
+accepts the path to the _general_ folder that stores all the
+experiments and generates a csv file for each encoding.
 
-For instance, in previous example, the _general_ folder in which we will store the experiments
-is _../results-a/block\_results/_. Thus, we need to run the following command: 
+For instance, in previous example, the _general_ folder in which we
+will store the experiments is _../results-a/block\_results/_. Thus, we
+need to run the following command:
 
 ```
 ./generate_info_per_contract_with_verifier_time.py -block-results-folder ../results-a/block_results/ -combined-csvs-folder ../results-a/combined_results/
