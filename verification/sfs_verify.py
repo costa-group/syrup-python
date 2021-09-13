@@ -7,8 +7,8 @@ from utils import process_isolate_block
 from syrup_optimization import get_sfs_dict
 from timeit import default_timer as dtimer
 
-costabs_path = "/tmp/gasol/"
-solutions_path = costabs_path + "solutions/"
+sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))+"/params")
+from params.paths import solutions_path, syrup_path
 
 
 '''
@@ -236,7 +236,7 @@ def verify_sfs(source, sfs_dict):
                 else:
                     report += "File for "+block_id+" is empty.\n"
 
-            with open(costabs_path + "report_verification.txt", 'w') as f:
+            with open(syrup_path + "report_verification.txt", 'w') as f:
                 print(report)
                 f.write(report)
 
@@ -249,7 +249,6 @@ def verify_sfs(source, sfs_dict):
                 
     else:
         print("There are not solutions generated. They cannot be verified.")
-
 
 
 if __name__ == '__main__':
