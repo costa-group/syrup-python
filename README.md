@@ -44,7 +44,7 @@ In case you want to install the latest version:
 ### 2. Install Ethereum (last version tested 1.9.20)
 
 Static executables of the Ethereum Virtual Machine are provided in the
-folder source. Add ot to the PATh and test that it is installed.
+folder source. Add it to the PATh and test that it is installed.
  
  ```
  sudo cp source/evm* /usr/bin/
@@ -121,7 +121,7 @@ each optimized sub-block:
 optimization process in term of the solution from each generated Max-SMT problem.
 This way, it can be ensured the same optimization results can be obtained when
 executing the tool with the same input format. If the log file is not provided, it
-cannot ensured this behaviour can be replicated, mostly due to the fact that SMT solvers
+cannot ensured this behavior can be replicated, mostly due to the fact that SMT solvers
 may lead to different models.
 
 ### Max-SMT encoding
@@ -161,7 +161,7 @@ syrup_full_execution.py -s SOURCE -storage [-b] [-isb] [-json] [-solver
 
 where the:
 * SOURCE represents the source file where the Solidity smart contract,
-EVM bytecode, SFS os basic block is stored
+EVM bytecode, SFS or basic block is stored
 * -b is needed when analyzing EVM bytecode
 * -isb is needed when analyzing a basic block
 * -json is needed when analyzing a SFS
@@ -188,20 +188,20 @@ execute the following command:
 The directory _examples_ contains the benchmarks used in the
 experimental section (Section 5) of the paper (directories
 _tosem-benchmarks-a_ and _tosem-benchmarks-b_ respectively) submitted
-to TOSEM. The smart contracts located in _tosem-benckmarks-a_ are
+to TOSEM. The smart contracts located in _tosem-benchmarks-a_ are
 those selected for experiments (i) and (ii) and the ones located in
-_tosem-benckmarks-b_ the contracts used for experiments (iii).
+_tosem-benchmarks-b_ the contracts used for experiments (iii).
 
 In order to reproduce the results, you can find the scripts used in
 the directory _scripts_:
 
-* Script _process\_benckmarks\_a.sh_ (_process\_benckmarks\_b.sh_
+* Script _process\_benchmarks\_a.sh_ (_process\_benchmarks\_b.sh_
 respectively) generates the SFS for all the blocks of the smart
-contracts located in the directory _tosem-benckmarks-a_
-(_tosem-benckamrks b_ respectively). These scripts generate two new
+contracts located in the directory _tosem-benchmarks-a_
+(_tosem-benchmarks b_ respectively). These scripts generate two new
 directories in the root directory of the repository: _results-a_ for
 the smart contracts analyzed in the set _tosem-benchmarks-a_ and
-_results-b_ for those in _tosem-benckmarks-b_. There, you can find a
+_results-b_ for those in _tosem-benchmarks-b_. There, you can find a
 new directory _sfs-a_ (_sfs-b_ respectively) with the SFSs generated
 for each of the basic blocks.
 
@@ -218,12 +218,12 @@ flags in order to allow multiple configurations to study:
   * -solver {z3,barcelogic,oms}
   * -tout timeout : Timeout in seconds
   *  -syrup-encoding-flags syrup_flags : Flags passed to syrup in order to generate different Max-SMT encodings. If multiple flags are provided, use
-  "" to delimitate the argument. It is mandatory to start syrup_flags string with a blank space, otherwise the options are not recognized.
+  "" to delimit the argument. It is mandatory to start syrup_flags string with a blank space, otherwise the options are not recognized.
   *  -csv-folder csv_folder : Folder in which the results from the experiments are stored. Inside this folder, the subfolder 
   _solver + "\_" + timeout + "s/"_ is created. This subfolder contains a csv file for each analyzed file, containing a row for each sub-block analyzed.
 
 Note that multiple executions of this script can lead to inconsistencies, as all intermediate files are stored in the same folder. This can lead
-to name clashing and thus, incoherent results. In order to avoid this behaviour, rename the variable _syrup\_folder_ in the file _params/paths.py_
+to name clashing and thus, incoherent results. In order to avoid this behavior, rename the variable _syrup\_folder_ in the file _params/paths.py_
 to another name before running again the script.
 
 For instance, if we want to study the initial configuration with C<sub>U</sub> encoding when applied to Z3 and with a timeout of 15 seconds,
