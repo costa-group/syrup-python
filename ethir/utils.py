@@ -834,11 +834,11 @@ def process_isolate_block(contract_name, in_stack = -1):
         input_stack = in_stack
 
 
-    print(input_stack)
+    # print(input_stack)
         
     instructions = f.readline().strip()
 
-    print(instructions)
+    # print(instructions)
     
     initial = 0
     opcodes = []

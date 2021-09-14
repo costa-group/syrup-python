@@ -1636,7 +1636,7 @@ Main function that build the rbr representation from the CFG of a solidity file.
 def evm2rbr_compiler(contract_name = None, syrup = None,block = None, sto = False, block_id = -1):
     global rbr_blocks
     global syrup_flag
-    
+
     init_globals()
     
     begin = dtimer()
@@ -1648,15 +1648,14 @@ def evm2rbr_compiler(contract_name = None, syrup = None,block = None, sto = Fals
         input_stack = int(block["input"])
         # print(instructions)
         # print(input_stack)
-        
+
         rule = compile_block(instructions,input_stack,block_id)
 
-            
         write_rbr(rule,block_id,contract_name)
         
         end = dtimer()
         ethir_time = end-begin
-        print("Build RBR: "+str(ethir_time)+"s")
+        # print("Build RBR: "+str(ethir_time)+"s")
                
 
         if syrup:

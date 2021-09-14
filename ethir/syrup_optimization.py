@@ -196,9 +196,9 @@ def get_stack_variables(rule):
 def generate_target_stack_idx(input_elems,list_opcodes):
     init_val = 0
 
-    print ("TARGET STACK")
-    print (input_elems)
-    print (list_opcodes)
+    # print ("TARGET STACK")
+    # print (input_elems)
+    # print (list_opcodes)
     
     for op in list_opcodes:
         opcode = op[4:-1].strip()
@@ -2362,25 +2362,25 @@ def translate_block(rule,instructions,opcodes,isolated=False):
     pops = list(filter(lambda x: x.find("nop(POP)")!=-1,opcodes))
     num_pops = len(pops)
     
-    print ("************")
-    print (rule.get_rule_name())
-    print ("Instructions:")
-    print (rule.get_instructions())
-    print ("Filtered opcodes:")
-    print (instructions)
-    print ("Opcodes")
-    print (opcodes)
-    print ("Get JUMPI Opcodes")
-    print (get_jumpi_opcodes(rule))
-    print ("Num Guards")
-    print (num_guard)
-    print ("Target Stack")
-    print (t_vars)
+    # print ("************")
+    # print (rule.get_rule_name())
+    # print ("Instructions:")
+    # print (rule.get_instructions())
+    # print ("Filtered opcodes:")
+    # print (instructions)
+    # print ("Opcodes")
+    # print (opcodes)
+    # print ("Get JUMPI Opcodes")
+    # print (get_jumpi_opcodes(rule))
+    # print ("Num Guards")
+    # print (num_guard)
+    # print ("Target Stack")
+    # print (t_vars)
 
     #print (source_stack_idx)
     source_stack = generate_source_stack_variables(source_stack_idx)
     get_s_counter(source_stack,t_vars)
-    print ("GENERATING ENCONDING")
+    # print ("GENERATING ENCONDING")
 
 
     generate_encoding(instructions,t_vars,source_stack)
@@ -3080,7 +3080,7 @@ def smt_translate(rules,sname,contract_name,storage):
                     info_deploy.append(info)
 
                     original_opcodes = opcodes
-                    #print ("-*-*-*-*-*-*-*-*-*-*-*")
+                    print ("-*-*-*-*-*-*-*-*-*-*-*")
 
                     res = is_optimizable(opcodes,instructions)
                     
@@ -3134,14 +3134,14 @@ def smt_translate_isolate(rule,name,storage):
     global source_name
     global blocks_json_dict
     global sfs_contracts
-    
+
     visited = []
     init_globals()
     sfs_contracts = {}
     
     if storage:
         add_storage2split()
-    
+
     blocks_json_dict = {}
     
     info_deploy = []
@@ -3152,7 +3152,7 @@ def smt_translate_isolate(rule,name,storage):
 
     
     begin = dtimer()
-    
+
     init_globals()
     
     instructions = filter_opcodes(rule)
@@ -3168,7 +3168,7 @@ def smt_translate_isolate(rule,name,storage):
     else:
         x = (False,"")
         
-    print ("-*-*-*-*-*-*-*-*-*-*-*")
+    # print ("-*-*-*-*-*-*-*-*-*-*-*")
 
     #print("ENTRO AQUI PABLO")
     res = is_optimizable(opcodes,instructions)
@@ -3192,7 +3192,7 @@ def smt_translate_isolate(rule,name,storage):
     #     print f
     sfs_contracts["syrup_contract"] = blocks_json_dict
     end = dtimer()
-    print("Blocks Generation SYRUP: "+str(end-begin)+"s")
+    # print("Blocks Generation SYRUP: "+str(end-begin)+"s")
 
 def apply_transform(instr):
     global discount_op
