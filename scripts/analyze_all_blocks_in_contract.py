@@ -33,10 +33,6 @@ def modifiable_path_files_init():
     parser.add_argument("-solver", "--solver", help="Choose the solver", choices=["z3", "barcelogic", "oms"],
                         required=True)
     parser.add_argument("-tout", metavar='timeout', action='store', type=int, help="timeout in seconds", required=True)
-    parser.add_argument("-syrup-encoding-flags", metavar='syrup_flags', action='store', type=str,
-                        help="flags to select the desired Max-SMT encoding. "
-                             "Use same format as the one in syrup_full_execution. "
-                             "First argument must be preceded by a blank space", required=True)
     parser.add_argument("-jsons-folder", metavar='jsons_folder', action='store', type=str,
                         help="folder that contains the jsons to analyze. It must be in the proper format",
                         required=True)
@@ -74,11 +70,6 @@ def modifiable_path_files_init():
 
     results_dir += solver + "_" + str(tout) + "s/"
 
-    # Flags activated for the syrup backend (i.e. the Max-SMT encoding).
-    # Do not include timeout flag nor solver flag, only for encoding flags
-    global syrup_encoding_flags
-    syrup_encoding_flags = args.syrup_encoding_flags
-
     # Folder which contains the json files to analyze. Must follow this structure:
     # - main_folder
     #   -- contract_1_folder
@@ -95,15 +86,6 @@ def modifiable_path_files_init():
 
 
 def not_modifiable_path_files_init():
-    global disasm_generation_file
-    disasm_generation_file = project_path + "solution_generation/disasm_generation.py"
-
-    global oms_flags
-    oms_flags = " "
-
-    global syrup_backend_exec
-    syrup_backend_exec = project_path + "backend/python_syrup.py"
-
     global solver_output_file
     solver_output_file = syrup_path + "solution.txt"
 
@@ -112,15 +94,6 @@ def not_modifiable_path_files_init():
 
     global final_disasm_blk_path
     final_disasm_blk_path = syrup_path + "block.disasm_blk"
-
-    global syrup_full_execution_flags
-    syrup_full_execution_flags = " -isb -storage -s " + final_disasm_blk_path
-
-    global syrup_encoding_flags
-    global tout
-    global solver
-    global syrup_flags
-    syrup_flags = " " + syrup_encoding_flags + " -tout " + str(tout) + " -solver " + solver
 
 
 def init():
@@ -255,7 +228,6 @@ if __name__=="__main__":
 
             execute_syrup_backend(args, file)
             smt_exec_command = get_solver_to_execute(block_id)
-            print(smt_exec_command)
             solution, executed_time = run_and_measure_command(smt_exec_command)
             executed_time = round(executed_time, 3)
             tout_pattern = get_tout_found_per_solver(solution)
