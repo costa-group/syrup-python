@@ -223,10 +223,9 @@ flags in order to allow multiple configurations to study:
 
   * -solver {z3,barcelogic,oms}
   * -tout timeout : Timeout in seconds
-  *  -syrup-encoding-flags syrup_flags : Flags passed to syrup in order to generate different Max-SMT encodings. If multiple flags are provided, use
-  "" to delimit the argument. It is mandatory to start syrup_flags string with a blank space, otherwise the options are not recognized.
   *  -csv-folder csv_folder : Folder in which the results from the experiments are stored. Inside this folder, the subfolder 
-  _solver + "\_" + timeout + "s/"_ is created. This subfolder contains a csv file for each analyzed file, containing a row for each sub-block analyzed.
+  _solver + "\_" + timeout + "s/"_ is created. This subfolder contains a csv file for each analyzed file, containing a row for each sub-block analyzed
+  * -inequality-gas-model, -pushed-once, -no-output-before-pop, -at-most, -disable-default-encoding : flags used to modify the Max-SMT encoding configuration
 
 Note that multiple executions of this script can lead to inconsistencies, as all intermediate files are stored in the same folder. This can lead
 to name clashing and thus, incoherent results. In order to avoid this behavior, rename the variable _syrup\_folder_ in the file _params/paths.py_
