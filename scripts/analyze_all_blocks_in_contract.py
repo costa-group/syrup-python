@@ -11,7 +11,7 @@ import pandas as pd
 import sys
 import resource
 sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))+"/params")
-from paths import project_path, oms_exec, syrup_exec, syrup_path, smt_encoding_path, json_path, z3_exec, bclt_exec
+from paths import project_path, oms_exec, syrup_exec, syrup_path, smt_encoding_path, json_path, z3_exec, bclt_exec, solutions_path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))+"/backend")
 from encoding_utils import generate_phi_dict
 from python_syrup import execute_syrup_backend
@@ -20,6 +20,10 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))+"/v
 from sfs_verify import are_equals
 from solver_solution_verify import generate_solution_dict, check_solver_output_is_correct
 sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))+"/scripts")
+sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))+"/solution_generation")
+from disasm_generation import generate_disasm_sol
+sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))+"/ethir")
+from oyente_ethir import analyze_isolate_block
 import traceback
 
 
@@ -102,15 +106,6 @@ def not_modifiable_path_files_init():
 
     global solver_output_file
     solver_output_file = syrup_path + "solution.txt"
-
-    global encoding_file
-    encoding_file = smt_encoding_path + "encoding.smt2"
-
-    global instruction_final_solution
-    instruction_final_solution = syrup_path + "optimized_block_instructions.disasm_opt"
-
-    global gas_final_solution
-    gas_final_solution = syrup_path + "gas.txt"
 
     global final_json_path
     final_json_path = json_path + "block__block0_input.json"
@@ -198,9 +193,10 @@ def analyze_file(solution):
         return analyze_file_barcelogic(solution)
 
 
-def get_solver_to_execute():
-    global encoding_file
+def get_solver_to_execute(block_id):
     global tout
+
+    encoding_file = smt_encoding_path + block_id + "_" + solver + ".smt2"
 
     if solver == "z3":
         return z3_exec + " -smt2 " + encoding_file
@@ -235,13 +231,14 @@ if __name__=="__main__":
     for contract_path in [f.path for f in os.scandir(contracts_dir_path) if f.is_dir()]:
         rows_list = []
         log_dict = dict()
-        csv_file = results_dir + contract_path.split('/')[-1] + "_results_" + solver + ".csv"
+        contract_name = contract_path.split('/')[-1]
+        csv_file = results_dir + contract_name + "_results_" + solver + ".csv"
 
         if csv_file in already_analyzed_contracts:
             continue
 
         for file in glob.glob(contract_path + "/*.json"):
-            file_results = {}
+            file_results = dict()
             block_id = file.split('/')[-1].rstrip(".json")
             file_results['block_id'] = block_id
             with open(file) as path:
@@ -257,8 +254,8 @@ if __name__=="__main__":
                 initial_stack = data['src_ws']
 
             execute_syrup_backend(args, file)
-            run_command(syrup_backend_exec + " " + file + " " + syrup_flags)
-            smt_exec_command = get_solver_to_execute()
+            smt_exec_command = get_solver_to_execute(block_id)
+            print(smt_exec_command)
             solution, executed_time = run_and_measure_command(smt_exec_command)
             executed_time = round(executed_time, 3)
             tout_pattern = get_tout_found_per_solver(solution)
@@ -280,7 +277,9 @@ if __name__=="__main__":
                 with open(solver_output_file, 'w') as f:
                     f.write(solution)
 
-                run_command(disasm_generation_file)
+                generate_disasm_sol(contract_name, block_id, solution)
+                instruction_final_solution = solutions_path + contract_name + "/disasm/" + block_id + "_optimized.disasm_opt"
+                gas_final_solution = solutions_path + contract_name + "/total_gas/" + block_id + "_real_gas.txt"
 
                 with open(instruction_final_solution, 'r') as f:
                     instructions_disasm = f.read()
@@ -302,18 +301,19 @@ if __name__=="__main__":
                     # It cannot be negative
                     file_results['saved_gas'] = max(0, file_results['source_gas_cost'] - int(file_results['real_gas']))
 
-                try:
+                args_sfs_generation = argparse.Namespace()
+                args_sfs_generation.source = final_disasm_blk_path
+                args_sfs_generation.storage = True
 
-                    run_command(syrup_exec + " " + syrup_full_execution_flags)
+                analyze_isolate_block(args_i=args_sfs_generation)
 
-                    with open(final_json_path) as path:
-                        data2 = json.load(path)
-                        start = timer()
-                        file_results['result_is_correct'] = are_equals(data, data2)
-                        end = timer()
-                        file_results['verifier_time'] = end-start
-                except Exception:
-                    pass
+                with open(final_json_path) as path:
+                    data2 = json.load(path)
+                    start = timer()
+                    file_results['result_is_correct'] = are_equals(data, data2)
+                    end = timer()
+                    file_results['verifier_time'] = end-start
+
 
             rows_list.append(file_results)
 

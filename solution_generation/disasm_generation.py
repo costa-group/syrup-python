@@ -150,11 +150,10 @@ def generate_disasm_sol(contract_name, block_name, solver_output):
         gas_file.write(str(total_gas))
 
 
-
-if __name__ == "__main__":
+def disasm_generation_with_default_names():
 
     init()
-    
+
     with open(opcodes_json, 'r') as path:
         opcodes_theta_dict = json.load(path)
     with open(instruction_json, 'r') as path:
@@ -211,3 +210,7 @@ if __name__ == "__main__":
                 instruction_file.write(instr + " ")
     with open(gas_final_solution, 'w') as gas_file:
         gas_file.write(str(total_gas))
+
+
+if __name__ == "__main__":
+    disasm_generation_with_default_names()
