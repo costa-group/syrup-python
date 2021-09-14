@@ -617,6 +617,14 @@ def translateOpcodes30(opcode, value, index_variables,block):
             instr = "extcodecopy("+v0+","+v1+","+v2++","+v3+")"  
         else:
             instr = ""
+
+    elif opcode == "EXTCODEHASH":
+        _, updated_variables = get_consume_variable(index_variables)
+        v1, updated_variables = get_new_variable(updated_variables)
+        if syrup_flag:
+            instr = v1+" = extcodehash("+v1+")"  
+        else:
+            instr = ""
             
     elif opcode == "MCOPY":
         pass
