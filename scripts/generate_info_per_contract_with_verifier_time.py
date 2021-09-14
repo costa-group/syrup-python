@@ -20,6 +20,8 @@ if __name__ == "__main__":
 
     parent_directory = args.block_results_folder
     final_directory = args.combined_csvs_folder
+    if final_directory[-1] != "/":
+        final_directory += "/"
 
     pathlib.Path(final_directory).mkdir(parents=True, exist_ok=True)
 
