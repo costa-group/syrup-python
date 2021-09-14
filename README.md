@@ -235,10 +235,12 @@ For instance, if we want to study the initial configuration with C<sub>U</sub> e
 run the following command:
 
 ```
-./analyze_all_blocks_in_contract_benchmark_a.py -solver z3 -tout 15 -syrup-encoding-flags " -disable-default-encoding -at-most " -csv-folder ../results-a/block_results/at_most/
+./analyze_all_blocks_in_contract_benchmark_a.py -solver z3 -tout 15 -disable-default-encoding -at-most -csv-folder ../results-a/block_results/at_most/
 ```
 
 As a result, the folder _/results-a/block\_results/at\_most/z3\_15s_ is created.
+
+Note that the execution of the script can take several hours depending on the timeout set and the configuration studied.
 
 * Finally, to obtain the global results per configuration instead of
 having a csv file per file, execute the script
