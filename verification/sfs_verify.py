@@ -8,7 +8,7 @@ from syrup_optimization import get_sfs_dict
 from timeit import default_timer as dtimer
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))+"/params")
-from params.paths import solutions_path, syrup_path
+from paths import solutions_path, syrup_path
 
 
 '''

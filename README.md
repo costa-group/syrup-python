@@ -223,10 +223,9 @@ flags in order to allow multiple configurations to study:
 
   * -solver {z3,barcelogic,oms}
   * -tout timeout : Timeout in seconds
-  *  -syrup-encoding-flags syrup_flags : Flags passed to syrup in order to generate different Max-SMT encodings. If multiple flags are provided, use
-  "" to delimit the argument. It is mandatory to start syrup_flags string with a blank space, otherwise the options are not recognized.
   *  -csv-folder csv_folder : Folder in which the results from the experiments are stored. Inside this folder, the subfolder 
-  _solver + "\_" + timeout + "s/"_ is created. This subfolder contains a csv file for each analyzed file, containing a row for each sub-block analyzed.
+  _solver + "\_" + timeout + "s/"_ is created. This subfolder contains a csv file for each analyzed file, containing a row for each sub-block analyzed
+  * -inequality-gas-model, -pushed-once, -no-output-before-pop, -at-most, -disable-default-encoding : flags used to modify the Max-SMT encoding configuration
 
 Note that multiple executions of this script can lead to inconsistencies, as all intermediate files are stored in the same folder. This can lead
 to name clashing and thus, incoherent results. In order to avoid this behavior, rename the variable _syrup\_folder_ in the file _params/paths.py_
@@ -236,10 +235,12 @@ For instance, if we want to study the initial configuration with C<sub>U</sub> e
 run the following command:
 
 ```
-./analyze_all_blocks_in_contract_benchmark_a.py -solver z3 -tout 15 -syrup-encoding-flags " -disable-default-encoding -at-most " -csv-folder ../results-a/block_results/at_most/
+./analyze_all_blocks_in_contract_benchmark_a.py -solver z3 -tout 15 -disable-default-encoding -at-most -csv-folder ../results-a/block_results/at_most/
 ```
 
 As a result, the folder _/results-a/block\_results/at\_most/z3\_15s_ is created.
+
+Note that the execution of the script can take several hours depending on the timeout set and the configuration studied.
 
 * Finally, to obtain the global results per configuration instead of
 having a csv file per file, execute the script

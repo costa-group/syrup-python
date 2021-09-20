@@ -20,6 +20,8 @@ if __name__ == "__main__":
 
     parent_directory = args.block_results_folder
     final_directory = args.combined_csvs_folder
+    if final_directory[-1] != "/":
+        final_directory += "/"
 
     pathlib.Path(final_directory).mkdir(parents=True, exist_ok=True)
 
@@ -44,10 +46,11 @@ if __name__ == "__main__":
                 csv_row['no_solution_found'] = df[(df['shown_optimal'] == False) & (df['no_model_found'])].shape[0]
                 csv_row['verifier_total_time'] = df['verifier_time'].sum()
                 csv_row['verifier_number'] = df[df['no_model_found'] == False].shape[0]
+                csv_row['all_verified'] = all(df['result_is_correct'].tolist())
                 row_list.append(csv_row)
             df = pd.DataFrame(row_list, columns=['name', 'saved_gas', 'time', 'already_optimal', 'discovered_optimal', 
                                                 'non_optimal_with_less_gas', 'non_optimal_with_same_gas', 'no_solution_found', 
-                                                'verifier_total_time', 'verifier_number'])
+                                                'verifier_total_time', 'all_verified'])
             pathlib.Path(final_directory + encoding).mkdir(parents=True, exist_ok=True)
             csv_file = final_directory + encoding + "/" + encoding + "_" + solver + ".csv"
             df.to_csv(csv_file)

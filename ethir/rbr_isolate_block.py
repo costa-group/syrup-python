@@ -617,6 +617,14 @@ def translateOpcodes30(opcode, value, index_variables,block):
             instr = "extcodecopy("+v0+","+v1+","+v2++","+v3+")"  
         else:
             instr = ""
+
+    elif opcode == "EXTCODEHASH":
+        _, updated_variables = get_consume_variable(index_variables)
+        v1, updated_variables = get_new_variable(updated_variables)
+        if syrup_flag:
+            instr = v1+" = extcodehash("+v1+")"  
+        else:
+            instr = ""
             
     elif opcode == "MCOPY":
         pass
@@ -1636,7 +1644,7 @@ Main function that build the rbr representation from the CFG of a solidity file.
 def evm2rbr_compiler(contract_name = None, syrup = None,block = None, sto = False, block_id = -1):
     global rbr_blocks
     global syrup_flag
-    
+
     init_globals()
     
     begin = dtimer()
@@ -1648,15 +1656,14 @@ def evm2rbr_compiler(contract_name = None, syrup = None,block = None, sto = Fals
         input_stack = int(block["input"])
         # print(instructions)
         # print(input_stack)
-        
+
         rule = compile_block(instructions,input_stack,block_id)
 
-            
         write_rbr(rule,block_id,contract_name)
         
         end = dtimer()
         ethir_time = end-begin
-        print("Build RBR: "+str(ethir_time)+"s")
+        # print("Build RBR: "+str(ethir_time)+"s")
                
 
         if syrup:
