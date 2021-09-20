@@ -1483,20 +1483,20 @@ def generate_storage_info(instructions,source_stack):
             mload_relative_pos[last_mload]=mstores.pop(0)
             memory_order.append(mload_relative_pos[last_mload])
             
-    print("FINAL SSTORE:")
-    print(sstore_seq)
-    print("FINAL SLOAD:")
-    print(sload_relative_pos)
-    print("STORAGE ORDER:")
-    print(storage_order)
-    print(variable_content)
-    print(u_dict)
+    # print("FINAL SSTORE:")
+    # print(sstore_seq)
+    # print("FINAL SLOAD:")
+    # print(sload_relative_pos)
+    # print("STORAGE ORDER:")
+    # print(storage_order)
+    # print(variable_content)
+    # print(u_dict)
 
 
-    print("*******")
+
     remove_loads_instructions()
 
-    print(storage_order)
+    # print(storage_order)
     
         
 def generate_source_stack_variables(idx):
