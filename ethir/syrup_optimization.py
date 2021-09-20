@@ -1427,6 +1427,8 @@ def generate_storage_info(instructions,source_stack):
     global mmstore_vars
     global sload_relative_pos
     global mload_relative_pos
+    global storage_order
+    global memory_order
     
     #print("SLOADS")
     #print(sload_relative_pos)
@@ -1466,7 +1468,7 @@ def generate_storage_info(instructions,source_stack):
             #print(exp)
             storage_order.append(r)
             
-        elif instructions[x].find("sstore")!=-1 and last_sload != "" and sload_relative_pos.get(last_sload,[])==[]:
+        elif instructions[x].find("sstore")!=-1: # and last_sload != "" and sload_relative_pos.get(last_sload,[])==[]:
             sload_relative_pos[last_sload]=sstores.pop(0)
             storage_order.append(sload_relative_pos[last_sload])
             
@@ -1481,12 +1483,21 @@ def generate_storage_info(instructions,source_stack):
             mload_relative_pos[last_mload]=mstores.pop(0)
             memory_order.append(mload_relative_pos[last_mload])
             
-    #print("FINAL SSTORE:")
-    #print(sstore_seq)
-    #print("FINAL SLOAD:")
-    #print(sload_relative_pos)
-    #print("STORAGE ORDER:")
-    #print(storage_order)
+    print("FINAL SSTORE:")
+    print(sstore_seq)
+    print("FINAL SLOAD:")
+    print(sload_relative_pos)
+    print("STORAGE ORDER:")
+    print(storage_order)
+    print(variable_content)
+    print(u_dict)
+
+
+    print("*******")
+    remove_loads_instructions()
+
+    print(storage_order)
+    
         
 def generate_source_stack_variables(idx):
     ss_list = []
@@ -4646,3 +4657,29 @@ def is_identity_map(source_stack,target_stack):
             return False
 
     return True
+
+
+def remove_loads(storage,instruction):
+    new_storage = []
+    for s in storage:
+        if s[0][-1].find(instruction)!=-1:
+            if s in list(u_dict.values()) :
+                new_storage.append(s)
+        else:
+            new_storage.append(s)
+    return new_storage
+
+def remove_loads_instructions():
+    global storage_order
+    global memory_order
+
+    target_stack_content = variable_content.values()
+
+    sstore_instructions = filter(lambda x: x[0][-1].find("sstore")!=-1,storage_order)
+    sstore_vars = list(map(lambda x: x[0][0],sstore_instructions))
+    
+    mstore_instructions = filter(lambda x: x[0][-1].find("mstore")!=-1,memory_order)
+    mstore_vars = list(map(lambda x: x[0][0],mstore_instructions))
+                
+    storage_order = remove_loads(storage_order,"sload")
+    memory_order = remove_loads(memory_order,"mload")
