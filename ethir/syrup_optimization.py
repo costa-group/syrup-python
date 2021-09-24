@@ -103,29 +103,20 @@ def init_globals():
     global sstore_seq
     sstore_seq = []
 
-    global sstore_vars
-    sstore_vars = {}
-
     global sstore_v_counter
     sstore_v_counter = 0
-
-    #it stores when the sloads are executed
-    global sload_relative_pos
-    sload_relative_pos = {}
 
     global mstore_seq
     mstore_seq = []
 
-    global mstore_vars
-    mstore_vars = {}
-
     global mstore_v_counter
     mstore_v_counter = 0
 
-    #it stores when the sloads are executed
-    global mload_relative_pos
-    mload_relative_pos = {}
+    global storage_dep
+    storage_dep = []
 
+    global memory_dep
+    memory_dep = []
     
 def add_storage2split():
     global split_block
@@ -378,6 +369,11 @@ def generate_sstore_mstore(store_ins,instructions,source_stack):
 def generate_sload_mload(load_ins,instructions,source_stack):
 
     level = 0
+
+    if load_ins.find("=")!=-1:
+        load_ins = load_ins.split("=")[-1].strip()
+
+    
     new_vars, funct = get_involved_vars(load_ins,"")
     
         
@@ -414,21 +410,6 @@ def is_already_defined(elem):
             return u_var, True
 
     return -1, False
-
-def is_already_defined_storage(elem,location):
-
-    if location == "storage":
-        for var in sstore_vars.keys():
-            if elem == sstore_vars[var]:
-                return var, True
-
-    elif location == "memory":
-        for var in mstore_vars.keys():
-            if elem == mstore_vars[var]:
-                return var, True
-
-    return -1, False
-
 
 def compute_len(number):
     bin_number = bin(number)
@@ -549,14 +530,14 @@ def get_involved_vars(instr,var):
 
         funct = "mload"
 
-    elif instr.find("sload(")!=-1:
+    elif instr.find("sload")!=-1:
         instr_new = instr.strip("\n")
-        pos = instr_new.find("sload(")
-        arg0 = instr_new[pos+6:-1]
+        pos = instr_new.find("(")
+        arg0 = instr_new[pos+1:-1]
         var0 = arg0.strip()
         var_list.append(var0)
 
-        funct = "sload"
+        funct = instr_new[:pos]
 
 
     elif instr.find("sstore(")!=-1:
@@ -1423,16 +1404,17 @@ def generate_encoding(instructions,variables,source_stack):
 def generate_storage_info(instructions,source_stack):
     global sstore_seq
     global mstore_seq
-    global sstore_vars
-    global mmstore_vars
-    global sload_relative_pos
-    global mload_relative_pos
     global storage_order
     global memory_order
+    global storage_dep
+    global memory_dep
     
     #print("SLOADS")
     #print(sload_relative_pos)
 
+    sload_relative_pos = {}
+    mload_relative_pos = {}
+    
     for x in range(0,len(instructions)):
         s_dict = {}
 
@@ -1483,21 +1465,30 @@ def generate_storage_info(instructions,source_stack):
             mload_relative_pos[last_mload]=mstores.pop(0)
             memory_order.append(mload_relative_pos[last_mload])
             
-    # print("FINAL SSTORE:")
-    # print(sstore_seq)
-    # print("FINAL SLOAD:")
-    # print(sload_relative_pos)
-    # print("STORAGE ORDER:")
-    # print(storage_order)
-    # print(variable_content)
-    # print(u_dict)
+    print("FINAL SSTORE:")
+    print(sstore_seq)
+    print("FINAL SLOAD:")
+    print(sload_relative_pos)
+    print("STORAGE ORDER:")
+    print(storage_order)
+    print(variable_content)
+    print(u_dict)
 
 
 
     remove_loads_instructions()
 
-    # print(storage_order)
-    
+    print("*************")
+    remove_store_recursive_dif(storage_order,"storage")
+    print(storage_order)
+    remove_store_recursive_eq(storage_order,"storage")
+    print(storage_order)
+    dep = generate_dependencies(storage_order)
+    print(storage_order)
+    print(dep)
+
+    storage_dep = dep
+    memory_dep = []
         
 def generate_source_stack_variables(idx):
     ss_list = []
@@ -1595,6 +1586,7 @@ def generate_sstore_info(sstore_elem):
     global user_def_counter
     global sstore_v_counter
 
+    
     obj = {}
     idx  = user_def_counter.get("SSTORE",0)
 
@@ -1607,10 +1599,9 @@ def generate_sstore_info(sstore_elem):
     obj["opcode"] = process_opcode(str(opcodes.get_opcode(instr_name)[0]))
     obj["disasm"] = instr_name
     obj["inpt_sk"] = [sstore_elem[0][0],sstore_elem[0][1]]
-    obj["sto_state"] = ["sto"+str(sstore_v_counter-1)] if sstore_v_counter != 0 else []
+    obj["sto_state"] = ["sto"+str(idx)]
 
-    out_var = create_new_sstorevar()
-    obj["out_sto"] = [out_var]
+    obj["out_sto"] = []
     
     obj["gas"] = opcodes.get_ins_cost(instr_name)
     obj["commutative"] = False
@@ -1618,7 +1609,7 @@ def generate_sstore_info(sstore_elem):
 
     return obj
 
-def generate_sstore_info(sstore_elem):
+def generate_mstore_info(sstore_elem):
     global user_def_counter
     global mstore_v_counter
 
@@ -1648,7 +1639,7 @@ def generate_sstore_info(sstore_elem):
 
     
     
-def generate_json(block_name,ss,ts,max_ss_idx1,gas,opcodes_seq,subblock = None):
+def generate_json(block_name,ss,ts,max_ss_idx1,gas,opcodes_seq,dependences=[],subblock = None):
     global max_instr_size
     global num_pops
     global blocks_json_dict
@@ -1744,7 +1735,8 @@ def generate_json(block_name,ss,ts,max_ss_idx1,gas,opcodes_seq,subblock = None):
 
     #Adding sstore seq
     sto_objs = []
-    for sto in sstore_seq:
+    sstore_list = list(filter(lambda x: x[0][-1].find("sstore") != -1, storage_order))
+    for sto in sstore_list:
         # print("opopopopopopopoppppo")
         # print(sto)
         x = generate_sstore_info(sto)
@@ -1752,11 +1744,16 @@ def generate_json(block_name,ss,ts,max_ss_idx1,gas,opcodes_seq,subblock = None):
         # print("STO")
         # print(x)
 
+    print(sto_objs)
+    
     mem_objs = []
     for mem in mstore_seq:
         x = generate_mstore_info(sto)
         mem_objs.append(x)
-        
+
+    
+    x, y = translate_dependences_sfs(new_user_defins)
+    
     #json_dict["init_progr_len"] = max_instr_size-(num_pops-len(not_used))-discount_op
     #json_dict["max_progr_len"] = max_instr_size-discount_op
     json_dict["init_progr_len"] = max_instr_size-discount_op
@@ -4658,7 +4655,6 @@ def is_identity_map(source_stack,target_stack):
 
     return True
 
-
 def remove_loads(storage,instruction):
     new_storage = []
     for s in storage:
@@ -4669,6 +4665,9 @@ def remove_loads(storage,instruction):
             new_storage.append(s)
     return new_storage
 
+# It removes from storage_order or memory_order the loads instructions
+# that are not used neither in the target stack nor the storage
+# operations
 def remove_loads_instructions():
     global storage_order
     global memory_order
@@ -4683,3 +4682,216 @@ def remove_loads_instructions():
                 
     storage_order = remove_loads(storage_order,"sload")
     memory_order = remove_loads(memory_order,"mload")
+
+
+
+def remove_store_recursive_dif(storage_location, location):
+
+    if location == "storage":
+        instruction = "sstore"
+    else:
+        instruction = "mstore"
+
+    i = 0
+    finish = False
+
+    while(i<len(storage_location) and not finish):
+        elem = storage_location[i]
+        
+        if elem[0][-1].find(instruction)!=-1:
+            var = elem[0][0]
+            rest = list(filter(lambda x: x[0][0] == var and x[0][-1].find(instruction)!=-1 and x!=elem, storage_location[i+1::]))
+            if rest !=[]:
+                next_ins = rest[0]
+                pos = storage_location.index(next_ins)
+                sublist = storage_location[i+1:pos]
+                storage_instructions = list(filter(lambda x: x[0][0] == var,sublist)) #It checks for loads betweeen the stores
+                if len(storage_instructions) == 0:
+                    storage_location.pop(i)
+                    remove_store_recursive_dif(storage_location,location)
+                    finish = True
+        i+=1
+
+#Here it means that we have sloads between the sstores that are equals.
+#Otherwise it would have been removed with remove_store_recursive_dif
+def remove_store_recursive_eq(storage_location,location):
+
+    if location == "storage":
+        instruction = "sstore"
+    else:
+        instruction = "mstore"
+
+    i = 0
+    finish = False
+
+    while(i<len(storage_location) and not finish):
+        elem = storage_location[i]
+        
+        if elem[0][-1].find(instruction)!=-1 and elem in storage_location[i+1::]:
+            pos = storage_location[i+1::].index(elem)+i+1
+            var = elem[0][0]
+            subList = storage_location[i+1:pos]
+            rest = list(filter(lambda x: x[0][0] == var and x[0][-1].find(instruction)!=-1, subList))
+            if rest ==[]:
+                storage_location.pop(pos)
+                remove_store_recursive_eq(storage_location, location)
+                finish = True
+        i+=1
+
+        
+#storage location may be storage_order or memory_order
+def generate_dependencies(storage_location):
+    storage_dependences = []
+
+    for i in range(len(storage_location)-2,-1,-1):
+        elem = storage_location[i]
+        var = elem[0][0]
+
+        j = 0
+        already = False
+        sub_list = storage_location[i+1::]
+        while((j<len(sub_list)) and (not already)):
+            rest = sub_list[j]
+            var_rest = rest[0][0]
+            print(elem)
+            print(rest)
+
+            # if (elem[0][-1] == rest[0][-1] and (elem[0][-1] == "sstore" or rest[0][-1] == "sstore")): # or (not elem[0][-1].startswith("sload") and not rest[0][-1].startswith("sload")):
+            if (elem[0][-1] == "sstore" or rest[0][-1] == "sstore"):
+                print("YEEES")
+                print(var)
+                print(var_rest)
+                if var == var_rest:
+                    
+                    storage_dependences.append((i,i+j+1))
+                else:
+                    if var.startswith("s") or var_rest.startswith("s"):
+                        storage_dependences.append((i,i+j+1))
+            
+                if len(list(filter(lambda x: x[0] == i+j+1, storage_dependences))) > 0:
+                    # It means that the transitive things have been already computed
+                    already = True
+            j+=1
+                                
+            
+    return storage_dependences
+
+
+def update_variables_loads(elem1, elem2, storage_location):
+    global variable_content
+    global u_dict
+
+
+    for v in u_dict:
+        elem = u_dict[v]
+        if elem == elem1:
+            var2keep = v
+        if elem == elem2:
+            var2replace = v
+
+
+    print(u_dict)
+    print(var2keep)
+    print(var2replace)
+            
+    #We remove the second sload
+    u_dict.pop(var2replace)
+
+    for v in u_dict:
+        elem = u_dict[v]
+        list_tuple = list(elem[0])
+        if var2replace in list_tuple:
+            pos = elem[0].index(var2replace)
+            list_tuple[pos] = var2keep
+            u_dict[v] = (tuple(list_tuple),elem[1])
+    
+    for var in variable_content:
+        if variable_content[var] == var2replace:
+            variable_content[var] = var2keep
+
+    for i in range(0,len(storage_location)):
+        elem = storage_location[i]
+        list_tuple = list(elem[0])
+        if var2replace in list_tuple:
+            pos = list_tuple.index(var2replace)
+            list_tuple[pos] = var2keep
+            storage_location[i] = (tuple(list_tuple),elem[1])
+
+
+    
+#It checks in which cases the loads are 
+def unify_loads_instructions(storage_location, location):
+    global variable_content
+
+    if location == "storage":
+        instruction = "sload"
+    elif location == "memory":
+        instruction = "mload"
+
+
+    i = 0
+    finished = False
+    while(i<len(storage_location) and not finished):
+        elem = storage_location[i]
+        if elem[0][-1].find(instruction)!=-1:
+            loads = list(filter(lambda x: x[0][0] == elem[0][0] and x[0][-1].find("sload")!=-1,storage_location[i+1::]))
+            if len(loads)>0:
+                load_ins = loads[0]
+                pos = storage_location.index(load_ins)
+                storage_location.pop(pos)
+                update_variables_loads(elem,load_ins,storage_location)
+                finished = True
+                
+            
+        i+=1
+
+def compute_identifiers_storage_instructions(storage_location, location, new_user_defins):
+
+    if location == "storage":
+        store = "sstore"
+        store_up = "SSTORE"
+        load = "SLOAD"
+    else:
+        store = "mstore"
+        store_up = "MSTORE"
+        load = "MLOAD"
+    
+    store_count = 0
+
+    storage_identifiers = []
+
+    key_list = list(u_dict.keys())
+    values_list = list(u_dict.values())
+    
+    for i in range(0,len(storage_location)):
+        ins = storage_location[i]
+        if ins[0][-1] == store:
+            storage_identifiers.append(store_up+"_"+str(store_count))
+            store_count+=1
+        else: # loads instructions
+            pos = values_list.index(ins)
+            var = key_list[pos]
+            sload_ins = list(filter(lambda x: x["disasm"] == load and x["outpt_sk"] == [var],new_user_defins))
+            if len(sload_ins)!= 1:
+                raise Exception("Error in looking for load instruction")
+            else:
+                storage_identifiers.append(sload_ins[0]["id"])
+
+    return storage_identifiers
+
+def translate_dependences_sfs(new_user_defins):
+    new_storage_dep = []
+    new_memory_dep = []
+    
+    storage = compute_identifiers_storage_instructions(storage_order,"storage",new_user_defins)
+    memory = compute_identifiers_storage_instructions(memory_order,"memory",new_user_defins)
+
+    for e in storage_dep:
+        first, second = e
+        new_storage_dep.append((storage[first],storage[second]))
+
+    for e in memory_dep:
+        first, second = e
+        new_memory_dep.append((memory[first],memory[second]))
+
+    return new_storage_dep, new_memory_dep
