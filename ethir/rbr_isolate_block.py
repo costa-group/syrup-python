@@ -144,6 +144,8 @@ def init_globals():
     global syrup_flag
     syrup_flag = False
 
+    global sloads_counter
+    sloads_counter = 0
 '''
 Given a block it returns a list containingn the height of its
 stack when arriving and leaving the block.
@@ -695,6 +697,7 @@ updated. It also updated the corresponding global variables.
 def translateOpcodes50(opcode, value, index_variables,block,state_names):
     global new_fid
     global pc_cont
+    global sloads_counter
     # global unknown_mstore
     
     if opcode == "POP":        
@@ -748,7 +751,8 @@ def translateOpcodes50(opcode, value, index_variables,block,state_names):
         _ , updated_variables = get_consume_variable(index_variables)
         v1, updated_variables = get_new_variable(updated_variables)
         if syrup_flag:
-            instr = v1+" = sload("+v1+")"
+            instr = v1+" = sload"+str(sloads_counter)+"("+v1+")"
+            sloads_counter+=1
         else:
             try:
                 val = value.split("_")
